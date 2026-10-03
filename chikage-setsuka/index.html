@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18181b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="異常処理室">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="セツカとチカゲ、ふたりの育て方が夜を変える。短時間の自動進行ビルドRPG。">
+  <title>異常処理室 — セツカとチカゲ</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2318181b'/%3E%3Cpath d='M15 16l34 32M49 16L15 48' stroke='%23ff1461' stroke-width='8'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%232969ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <aside class="desktop-note" aria-hidden="true">
+    <span class="editorial-number">02</span>
+    <span>異常処理室<br>夜間対応班</span>
+    <div class="editorial-line"></div>
+    <span class="mono">TWO OPERATORS.<br>ONE STRANGE NIGHT.</span>
+  </aside>
+  <div class="game-shell" id="game-shell">
+    <header class="topbar">
+      <div class="wordmark"><span class="brand-cross" aria-hidden="true"></span><div><h1>異常処理室</h1><span class="mono">NIGHT SHIFT / UNIT 02</span></div></div>
+      <div class="header-tools"><button class="speed-button mono" id="speed-button" title="進行速度を切り替える" aria-label="進行速度 1倍">1×</button><button class="help-button" id="help-button" aria-label="遊び方を開く">?</button></div>
+    </header>
+
+    <section class="operators" aria-label="セツカとチカゲ">
+      <article class="operator setsuka">
+        <div class="portrait-media"><img src="assets/setsuka.jpg" alt="ピンクの差し色、巨大な斧を持つセツカ" fetchpriority="high" draggable="false"></div>
+        <span class="operator-code mono">01 / BREACH</span>
+        <div class="operator-info"><span class="operator-caption">破壊は、私に任せて。</span><h2>セツカ <span class="mono">SETSUKA</span></h2><div class="operator-state"><span class="state-dot"></span><span id="setsuka-state">待機中</span><span class="operator-type" id="setsuka-type">未特化</span></div></div>
+      </article>
+      <article class="operator chikage">
+        <div class="portrait-media"><img src="assets/chikage.jpg" alt="青の差し色、冷静な解析担当のチカゲ" fetchpriority="high" draggable="false"></div>
+        <span class="operator-code mono">02 / ANALYZE</span>
+        <div class="operator-info"><span class="operator-caption">……後のことは、私が。</span><h2>チカゲ <span class="mono">CHIKAGE</span></h2><div class="operator-state"><span class="state-dot"></span><span id="chikage-state">待機中</span><span class="operator-type" id="chikage-type">未特化</span></div></div>
+      </article>
+      <div class="duo-mark mono" aria-hidden="true">×</div>
+    </section>
+
+    <div class="run-strip">
+      <div class="run-position"><span class="micro">CASE</span><strong class="mono" id="case-number">01<span>/10</span></strong></div>
+      <div class="resource"><span class="micro">異物</span><strong class="mono" id="artifact-count">0</strong></div>
+      <div class="resource"><span class="micro">DATA</span><strong class="mono" id="data-count">0</strong></div>
+      <div class="run-clock"><span class="micro" id="run-status">待機</span><span class="mono" id="run-time">00:00</span></div>
+    </div>
+
+    <main>
+      <section class="case-panel" aria-labelledby="case-name">
+        <div class="section-meta"><span class="mono" id="case-label">CASE FILE / 001</span><span class="case-kind" id="case-kind">実体</span></div>
+        <div class="case-heading"><div><h2 id="case-name">笑わない死体</h2><p id="case-location">旧市街 / 地下安置室</p></div><span class="research-tag" id="research-tag" title="DATAが60 / 150 / 300に到達すると研究が進み、弱点看破と危険制御が向上">研究 0</span></div>
+        <div class="incident-row">
+          <div class="anomaly" id="anomaly" data-kind="body" aria-hidden="true"><div class="target-ring"></div><span id="anomaly-mark">◉</span><span class="anomaly-id mono">UNIDENTIFIED</span></div>
+          <div class="gauges">
+            <div class="gauge process"><div class="gauge-label"><label for="process-bar" id="process-label">処理</label><span class="mono" id="process-value">0%</span></div><progress id="process-bar" value="0" max="100">0%</progress></div>
+            <div class="gauge analysis"><div class="gauge-label"><label for="analysis-bar">解析</label><span class="mono" id="analysis-value">0%</span></div><progress id="analysis-bar" value="0" max="100">0%</progress></div>
+            <div class="gauge danger"><div class="gauge-label"><label for="danger-bar">危険</label><span class="mono" id="danger-value">14%</span></div><progress id="danger-bar" value="14" max="100">14%</progress></div>
+          </div>
+        </div>
+        <p class="case-hint" id="case-hint">処理100%で解決。解析を進めると弱点を看破し、DATA回収量が増加。</p>
+        <div class="synergy-strip" id="synergy-strip"><span class="link-symbol" aria-hidden="true">⌁</span><span>ふたりの組み合わせが、夜を変える。</span></div>
+      </section>
+      <section class="log-panel" aria-labelledby="log-title"><div class="section-meta"><h2 id="log-title" class="mono">LIVE LOG</h2><span class="mono" id="log-indicator">STANDBY</span></div><ol id="action-log"><li><time class="mono">00:00</time><span>夜間対応班、待機。最初の育成方針を選んで出動。</span></li></ol></section>
+    </main>
+
+    <footer class="controls">
+      <div class="control-row"><button class="secondary-button" id="build-button"><span aria-hidden="true">⊞</span><span class="mono">BUILD</span></button><button class="primary-button" id="main-button">夜勤を開始する <span aria-hidden="true">↗</span></button><button class="secondary-button" id="archive-button"><span aria-hidden="true">▤</span><span class="mono">ARCHIVE</span></button></div>
+      <p id="footer-hint">1ラン 約10–20分 · 自動進行 / 強化は3択</p>
+    </footer>
+  </div>
+  <div class="desktop-stamp" aria-hidden="true"><span class="mono">RESTRICTED<br>ACCESS / 02</span><span>壊す。知る。<br>ふたりで、終わらせる。</span></div>
+  <dialog id="game-dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+  <noscript>このゲームを遊ぶにはブラウザのJavaScriptを有効にしてください。</noscript>
+</body>
+</html>
