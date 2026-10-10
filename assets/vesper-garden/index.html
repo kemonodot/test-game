@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101f28">
+<meta name="description" content="人工生命体を育て、3レーンの夜の庭を守るGodot製ゲーム。Android用テストAPKのダウンロード。">
+<title>Vesper Garden — Androidで遊ぶ</title>
+<style>
+:root { color-scheme: dark; --bg:#101f28; --ink:#ecf0de; --dim:#a6bcb4; --mint:#9cddcb; --gold:#d6b577; }
+* { box-sizing:border-box; }
+body { margin:0; background:radial-gradient(ellipse at top,#233a40 0,var(--bg) 62%); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif; line-height:1.8; }
+main { max-width:760px; margin:auto; padding:40px 22px 54px; }
+.eyebrow { font-size:12px; letter-spacing:.22em; color:var(--gold); }
+h1 { font-family:Georgia,serif; letter-spacing:.06em; font-size:clamp(30px,8vw,48px); line-height:1.2; margin:12px 0 8px; font-weight:400; }
+.subtitle { color:var(--gold); margin:0 0 24px; }
+p { margin:16px 0; }
+.intro { max-width:560px; }
+.download { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:78px; padding:14px; border:1px solid var(--gold); border-radius:16px; background:linear-gradient(140deg,#bfdcbe,#80c6b5); color:#132a2e; text-decoration:none; font-size:19px; font-weight:700; box-shadow:0 8px 30px #0004; margin:24px 0 12px; }
+.download small { font-size:12px; font-weight:500; }
+.download:focus-visible,a:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+.fine { font-size:13px; color:var(--dim); }
+h2 { font-size:18px; color:var(--gold); margin:30px 0 10px; font-weight:600; }
+ol,ul { padding-left:24px; }
+li { margin:8px 0; }
+a { color:var(--mint); text-underline-offset:4px; overflow-wrap:anywhere; }
+.gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px; }
+figure { margin:0; min-width:0; }
+img { width:100%; display:block; border:1px solid #618481; border-radius:12px; background:var(--bg); }
+figcaption { color:var(--dim); font-size:12px; text-align:center; margin-top:8px; }
+.note { border-left:2px solid var(--gold); padding-left:14px; }
+footer { border-top:1px solid #52706b; margin-top:32px; padding-top:14px; font-size:12px; color:var(--dim); }
+@media(max-width:420px) { main { padding:28px 18px 40px; } .gallery { gap:8px; } }
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">GODOT 4 · PLAYABLE PROTOTYPE</div>
+<h1>VESPER GARDEN</h1>
+<p class="subtitle">宵庭の錬成室</p>
+<p class="intro">人工生命体を育てて、夜の庭を守る小さな防衛ゲーム。3体の組み合わせと固有スキルを試し、育った個体を引退させて、力を次の世代へ託します。</p>
+<a class="download" href="0.1.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.1.0 · 約57 MB · Android 7以降</small></a>
+<p class="fine">縦画面・タップ操作。OpenGL ES 3.0対応端末向け。Godotのインストール、登録、通信は不要です。</p>
+<h2>スマホに入れる</h2>
+<ol>
+<li>上のボタンをChromeなどのブラウザで開き、APKを保存します。</li>
+<li>ダウンロードが完了したら、通知またはファイルアプリからAPKを開きます。求められた場合、そのアプリに「不明なアプリのインストール」を許可します。</li>
+<li>「Vesper Garden」をインストールして起動します。</li>
+</ol>
+<p class="fine">リンクがアプリ内ブラウザで開けない場合は、「ブラウザで開く」からChromeへ切り替えてください。APKはインストール用ファイルで、ブラウザ内でゲームを実行する形式ではありません。</p>
+<h2>最初の一周</h2>
+<ul>
+<li>下段の個体を選び、上段の台座に配属して3体を編成。</li>
+<li>「防衛をはじめる」。通常攻撃は自動。スキルをタップすると時間が止まり、対象レーンを選べます。</li>
+<li>約90秒の防衛を終え、成長を確認。「引退・継承」で次世代を生成し、親をコーチにして再び出撃。</li>
+</ul>
+<div class="gallery">
+<figure><a href="0.1.0/01-laboratory.png"><img src="0.1.0/01-laboratory.png" width="540" height="960" alt="人工生命体を選び3体を編成する培養室" loading="lazy"></a><figcaption>編成と個体差</figcaption></figure>
+<figure><a href="0.1.0/02-defense.png"><img src="0.1.0/02-defense.png" width="540" height="960" alt="3レーンで敵を迎え撃つ実際のGodotゲーム画面" loading="lazy"></a><figcaption>自動防衛とスキル</figcaption></figure>
+<figure><a href="0.1.0/06-inheritance.png"><img src="0.1.0/06-inheritance.png" width="540" height="960" alt="親から子へ能力を継承するゲーム画面" loading="lazy"></a><figcaption>引退と次世代</figcaption></figure>
+</div>
+<h2>確認できていること</h2>
+<p class="note">PC上のGodotで、編成から戦闘・成長・継承・コーチ・次世代の再戦まで確認しました。モデル50項目と操作25項目が合格。APKのビルドと署名は検証済みですが、Android実機での起動と性能は未確認です。</p>
+<p class="fine">試作用の開発署名APKです。進行は端末内に自動保存します。アンインストールするとセーブも削除されます。</p>
+<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.1.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
+<footer>Vesper Garden 0.1.0 · <a href="0.1.0/SHA256SUMS.txt">配布ファイルのSHA-256</a></footer>
+</main>
+</body>
+</html>
