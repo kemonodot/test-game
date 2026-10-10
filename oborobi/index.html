@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10151e">
-  <meta name="description" content="朧火 0.3.0 — スワイプで鎖をつなぎ、4種類の術で群れを突破するAndroid向け3分サバイバル。">
-  <title>朧火 0.3.0 — スワイプと4つの術</title>
+  <meta name="description" content="朧火 0.4.0 — 敵へ飛び込んで鎖火を溜め、次の鎖で金色の刃を放つAndroid向け3分サバイバル。">
+  <title>朧火 0.4.0 — 鎖移動のリスクと報酬</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151e; color: #ede6d6; }
     * { box-sizing: border-box; }
@@ -35,14 +35,14 @@
 </head>
 <body>
   <main>
-    <div class="eyebrow">ANDROID / SWIPE &amp; ARTS / 0.3.0</div>
+    <div class="eyebrow">ANDROID / CHAIN RISK &amp; REWARD / 0.4.0</div>
     <h1>朧火 <small>OBOROBI</small></h1>
-    <p class="lead">スワイプで鎖をつなぎ、群れを駆け抜ける。<br>蒼い炎・連鎖雷・周回する刃・花の衝撃波を追加。</p>
-    <a class="download" href="0.3.0/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 0.3.0をダウンロード</a>
+    <p class="lead">敵へ飛び込み、鎖火を溜める。<br>次の鎖で、金色の広い斬撃「鎖葬」を放つ。</p>
+    <a class="download" href="0.4.0/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 0.4.0をダウンロード</a>
     <p class="info">約78MB · Android 7.0以降 · OpenGL ES 3.0対応端末<br>Godotのインストールは不要です。</p>
     <figure>
-      <img src="0.3.0/13-swipe-and-arts.png" width="1280" height="720" alt="夜の境内で鬼面に鎖を掛け、蒼い炎・雷・周回する刃・花の斬撃を発動するゲーム画面。">
-      <figcaption>実際のGodot画面。表示確認用に4種類の術を取得した状態です。</figcaption>
+      <img src="0.4.0/captures/17-chain-burst-middle.png" width="1280" height="720" alt="夜の境内で金色の広い斬撃「鎖葬」を放ち、敵がピクセルの破片に砕ける実際のゲーム画面。">
+      <figcaption>実際のGodot画面。スワイプで力を溜め、次の鎖で強攻撃を発動したところです。</figcaption>
     </figure>
     <h2>インストール</h2>
     <ol>
@@ -51,7 +51,7 @@
       <li>インストール元の許可を求められた場合は、そのブラウザ／ファイルアプリについて「この提供元を許可」を有効にし、戻って「インストール」を押します。</li>
       <li>アプリ <strong>「朧火」</strong> を開き、「境内へ入る」をタップします。</li>
     </ol>
-    <p class="info">0.1.1・0.2.0と同じ署名です。インストール済みの「朧火」に上書き更新できます。</p>
+    <p class="info">0.1.1・0.2.0・0.3.0と同じ署名です。インストール済みの「朧火」に上書き更新できます。</p>
     <h2>遊び方</h2>
     <ol>
       <li><strong>進みたい方向へ短くスワイプ。</strong> 指を離す前に鎖を射出します。</li>
@@ -60,20 +60,27 @@
       <li><strong>短くタップすると解除。</strong> 慣性で少し滑走します。刀と魂火は自動です。</li>
       <li>魂を集め、3択から強化。最初のレベルアップでは新しい術を選べます。180秒生存でクリア、HP0で落命。結果から再挑戦できます。</li>
     </ol>
-    <h2>4つの新しい術</h2>
+    <h2>鎖移動のリスクと報酬</h2>
+    <ol>
+      <li><strong>敵のそばを高速で抜けると鎖火＋1、鬼面に到着すると＋2。</strong> 安全な壁移動や歩行では溜まりません。それぞれ同じ敵から一度だけ得られます。</li>
+      <li><strong>鎖火が3つで、次の鎖が「鎖葬」に。</strong> 接続した時に力を使い、進路の広い範囲を金色の刃で切り抜けます。</li>
+      <li><strong>被弾すると溜めた力を失います。</strong> 鎖をつながず4秒経った場合も消えます。停止・強化画面では保持時間も止まります。</li>
+    </ol>
+    <p>敵へ飛び込み、もう一度つないで掃討するか。安全な場所へ逃げて仕切り直すか。鎖移動中すべてが無敵ではないため、敵の近くで止まる危険と強攻撃の報酬を試せます。</p>
+    <h2>4つの術</h2>
     <p><strong>残火の轍</strong>：走った道に蒼い炎。<br><strong>雷渡り</strong>：3体をつなぐ白い雷。<br><strong>三日月の輪</strong>：周囲を巡る3枚の刃。<br><strong>彼岸の花</strong>：花びら状に広がる斬撃。</p>
     <p>右上の停止ボタンやAndroidの「戻る」で一時停止。別のアプリへ切り替えた後は、再開ボタンを押してください。</p>
     <div class="note">
-      <p>署名・APK内容、Godot上の鎖36項目・術23項目・戦闘31項目・入力12シナリオを検証済み。Android端末上での0.3.0の起動・性能は未検証です。連続スワイプと術の組み合わせを実機で試すための版です。</p>
+      <p>署名・APK内容、Godot上の鎖火・鎖葬28項目・鎖36項目・術23項目・戦闘31項目・入力12シナリオを検証済み。Android端末上での0.4.0の起動・性能は未検証です。鎖移動のリスクと報酬を実機で試すための版です。</p>
     </div>
     <h2>プロジェクトと確認用ファイル</h2>
     <div class="links">
-      <a href="0.3.0/OborobiGodot.zip" download>Godotプロジェクト一式（約1.4MB）</a>
-      <a href="0.3.0/12-new-arts-choice.png">新スキルの3択画面</a>
-      <a href="0.3.0/13-swipe-and-arts.png">戦闘のスクリーンショット</a>
-      <a href="0.3.0/ANDROID.md">詳しい導入・操作手順</a>
-      <a href="0.3.0/TEST_RESULTS.md">テスト結果と残る検証項目</a>
-      <a href="0.3.0/SHA256SUMS.txt">ファイルのSHA256</a>
+      <a href="0.4.0/OborobiGodot.zip" download>Godotプロジェクト一式（約1.8MB）</a>
+      <a href="0.4.0/captures/19-chain-risk-upgrade.png">術の3択画面</a>
+      <a href="0.4.0/captures/17-chain-burst-middle.png">戦闘のスクリーンショット</a>
+      <a href="0.4.0/ANDROID.md">詳しい導入・操作手順</a>
+      <a href="0.4.0/TEST_RESULTS.md">テスト結果と残る検証項目</a>
+      <a href="0.4.0/SHA256SUMS.txt">ファイルのSHA256</a>
     </div>
     <footer>ゲームはネット接続・アカウント登録不要。セーブはなく、終了するとランがリセットされます。</footer>
   </main>

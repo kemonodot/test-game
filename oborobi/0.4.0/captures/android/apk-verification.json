@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-10",
+  "version": "0.4.0",
+  "version_code": 5,
+  "package": "org.oborobi.prototype",
+  "min_android_api": 24,
+  "target_android_api": 36,
+  "permissions": [],
+  "debuggable": false,
+  "signature_verified": true,
+  "same_signing_key_as_earlier_versions": true,
+  "certificate_sha256": "c24c9ba91dd2dda753ee6e844dc475f1fb0e649bf33a3e0d43e7a8896ddeb633",
+  "native_libraries": [
+    "lib/arm64-v8a/libc++_shared.so",
+    "lib/arm64-v8a/libgodot_android.so",
+    "lib/armeabi-v7a/libc++_shared.so",
+    "lib/armeabi-v7a/libgodot_android.so",
+    "lib/x86_64/libc++_shared.so",
+    "lib/x86_64/libgodot_android.so"
+  ],
+  "crc_verified": true,
+  "size_bytes": 77437266,
+  "sha256": "1efeafe76ea4104f712b8e7a9261ec7000917fc632cdd7f08cf07cdc71efdd25",
+  "skills_and_grapple_compiled": true,
+  "android_game_execution_verified": false,
+  "physical_device_tested": false
+}

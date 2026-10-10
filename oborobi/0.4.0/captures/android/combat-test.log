@@ -1,0 +1,35 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS free movement responds immediately
+PASS player remains in the shrine boundary
+PASS heavy enemy pursues the player
+PASS automatic sword deals directional damage and creates a slash
+PASS enemy shatters into colored debris and drops a soul
+PASS debris disappears quickly instead of accumulating
+PASS nearby experience is attracted and absorbed
+PASS powerful attacks produce more energetic body fragments
+PASS blue soul fire reaches a distant pursuing enemy
+PASS level up offers three different upgrades
+PASS upgrade selection pauses the combat clock
+PASS unoffered upgrades cannot be selected
+PASS choosing a valid card resumes combat
+PASS enemy count is bounded for mobile performance
+PASS mass kills obey the particle budget
+PASS player death has a visible shattering sequence
+PASS death sequence leads to game over
+PASS full run terminates and combat/XP/builds work, seed 7319
+PASS full run stays within object budgets, seed 7319
+PASS full run terminates and combat/XP/builds work, seed 23
+PASS full run stays within object budgets, seed 23
+PASS full run terminates and combat/XP/builds work, seed 81
+PASS full run stays within object budgets, seed 81
+SIMULATION RESULTS [{"kills":784,"level":12,"peak_enemies":110,"peak_particles":474,"result":"won","seconds":180.0,"seed":7319},{"kills":785,"level":13,"peak_enemies":110,"peak_particles":520,"result":"won","seconds":180.0,"seed":23},{"kills":787,"level":12,"peak_enemies":110,"peak_particles":520,"result":"won","seconds":180.0,"seed":81}]
+PASS actual touch swipe fires before lifting the finger
+PASS lifting after a swipe does not fire a second chain
+PASS pause opens the actual pause overlay
+PASS resume closes the overlay
+PASS the real scene builds three tappable cards
+PASS actual card signal applies an upgrade
+PASS the real scene displays the three-minute clear result
+PASS retry fully resets the run
+TEST SUMMARY 31/31 passed

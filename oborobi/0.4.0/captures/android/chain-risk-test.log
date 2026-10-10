@@ -1,0 +1,31 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS safe empty-wall chains never generate a reward
+PASS standing near enemies generates no chain energy
+PASS walking past an enemy cannot farm chain energy
+PASS a fast near-pass earns energy without changing contact damage
+PASS a near-pass rewards danger without inventing a hit or invincibility
+PASS the same surviving enemy cannot be farmed by swinging back and forth
+PASS an enemy killed during a real rush still yields its one reward
+PASS actually arriving at a masked anchor earns the larger reward
+PASS the same guardian cannot give repeated arrival rewards
+PASS three distinct fast near-passes arm the next chain, not a passive attack
+PASS earned chain energy changes no permanent weapon stats
+PASS firing alone does not consume a reward before the hook connects
+PASS a successful follow-up chain spends the full gauge once
+PASS the golden dash reaches enemies outside the ordinary body-contact width
+PASS the earned attack shatters a real guardian and nearby crowd
+PASS the real swept strike produces a bounded visible wake
+PASS attack and wake both end instead of becoming a permanent aura
+PASS retargeting within one golden attack cannot deal repeated damage to the same enemy
+PASS an anchor that dies before attachment does not waste the ready attack
+PASS actual damage costs HP and all accumulated chain energy
+PASS damage still grants the usual recovery window and a readable loss reason
+PASS standing still lets the earned gauge expire without automatic detonation
+PASS a broken chain has its own feedback
+PASS another successful chain preserves partial energy for the next risk
+PASS an upgrade overlay neither consumes nor expires earned energy
+PASS the selected upgrade resumes with earned energy intact
+PASS the earned attack is not full invincibility and ends on actual damage
+PASS blocked movement neither attacks nor earns rewards from enemies beyond masonry
+CHAIN RISK CHECKS 28/28 passed

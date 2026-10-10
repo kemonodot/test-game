@@ -1,0 +1,13 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:364)
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+
+CAPTURE 14-chain-risk-intro (1280, 720) result=0
+CAPTURE 15-chain-energy-ready (1280, 720) result=0
+CAPTURE 16-chain-burst-start (1280, 720) result=0
+CAPTURE 17-chain-burst-middle (1280, 720) result=0
+CAPTURE 18-chain-burst-end (1280, 720) result=0
+PASS real swipe-earned gauge and golden strike rendered across motion phases
+CHAIN VISUAL {"bursts":1,"energy":0,"heavy_shatters":7,"kills":7,"near_passes":3,"particles":123}
+CAPTURE 19-chain-risk-upgrade (1280, 720) result=0
