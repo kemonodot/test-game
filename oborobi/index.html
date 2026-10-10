@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10151e">
+  <meta name="description" content="朧火 — Android向け和風ダークファンタジーの3分サバイバル。APK・Godotプロジェクトのダウンロード。">
+  <title>朧火 — Android ダウンロード</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151e; color: #ede6d6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 720px; padding: 32px 20px 48px; margin: 0 auto; }
+    .eyebrow { color: #82b9d3; font-size: 12px; letter-spacing: .18em; }
+    h1 { margin: 12px 0 8px; font-size: clamp(36px, 9vw, 52px); letter-spacing: .12em; }
+    h1 small { font-size: 14px; color: #b4a997; letter-spacing: .18em; white-space: nowrap; }
+    p, li { line-height: 1.85; }
+    .lead { margin: 8px 0 24px; color: #c4bfb5; }
+    .download { display: flex; align-items: center; justify-content: center; min-height: 64px; padding: 16px 20px; border-radius: 6px; background: #93d0e9; color: #0b1722; font-size: 18px; font-weight: 700; text-decoration: none; }
+    .download:hover { background: #b5e0f0; }
+    a:focus-visible { outline: 3px solid #f2cd87; outline-offset: 4px; }
+    .info { font-size: 13px; color: #afa99f; margin-top: 10px; }
+    figure { margin: 26px 0; }
+    img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #333c48; }
+    figcaption { color: #afa99f; font-size: 12px; margin-top: 8px; }
+    h2 { font-size: 18px; margin-top: 28px; }
+    ol { padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    a { color: #9ed5ec; }
+    .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+    .links a { padding: 14px; border: 1px solid #333c48; border-radius: 6px; text-underline-offset: 4px; }
+    .note { border-left: 3px solid #b8a16c; padding-left: 16px; color: #c4bfb5; font-size: 14px; }
+    footer { margin-top: 32px; color: #afa99f; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">ANDROID / GODOT 4 / PROTOTYPE 0.1.1</div>
+    <h1>朧火 <small>OBOROBI</small></h1>
+    <p class="lead">青い魂火を纏い、夜の境内で3分間生き残る。<br>片手で移動し、刀と魂火で群れを斬る。</p>
+    <a class="download" href="0.1.1/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 APKをダウンロード</a>
+    <p class="info">約78MB · Android 7.0以降 · OpenGL ES 3.0対応端末<br>Godotのインストールは不要です。</p>
+    <figure>
+      <img src="0.1.1/08-blade-shatter.png" width="1280" height="720" alt="神社の境内で、刀の青い軌跡が敵をピクセルの破片へ砕く実際の戦闘画面。">
+      <figcaption>Linux上のGodotで実際に動かしたゲーム画面。</figcaption>
+    </figure>
+    <h2>インストール</h2>
+    <ol>
+      <li>上のボタンでAPKを保存します。アプリ内のブラウザで保存できない場合は、このページをChromeなどのブラウザで開いてください。</li>
+      <li>スマホの「ファイル」アプリで、ダウンロードした <strong>Oborobi-Android.apk</strong> を開きます。</li>
+      <li>インストール元の許可を求められた場合は、そのブラウザ／ファイルアプリについて「この提供元を許可」を有効にし、戻って「インストール」を押します。</li>
+      <li>アプリ <strong>「朧火」</strong> を開き、「境内へ入る」をタップします。</li>
+    </ol>
+    <h2>遊び方</h2>
+    <p>横画面で、戦場の空いている場所をドラッグすると移動します。指を離すと停止。攻撃は自動です。魂を集め、レベルアップの3択から強化を選びます。180秒生存でクリア。HPがなくなったら結果画面から再挑戦できます。</p>
+    <p>右上の停止ボタンやAndroidの「戻る」で一時停止。別のアプリへ切り替えた後は、再開ボタンを押してください。</p>
+    <div class="note">
+      <p>署名とAPKの内容、Godot上の戦闘・タッチ操作は検証済みです。Android端末上での起動・性能は未検証です。プロトタイプ署名の直接インストール版です。</p>
+    </div>
+    <h2>プロジェクトと確認用ファイル</h2>
+    <div class="links">
+      <a href="0.1.1/OborobiGodot.zip" download>Godotプロジェクト一式（約9MB）</a>
+      <a href="0.1.1/oborobi-vfx.mp4">実際の戦闘・VFX動画（27秒）</a>
+      <a href="0.1.1/ANDROID.md">詳しい導入・操作手順</a>
+      <a href="0.1.1/SHA256SUMS.txt">ファイルのSHA256</a>
+    </div>
+    <footer>ゲームはネット接続・アカウント登録不要。セーブはなく、終了するとランがリセットされます。</footer>
+  </main>
+</body>
+</html>
