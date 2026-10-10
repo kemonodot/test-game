@@ -1,0 +1,23 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:364)
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+
+CAPTURE 20-boss-intro (1280, 720) result=0
+CAPTURE 21-boss-warning (1280, 720) result=0
+PASS native giant and real attack warning rendered
+CAPTURE 22-boss-chain-evade (1280, 720) result=0
+CAPTURE 23-boss-return-chain (1280, 720) result=0
+PASS real native swipes escape a warning and return to its lit ring
+CAPTURE 24-chain-rite-start (1280, 720) result=0
+CAPTURE 24-chain-rite-fade (1280, 720) result=0
+CAPTURE 25-flame-rite-start (1280, 720) result=0
+CAPTURE 25-flame-rite-fade (1280, 720) result=0
+CAPTURE 26-blade-rite-start (1280, 720) result=0
+CAPTURE 26-blade-rite-fade (1280, 720) result=0
+PASS all three manual rites rendered at early and late motion phases
+CAPTURE 27-boss-golden-rush (1280, 720) result=0
+CAPTURE 28-boss-upgrade (1280, 720) result=0
+CAPTURE 29-boss-breakup (1280, 720) result=0
+CAPTURE 30-boss-clear (1280, 720) result=0
+NATIVE BOSS RUN {"bursts":8,"counters":8,"dodges":11,"frame_p95_ms":55.628,"hp":88.0,"level":3,"manual_casts":{"blade":3,"chain":4,"flame":4},"peak_enemies":5,"peak_particles":134,"phase":"won","renderer":"llvmpipe (LLVM 19.1.7, 256 bits)","seconds":85.5}

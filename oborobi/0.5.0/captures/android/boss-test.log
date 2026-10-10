@@ -1,0 +1,37 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS a new run starts directly against one giant
+PASS the giant has its own substantial health and three physical chain rings
+PASS swipe aim assist can select a boss ring
+PASS a real chain arrival attacks the giant without farming a flame
+PASS elapsed survival time never clears a living boss
+PASS attendants stop at eight instead of becoming a horde
+PASS the opening matters: passive damage is reduced while the giant is guarded
+PASS chain ultimate substantially increases real reel-in speed, not only a label
+PASS chain rite grants five seconds of high mobility
+PASS chain rite adds escape mobility without increasing passive sword power
+PASS a cooldown rejects repeated presses without duplicate effects
+PASS the three rites have independent readiness
+PASS all three temporary utilities expire
+PASS the wide VFX disappear rather than becoming a permanent screen cover
+PASS flame rite restores actual lost HP
+PASS flame suppresses attendant contact attacks while its burn deals damage
+PASS flame slows the giant's actual attack countdown
+PASS an unavoidable marked hit is halved by flame's suppression
+PASS blade breaks the guard and opens all three rings for follow-up
+PASS blade's follow-up really defeats the guarded damage reduction
+PASS blade's utility is distinct from healing and mobility
+PASS screen-wide rites reach enemies beyond masonry while normal attacks remain blocked
+PASS manual rites obey the shared particle and effect budgets
+PASS an upgrade freezes cooldowns and rejects manual casting
+PASS unknown rites cannot execute
+PASS giant defeat first runs a substantial breakup sequence
+PASS only the giant's defeat sequence leads to clear
+PASS complete normal-HP boss fight clears by chain counters, seed 7319
+PASS complete fight keeps attendant/particle caps and grows from earned XP, seed 7319
+PASS complete normal-HP boss fight clears by chain counters, seed 23
+PASS complete fight keeps attendant/particle caps and grows from earned XP, seed 23
+PASS complete normal-HP boss fight clears by chain counters, seed 81
+PASS complete fight keeps attendant/particle caps and grows from earned XP, seed 81
+BOSS RUNS [{"boss_hp":0,"bursts":10,"counters":11,"dodges":12,"hp":92.0,"kills":17,"level":3,"manual_casts":{"blade":3,"chain":4,"flame":1},"peak_enemies":5,"peak_particles":99,"result":"won","seconds":70.45,"seed":7319},{"boss_hp":0,"bursts":10,"counters":10,"dodges":11,"hp":44.0,"kills":17,"level":3,"manual_casts":{"blade":3,"chain":4,"flame":1},"peak_enemies":5,"peak_particles":98,"result":"won","seconds":73.22,"seed":23},{"boss_hp":0,"bursts":12,"counters":12,"dodges":13,"hp":84.0,"kills":17,"level":3,"manual_casts":{"blade":3,"chain":4,"flame":0},"peak_enemies":5,"peak_particles":93,"result":"won","seconds":70.85,"seed":81}]
+BOSS CHECKS 33/33 passed

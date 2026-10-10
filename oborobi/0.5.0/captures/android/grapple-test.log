@@ -1,0 +1,36 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS aim finds the actual outer wall
+PASS chain connects and reels the player to the wall
+PASS grapple reaches a clearly higher speed than walking
+PASS pull and drift preserve the player's boundary clearance
+PASS aim assist selects a slightly off-axis enemy
+PASS the flying hook tracks its moving enemy anchor
+PASS the enemy anchor starts a pull
+PASS manual release retains useful momentum
+PASS released momentum gradually decelerates
+PASS drift ends instead of leaving perpetual sliding
+PASS dead enemy anchors immediately detach without stale references
+PASS masonry blocks aim assist from selecting an enemy behind it
+PASS a very large step cannot tunnel through a thin wall
+PASS a very large step cannot escape the outer boundary
+PASS diagonal sliding does not penetrate a wall corner
+PASS a fast sweep hits a surviving enemy and stops before passing through it
+PASS a surviving blocking enemy releases the pull
+PASS small enemies are never hook targets
+PASS a small enemy does not hide a large hookable enemy
+PASS a surviving small enemy cannot stop a fast chain dash
+PASS small enemies do not intercept a flying wall hook
+PASS successive connections build a visible chain streak
+PASS another direction can be fired during the current pull
+PASS an overlapping enemy never traps the player against every escape direction
+PASS an assisted shot selects the first enemy body along its path
+PASS interception order stays correct when targets have different off-axis angles
+PASS an enemy moving into a flying wall shot intercepts the hook
+PASS the outer boundary blocks an enemy anchor outside the playable floor
+PASS automatic sword cannot damage through masonry
+PASS pursuing enemies route around a wall instead of getting stuck
+PASS masonry also blocks boss rings behind it
+PASS high-speed chain motion cannot tunnel through the giant body
+PASS a defeated giant cannot retain a moving chain reference
+GRAPPLE CHECKS 33/33 passed

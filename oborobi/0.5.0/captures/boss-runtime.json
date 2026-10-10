@@ -1,0 +1,18 @@
+{
+	"bursts": 8,
+	"counters": 8,
+	"dodges": 11,
+	"frame_p95_ms": 55.628,
+	"hp": 88.0,
+	"level": 3,
+	"manual_casts": {
+		"blade": 3,
+		"chain": 4,
+		"flame": 4
+	},
+	"peak_enemies": 5,
+	"peak_particles": 134,
+	"phase": "won",
+	"renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+	"seconds": 85.5
+}

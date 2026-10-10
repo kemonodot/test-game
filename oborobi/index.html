@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10151e">
-  <meta name="description" content="朧火 0.4.0 — 敵へ飛び込んで鎖火を溜め、次の鎖で金色の刃を放つAndroid向け3分サバイバル。">
-  <title>朧火 0.4.0 — 鎖移動のリスクと報酬</title>
+  <meta name="description" content="朧火 0.5.0 — 巨大ボスへ返し鎖。鎖・炎・刀の手動大技3種を使うAndroid向けGodotゲーム。">
+  <title>朧火 0.5.0 — 巨鬼と返し鎖</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151e; color: #ede6d6; }
     * { box-sizing: border-box; }
@@ -31,58 +31,68 @@
     .links a { padding: 14px; border: 1px solid #333c48; border-radius: 6px; text-underline-offset: 4px; }
     .note { border-left: 3px solid #b8a16c; padding-left: 16px; color: #c4bfb5; font-size: 14px; }
     footer { margin-top: 32px; color: #afa99f; font-size: 12px; }
+    details { margin: 22px 0; }
+    summary { cursor: pointer; color: #b8dae7; padding: 12px 0; }
+    .rites { padding-left: 22px; }
   </style>
 </head>
 <body>
   <main>
-    <div class="eyebrow">ANDROID / CHAIN RISK &amp; REWARD / 0.4.0</div>
+    <div class="eyebrow">ANDROID / GIANT &amp; THREE RITES / 0.5.0</div>
     <h1>朧火 <small>OBOROBI</small></h1>
-    <p class="lead">敵へ飛び込み、鎖火を溜める。<br>次の鎖で、金色の広い斬撃「鎖葬」を放つ。</p>
-    <a class="download" href="0.4.0/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 0.4.0をダウンロード</a>
-    <p class="info">約78MB · Android 7.0以降 · OpenGL ES 3.0対応端末<br>Godotのインストールは不要です。</p>
+    <p class="lead">予告を鎖で避け、巨大な鬼へ返し鎖。<br>鎖・炎・刀の大技を、自分のタイミングで。</p>
+    <a class="download" href="0.5.0/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 0.5.0をダウンロード</a>
+    <p class="info">約78MB · Android 7.0以降 · OpenGL ES 3.0対応端末<br>スマホへのGodot導入は不要です。</p>
     <figure>
-      <img src="0.4.0/captures/17-chain-burst-middle.png" width="1280" height="720" alt="夜の境内で金色の広い斬撃「鎖葬」を放ち、敵がピクセルの破片に砕ける実際のゲーム画面。">
-      <figcaption>実際のGodot画面。スワイプで力を溜め、次の鎖で強攻撃を発動したところです。</figcaption>
+      <img src="0.5.0/captures/21-boss-warning.png" width="1280" height="720" alt="夜の境内にいる巨大な鬼と、主人公の足元に広がる赤い攻撃予告。右下には鎖・炎・刀の手動大技ボタン。">
+      <figcaption>実際のGodot画面。開始から巨鬼1体と戦う検証版です。</figcaption>
     </figure>
     <h2>インストール</h2>
     <ol>
-      <li>上のボタンでAPKを保存します。アプリ内のブラウザで保存できない場合は、このページをChromeなどのブラウザで開いてください。</li>
-      <li>スマホの「ファイル」アプリで、ダウンロードした <strong>Oborobi-Android.apk</strong> を開きます。</li>
-      <li>インストール元の許可を求められた場合は、そのブラウザ／ファイルアプリについて「この提供元を許可」を有効にし、戻って「インストール」を押します。</li>
-      <li>アプリ <strong>「朧火」</strong> を開き、「境内へ入る」をタップします。</li>
+      <li>上のボタンでAPKを保存します。アプリ内のブラウザで保存できない場合は、このページをChromeなどで開いてください。</li>
+      <li>スマホの「ファイル」アプリで <strong>Oborobi-Android.apk</strong> を開きます。</li>
+      <li>許可を求められた場合は、そのブラウザ／ファイルアプリについて「この提供元を許可」を有効にし、戻って「インストール」を押します。</li>
+      <li>アプリ <strong>「朧火」</strong> → <strong>「巨鬼に挑む」</strong>。</li>
     </ol>
-    <p class="info">0.1.1・0.2.0・0.3.0と同じ署名です。インストール済みの「朧火」に上書き更新できます。</p>
-    <h2>遊び方</h2>
+    <p class="info">0.1.1〜0.4.0と同じ署名で、以前の「朧火」に上書き更新できる構成です。</p>
+    <h2>鎖で回避して、反撃へ</h2>
     <ol>
-      <li><strong>進みたい方向へ短くスワイプ。</strong> 指を離す前に鎖を射出します。</li>
-      <li>移動中も、一度指を離して次のスワイプへ。勢いを保って鎖をつなぎ直せます。</li>
-      <li>接続先は<strong>大きい鬼面・石垣・外周</strong>。小さい敵は鎖を遮らず、高速の鎖移動を止めません。</li>
-      <li><strong>短くタップすると解除。</strong> 慣性で少し滑走します。刀と魂火は自動です。</li>
-      <li>魂を集め、3択から強化。最初のレベルアップでは新しい術を選べます。180秒生存でクリア、HP0で落命。結果から再挑戦できます。</li>
+      <li><strong>進みたい方向へ短くスワイプ。</strong> 指を離す前に発射。一度離して次のスワイプでつなぎ直せます。短いタップで解除。</li>
+      <li>接続先は<strong>ボスの3つの環・石垣・外周</strong>。小さい取り巻きは高速移動を遮りません。</li>
+      <li><strong>赤い予告の中から鎖で逃げ、着弾時に範囲外へ：鎖火＋1。</strong> 続けて、隙に光る金色の環へ戻ると＋2と強い反撃・経験値。</li>
+      <li><strong>鎖火3で次の鎖が「鎖葬」に。</strong> 広い金色の斬撃で突破します。被弾で失い、接続や獲得が7秒途切れても消えます。</li>
     </ol>
-    <h2>鎖移動のリスクと報酬</h2>
-    <ol>
-      <li><strong>敵のそばを高速で抜けると鎖火＋1、鬼面に到着すると＋2。</strong> 安全な壁移動や歩行では溜まりません。それぞれ同じ敵から一度だけ得られます。</li>
-      <li><strong>鎖火が3つで、次の鎖が「鎖葬」に。</strong> 接続した時に力を使い、進路の広い範囲を金色の刃で切り抜けます。</li>
-      <li><strong>被弾すると溜めた力を失います。</strong> 鎖をつながず4秒経った場合も消えます。停止・強化画面では保持時間も止まります。</li>
-    </ol>
-    <p>敵へ飛び込み、もう一度つないで掃討するか。安全な場所へ逃げて仕切り直すか。鎖移動中すべてが無敵ではないため、敵の近くで止まる危険と強攻撃の報酬を試せます。</p>
-    <h2>4つの術</h2>
-    <p><strong>残火の轍</strong>：走った道に蒼い炎。<br><strong>雷渡り</strong>：3体をつなぐ白い雷。<br><strong>三日月の輪</strong>：周囲を巡る3枚の刃。<br><strong>彼岸の花</strong>：花びら状に広がる斬撃。</p>
+    <p>敵の近くを通るだけでは溜まりません。鎖移動中も予告攻撃が当たれば被弾します。逃げた後に戻れる距離を選ぶ攻防を試してください。</p>
+    <h2>手動大技3種</h2>
+    <p>右下のボタンで任意に発動。開始から使え、それぞれ別の再使用待ちがあります。全て戦場全体を攻撃し、さらに5秒の戦術効果を得ます。</p>
+    <ul class="rites">
+      <li><strong>鎖 / 天鎖解放：</strong>金色の鎖が集結。鎖の加速と移動速度が大幅アップ。回避や連続移動へ。（20秒で再使用）</li>
+      <li><strong>炎 / 蒼炎還魂：</strong>蒼い魂火が広がる。HP28回復、取り巻きの攻撃を抑制、ボスの予告を遅くして被ダメージ半減。立て直しへ。（26秒）</li>
+      <li><strong>刀 / 天断ち：</strong>画面を3本の斬撃で切り裂く。ボスの防御を崩して全環を開き、追撃が通る。攻撃機会を作る。（30秒）</li>
+    </ul>
+    <details>
+      <summary>実際の大技・成長・討伐画面を見る</summary>
+      <figure><img src="0.5.0/captures/24-chain-rite-start.png" width="1280" height="720" loading="lazy" alt="天鎖解放の金色の鎖と敵の破片。"><figcaption>鎖：天鎖解放。発動後も5秒の高速移動が続きます。</figcaption></figure>
+      <figure><img src="0.5.0/captures/25-flame-rite-start.png" width="1280" height="720" loading="lazy" alt="戦場へ広がる青いピクセル状の魂火。"><figcaption>炎：蒼炎還魂。回復と攻撃抑制で立て直します。</figcaption></figure>
+      <figure><img src="0.5.0/captures/26-blade-rite-start.png" width="1280" height="720" loading="lazy" alt="戦場全体を横切る斬撃と、全て開いたボスの環。"><figcaption>刀：天断ち。守りを崩して追撃へ。</figcaption></figure>
+      <figure><img src="0.5.0/captures/28-boss-upgrade.png" width="1280" height="720" loading="lazy" alt="経験値を回収して新しい術を選ぶ3択。"><figcaption>返し鎖と取り巻きから魂を回収し、3択で成長。</figcaption></figure>
+      <figure><img src="0.5.0/captures/30-boss-clear.png" width="1280" height="720" loading="lazy" alt="実際に巨大ボスを倒した結果画面。"><figcaption>ボスHP0で討伐完了。結果から再挑戦できます。</figcaption></figure>
+    </details>
+    <p>刀・魂火と修得した術は自動発動。少数の取り巻きと返し鎖から魂を回収し、成長の3択を選びます。ボスHP0でクリア、HP0で落命。複数ボスへの拡張に進む前の1体の検証です。</p>
     <p>右上の停止ボタンやAndroidの「戻る」で一時停止。別のアプリへ切り替えた後は、再開ボタンを押してください。</p>
     <div class="note">
-      <p>署名・APK内容、Godot上の鎖火・鎖葬28項目・鎖36項目・術23項目・戦闘31項目・入力12シナリオを検証済み。Android端末上での0.4.0の起動・性能は未検証です。鎖移動のリスクと報酬を実機で試すための版です。</p>
+      <p>Godot上で161項目・シナリオ、通常HPで3パターンの討伐、動作中の実描画とAPK署名を確認しました。0.5.0のAndroid実機での起動・操作感・FPS・発熱は未検証です。</p>
     </div>
     <h2>プロジェクトと確認用ファイル</h2>
     <div class="links">
-      <a href="0.4.0/OborobiGodot.zip" download>Godotプロジェクト一式（約1.8MB）</a>
-      <a href="0.4.0/captures/19-chain-risk-upgrade.png">術の3択画面</a>
-      <a href="0.4.0/captures/17-chain-burst-middle.png">戦闘のスクリーンショット</a>
-      <a href="0.4.0/ANDROID.md">詳しい導入・操作手順</a>
-      <a href="0.4.0/TEST_RESULTS.md">テスト結果と残る検証項目</a>
-      <a href="0.4.0/SHA256SUMS.txt">ファイルのSHA256</a>
+      <a href="0.5.0/OborobiGodot.zip" download>Godotプロジェクト一式（約3.2MB）</a>
+      <a href="0.5.0/README.md">ファイル一覧・起動・調整方法</a>
+      <a href="0.5.0/ANDROID.md">詳しい導入・操作手順</a>
+      <a href="0.5.0/TEST_RESULTS.md">テスト結果と残る検証項目</a>
+      <a href="0.5.0/captures/29-boss-breakup.png">巨鬼のピクセル崩壊</a>
+      <a href="0.5.0/SHA256SUMS.txt">ファイルのSHA256</a>
     </div>
-    <footer>ゲームはネット接続・アカウント登録不要。セーブはなく、終了するとランがリセットされます。</footer>
+    <footer>通信・アカウント登録不要。セーブはなく、終了すると戦闘がリセットされます。</footer>
   </main>
 </body>
 </html>

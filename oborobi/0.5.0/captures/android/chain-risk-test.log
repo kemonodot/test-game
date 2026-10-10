@@ -1,0 +1,30 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS a genuine dash through 63 densely packed enemies earns NO energy
+PASS the density regression actually traverses and attacks enemy bodies
+PASS an ordinary guardian arrival alone earns no energy
+PASS empty wall chains earn no energy
+PASS the real boss aims a visible warning at the starting player
+PASS starting inside the warning and chain-escaping the impact earns one flame
+PASS a successful dodge opens a timed counter opportunity
+PASS actual return-chain arrival completes the wager and fills all three flames
+PASS the timed counter deals substantial boss damage and awards real collectible XP
+PASS repeated arrival cannot farm the same attack's counter reward
+PASS earned flames do not permanently multiply passive weapons
+PASS a following connected chain spends the earned full gauge on one golden rush
+PASS the golden rush has an actual bounded swept wake
+PASS the golden attack and wake expire
+PASS hooking inward and remaining in the warning takes damage instead of rewarding proximity
+PASS walking out of the same warning is safe but earns no chain flame
+PASS firing outside the marked danger cannot farm a dodge reward
+PASS several swipes during one warning still grant only one dodge reward
+PASS healing after a hit cannot conceal that the dodge attempt failed
+PASS normal guardian attacks also have a genuine warning
+PASS a guardian's marked attack can be chain-dodged for a flame
+PASS a guardian return chain consumes its one earned counter ticket
+PASS marked attacks pierce brief dash-contact protection and remove all stored flames
+PASS actual damage still grants a normal recovery window
+PASS the gauge expires after seven seconds without another connection
+PASS upgrade choices pause both the stored reward and its expiry timer
+PASS a valid card resumes with the earned flames intact
+CHAIN RISK CHECKS 27/27 passed

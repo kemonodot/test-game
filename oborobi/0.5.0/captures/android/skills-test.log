@@ -1,0 +1,26 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+PASS unlocking cinder_trail adds an attack without changing base stats
+PASS unlocking chain_lightning adds an attack without changing base stats
+PASS unlocking orbit_blades adds an attack without changing base stats
+PASS unlocking petal_wave adds an attack without changing base stats
+PASS the first level-up presents three different new attack patterns
+PASS one-time skills cannot be offered twice
+PASS locked skills neither damage enemies nor create effects
+PASS lightning hits three distinct enemies and draws every jump
+PASS lightning damages exactly the three displayed targets
+PASS lightning cannot acquire through masonry
+PASS fast movement leaves a real damaging blue flame patch
+PASS burn damage has a cooldown rather than firing every frame
+PASS flame patches expire instead of filling the battlefield
+PASS flame patches respect the mobile effect budget
+PASS three orbiting blades are actual weapons and hit along their path
+PASS orbiting blades do not damage the same enemy every frame
+PASS an orbiting blade cannot damage an enemy on the other side of a wall
+PASS a distant enemy is not hit before the petal wave reaches it
+PASS the expanding flower wave damages when its visible radius reaches an enemy
+PASS each flower wave hits an enemy once
+PASS flower waves cannot cut through the wall
+PASS burst effects have a fixed upper bound
+PASS upgrade selection pauses new attacks and damage
+SKILL CHECKS 23/23 passed
