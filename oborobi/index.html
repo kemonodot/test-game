@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10151e">
-  <meta name="description" content="朧火 — Android向け和風ダークファンタジーの3分サバイバル。APK・Godotプロジェクトのダウンロード。">
-  <title>朧火 — Android ダウンロード</title>
+  <meta name="description" content="朧火 0.2.0 — 敵と石垣に鎖を掛けて高速移動する、Android向け3分サバイバルの検証版。">
+  <title>朧火 0.2.0 — 鎖グラップル Android版</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151e; color: #ede6d6; }
     * { box-sizing: border-box; }
@@ -21,7 +21,7 @@
     a:focus-visible { outline: 3px solid #f2cd87; outline-offset: 4px; }
     .info { font-size: 13px; color: #afa99f; margin-top: 10px; }
     figure { margin: 26px 0; }
-    img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #333c48; }
+    img, video { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #333c48; }
     figcaption { color: #afa99f; font-size: 12px; margin-top: 8px; }
     h2 { font-size: 18px; margin-top: 28px; }
     ol { padding-left: 24px; }
@@ -35,14 +35,17 @@
 </head>
 <body>
   <main>
-    <div class="eyebrow">ANDROID / GODOT 4 / PROTOTYPE 0.1.1</div>
+    <div class="eyebrow">ANDROID / CHAIN PROTOTYPE 0.2.0</div>
     <h1>朧火 <small>OBOROBI</small></h1>
-    <p class="lead">青い魂火を纏い、夜の境内で3分間生き残る。<br>片手で移動し、刀と魂火で群れを斬る。</p>
-    <a class="download" href="0.1.1/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 APKをダウンロード</a>
+    <p class="lead">敵と石垣に鎖を掛けて、夜の境内を駆け抜ける。<br>片手で狙い、鎖を放ち、慣性で滑走する検証版。</p>
+    <a class="download" href="0.2.0/Oborobi-Android.apk" download="Oborobi-Android.apk">Android版 0.2.0をダウンロード</a>
     <p class="info">約78MB · Android 7.0以降 · OpenGL ES 3.0対応端末<br>Godotのインストールは不要です。</p>
     <figure>
-      <img src="0.1.1/08-blade-shatter.png" width="1280" height="720" alt="神社の境内で、刀の青い軌跡が敵をピクセルの破片へ砕く実際の戦闘画面。">
-      <figcaption>Linux上のGodotで実際に動かしたゲーム画面。</figcaption>
+      <video controls playsinline preload="metadata" poster="0.2.0/10-chain-enemy.png" width="1280" height="720">
+        <source src="0.2.0/grapple-vfx.mp4" type="video/mp4">
+        <a href="0.2.0/grapple-vfx.mp4">実際の鎖と戦闘の動画を見る</a>
+      </video>
+      <figcaption>Linux上のGodotで実際に動かした映像・音声。約31秒。</figcaption>
     </figure>
     <h2>インストール</h2>
     <ol>
@@ -51,18 +54,27 @@
       <li>インストール元の許可を求められた場合は、そのブラウザ／ファイルアプリについて「この提供元を許可」を有効にし、戻って「インストール」を押します。</li>
       <li>アプリ <strong>「朧火」</strong> を開き、「境内へ入る」をタップします。</li>
     </ol>
+    <p class="info">以前の0.1.1と同じ署名です。インストール済みの「朧火」に上書き更新できます。</p>
     <h2>遊び方</h2>
-    <p>横画面で、戦場の空いている場所をドラッグすると移動します。指を離すと停止。攻撃は自動です。魂を集め、レベルアップの3択から強化を選びます。180秒生存でクリア。HPがなくなったら結果画面から再挑戦できます。</p>
+    <ol>
+      <li>横画面で、戦場を進みたい方向へドラッグ。菱形で接続先を確認します。</li>
+      <li><strong>指を離すと鎖を射出。</strong> 敵・石垣・外周に掛かると高速移動します。</li>
+      <li><strong>短くタップすると解除。</strong> 速度が残って少し滑走します。移動中も次の方向を狙えます。</li>
+      <li>刀と青い魂火は自動。高速接触時には強襲斬撃が発生し、倒しきれない敵は進路を止めます。</li>
+      <li>魂を集め、レベルアップの3択から強化を選びます。180秒生存でクリア。HP0で落命し、結果から再挑戦できます。</li>
+    </ol>
     <p>右上の停止ボタンやAndroidの「戻る」で一時停止。別のアプリへ切り替えた後は、再開ボタンを押してください。</p>
     <div class="note">
-      <p>署名とAPKの内容、Godot上の戦闘・タッチ操作は検証済みです。Android端末上での起動・性能は未検証です。プロトタイプ署名の直接インストール版です。</p>
+      <p>署名とAPK内容、Godot上の鎖・衝突・戦闘・タッチ操作69項目を検証済みです。Android端末上での起動・性能は未検証です。狙いやすさ・速度・滑走距離を実機で試すための版です。</p>
     </div>
     <h2>プロジェクトと確認用ファイル</h2>
     <div class="links">
-      <a href="0.1.1/OborobiGodot.zip" download>Godotプロジェクト一式（約9MB）</a>
-      <a href="0.1.1/oborobi-vfx.mp4">実際の戦闘・VFX動画（27秒）</a>
-      <a href="0.1.1/ANDROID.md">詳しい導入・操作手順</a>
-      <a href="0.1.1/SHA256SUMS.txt">ファイルのSHA256</a>
+      <a href="0.2.0/OborobiGodot.zip" download>Godotプロジェクト一式（約7MB）</a>
+      <a href="0.2.0/grapple-vfx.mp4">実際の鎖・戦闘動画（約31秒）</a>
+      <a href="0.2.0/10-chain-enemy.png">ゲーム画面のスクリーンショット</a>
+      <a href="0.2.0/ANDROID.md">詳しい導入・操作手順</a>
+      <a href="0.2.0/TEST_RESULTS.md">テスト結果と残る検証項目</a>
+      <a href="0.2.0/SHA256SUMS.txt">ファイルのSHA256</a>
     </div>
     <footer>ゲームはネット接続・アカウント登録不要。セーブはなく、終了するとランがリセットされます。</footer>
   </main>

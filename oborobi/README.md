@@ -1,16 +1,20 @@
-# 朧火 — Android試作 0.1.1
+# 朧火 — 鎖グラップル Android検証版 0.2.0
 
 ダウンロードページ: https://kemonodot.github.io/test-game/oborobi/
 
-`0.1.1/Oborobi-Android.apk` はGodot 4.6.3製のAndroidアプリです。
+`0.2.0/Oborobi-Android.apk` はGodot 4.6.3製のAndroidアプリです。
 Android 7.0以降・OpenGL ES 3.0対応端末向け。ファイルアプリでAPKを開き、
 インストール後にアプリ「朧火」を起動してください。
 
-`0.1.1/OborobiGodot.zip` に実行可能なGodotプロジェクト、READMEとテスト記録を含みます。
-`0.1.1/ANDROID.md` に導入・操作手順、`0.1.1/SHA256SUMS.txt` に配布ファイルのSHA256を記録しています。
-スクリーンショットと27秒のMP4はLinux上のGodotで実際に動かした記録です。
+戦場をドラッグして狙い、指を離して一本の鎖を射出。敵・石垣・外周に接続して高速移動し、短いタップで解除すると慣性で滑走します。刀と魂火は自動で発動します。
 
-署名・APK内容・Godot上の戦闘31項目・タッチと中断操作は検証済みです。
+旧版0.1.1と同じ署名・アプリIDで上書き更新できる構成です。以前の配布ファイルも `0.1.1/` に残しています。
+
+`0.2.0/OborobiGodot.zip` に実行可能なGodotプロジェクト、READMEとテスト記録を含みます。
+`0.2.0/ANDROID.md` に導入・操作手順、`0.2.0/SHA256SUMS.txt` に配布ファイルのSHA256を記録しています。
+スクリーンショットと約31秒のMP4はLinux上のGodotで実際に動かした記録です。
+
+署名・APK内容・Godot上の鎖と衝突30項目・戦闘31項目・タッチと中断8項目は検証済みです。
 Android上での起動・実機性能は未検証です。試作鍵はリポジトリに含めていません。
 
 この環境ではGitHub Releaseの添付先 `uploads.github.com` が通信制限で利用できないため、
