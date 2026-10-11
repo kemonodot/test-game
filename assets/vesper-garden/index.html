@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10192e">
+<meta name="theme-color" content="#0b1a22">
 <meta name="description" content="個体の生成・遺伝・突然変異を楽しみ、育てた3体を防衛で試すGodot製ゲーム。">
 <title>Vesper Garden — Androidで遊ぶ</title>
 <style>
-:root { color-scheme: dark; --bg:#10192e; --ink:#f0ead7; --dim:#b7c5da; --mint:#57e6ff; --gold:#ffcd63; }
+:root { color-scheme: dark; --bg:#0b1a22; --ink:#edf4f0; --dim:#9aaeb4; --mint:#b8f1db; --gold:#edca94; }
 * { box-sizing:border-box; }
-body { margin:0; background:radial-gradient(ellipse at top,#343456 0,var(--bg) 62%); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif; line-height:1.8; }
+body { margin:0; background:radial-gradient(ellipse at top,#1f3b40 0,var(--bg) 62%); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif; line-height:1.8; }
 main { max-width:760px; margin:auto; padding:40px 22px 54px; }
 .eyebrow { font-size:12px; letter-spacing:.22em; color:var(--gold); }
-h1 { font-family:Georgia,serif; letter-spacing:.06em; font-size:clamp(30px,8vw,48px); line-height:1.2; margin:12px 0 8px; font-weight:400; }
+h1 { font-family:system-ui,sans-serif; letter-spacing:.06em; font-size:clamp(30px,8vw,48px); line-height:1.2; margin:12px 0 8px; font-weight:700; }
 .subtitle { color:var(--gold); margin:0 0 24px; }
 p { margin:16px 0; }
 .intro { max-width:560px; }
-.download { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:78px; padding:14px; border:1px solid var(--gold); border-radius:16px; background:linear-gradient(130deg,#b4ffdb,#57e6ff); color:#132a2e; text-decoration:none; font-size:19px; font-weight:700; box-shadow:0 8px 30px #57e6ff22; margin:24px 0 12px; }
+.download { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:78px; padding:14px; border:1px solid var(--gold); border-radius:16px; background:linear-gradient(130deg,#b4ffdb,#b8f1db); color:#132a2e; text-decoration:none; font-size:19px; font-weight:700; box-shadow:0 8px 30px #b8f1db22; margin:24px 0 12px; }
 .download small { font-size:12px; font-weight:500; }
 .download:focus-visible,a:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
 .fine { font-size:13px; color:var(--dim); }
@@ -24,7 +24,7 @@ h2 { font-size:18px; color:var(--gold); margin:30px 0 10px; font-weight:600; }
 ol,ul { padding-left:24px; }
 li { margin:8px 0; }
 a { color:var(--mint); text-underline-offset:4px; overflow-wrap:anywhere; }
-.gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px; }
+.gallery { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:24px; }
 figure { margin:0; min-width:0; }
 img { width:100%; height:auto; display:block; border:1px solid #618481; border-radius:12px; background:var(--bg); }
 figcaption { color:var(--dim); font-size:12px; text-align:center; margin-top:8px; }
@@ -35,46 +35,43 @@ footer { border-top:1px solid #52706b; margin-top:32px; padding-top:14px; font-s
 </head>
 <body>
 <main>
-<div class="eyebrow">GODOT 4 · PLAYABLE PROTOTYPE</div>
+<div class="eyebrow">GODOT 4 · ANDROID PROTOTYPE 0.7</div>
 <h1>VESPER GARDEN</h1>
-<p class="subtitle">宵庭の錬成室</p>
-<p class="intro">親の特徴を掛け合わせ、新しい個体を防衛で試すゲーム。6ウェーブの最後に「夜殻の主」が登場。腐食で増援を止め、赤い予告中にスキルを集中して破城を中断します。合体専用変異、3択強化、因子抽出、1倍／2倍はそのまま使えます。</p>
-<a class="download" href="0.6.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.6.0 · 約57 MB · Android 7以降</small></a>
-<p class="fine">縦画面・タップ操作。OpenGL ES 3.0対応端末向け。Godotのインストール、登録、通信は不要です。</p>
+<p class="subtitle">つくる。試す。次の世代へ。</p>
+<p class="intro">ホムンクルスの特徴を混ぜて、新しい個体を防衛で試すゲーム。ホーム・個体・合体・親子履歴へUIを整理し、能力名をアイス・サンダー・ポイズンなどへ変更しました。合体では、強みと弱点のある突然変異種が確率で生まれます。</p>
+<a class="download" href="0.7.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.7.0 · 約57 MB · Android 7以降</small></a>
+<p class="fine">縦画面・タップ操作。OpenGL ES 3.0対応のARM64・ARMv7端末向け。前版に上書きしてセーブを引き継げます。</p>
 <h2>スマホに入れる</h2>
 <ol>
-<li>上のボタンをChromeなどのブラウザで開き、APKを保存します。</li>
-<li>ダウンロードが完了したら、通知またはファイルアプリからAPKを開きます。求められた場合、そのアプリに「不明なアプリのインストール」を許可します。</li>
+<li>上のボタンをChromeなどで開き、APKを保存します。</li>
+<li>ダウンロード完了後、通知かファイルアプリからAPKを開きます。求められた場合、そのアプリに「不明なアプリのインストール」を許可します。</li>
 <li>「Vesper Garden」をインストールして起動します。</li>
 </ol>
-<p class="fine">リンクがアプリ内ブラウザで開けない場合は、「ブラウザで開く」からChromeへ切り替えてください。APKはインストール用ファイルで、ブラウザ内でゲームを実行する形式ではありません。</p>
-<h2>最初の一周</h2>
+<p class="fine">アプリ内ブラウザで保存できない時はChromeで開いてください。セーブを引き継ぐ場合はアンインストールせず上書き更新します。ゲームはAPKをインストールして遊ぶ形式です。</p>
+<h2>今回の改修</h2>
 <ul>
-<li>能力の札や個体名の i をタップ。効果・相性・弱点をひとつずつ確認できます。戦闘中の説明は時間停止。</li>
-<li>下段の個体を選び、上段の台座に配属して3体を編成。</li>
-<li>「防衛で性能を試す」。右上で1倍／2倍を切替。通常攻撃は自動。スキルをタップすると時間が止まり、戦場の好きな位置に発動できます。</li>
-<li>2・4ウェーブ突破で、ランダムな3択強化から1つを選びます。6ウェーブの最後はボス戦。約1〜2分の防衛。2倍なら約半分です。</li>
-<li>ボスHP表示をタップして対策を確認。腐食で増援を封じ、狩眼や裂花槍で殻を破壊。予告中にスキルを当て、拠点への破城攻撃を止めます。</li>
-<li>戦闘後は獲得強化を1つだけ変異因子として抽出。親2体・主属性・射撃型・副形質の狙いを選んで合体し、因子を新個体に定着させて再出撃。</li>
+<li><strong>4つの画面</strong>：ホーム、個体、合体、親子履歴を下部ナビで移動。カードをタップして役割・能力・配属を確認できます。</li>
+<li><strong>分かりやすい名前</strong>：アイス・サンダー・ポイズン、狙い撃ち・3連ショット・範囲ショット。説明は個別にタップできます。</li>
+<li><strong>バースト種</strong>：通常攻撃が25%弱い代わりに、4回撃つと広い爆発。群れへの攻撃役になります。</li>
+<li><strong>ミスト種</strong>：通常攻撃が40%弱い代わりに、氷と毒を広く長く届けるサポート役。変異種は合体時12〜20%、変異種の親がいると28%。確定の強化ではありません。</li>
+<li><strong>親子履歴</strong>：合体で消費した親の能力・外見もタップで確認。以前の記録で親の詳細が残っていない部分は名前を表示します。</li>
 </ul>
 <div class="gallery">
-<figure><a href="0.6.0/30-boss-arrival.png"><img src="0.6.0/30-boss-arrival.png" width="390" height="693" alt="6波の最後にボス出現：Godotの実画面" loading="lazy"></a><figcaption>6波の最後にボス出現</figcaption></figure>
-<figure><a href="0.6.0/31-boss-forecast.png"><img src="0.6.0/31-boss-forecast.png" width="390" height="693" alt="赤い予告にスキルを集中：Godotの実画面" loading="lazy"></a><figcaption>赤い予告にスキルを集中</figcaption></figure>
-<figure><a href="0.6.0/32-boss-counters.png"><img src="0.6.0/32-boss-counters.png" width="390" height="693" alt="タップで対策を確認・時間停止：Godotの実画面" loading="lazy"></a><figcaption>タップで対策を確認・時間停止</figcaption></figure>
-<figure><a href="0.6.0/33-boss-targeting.png"><img src="0.6.0/33-boss-targeting.png" width="390" height="693" alt="照準中もボスの予告は停止：Godotの実画面" loading="lazy"></a><figcaption>照準中もボスの予告は停止</figcaption></figure>
-<figure><a href="0.6.0/34-boss-interrupted.png"><img src="0.6.0/34-boss-interrupted.png" width="390" height="693" alt="破城を中断して核を露出：Godotの実画面" loading="lazy"></a><figcaption>破城を中断して核を露出</figcaption></figure>
-<figure><a href="0.6.0/35-boss-victory.png"><img src="0.6.0/35-boss-victory.png" width="390" height="693" alt="ボス討伐後は成長と因子抽出：Godotの実画面" loading="lazy"></a><figcaption>ボス討伐後は成長と因子抽出</figcaption></figure>
+<figure><a href="0.7.0/36-mobile-home.png"><img src="0.7.0/36-mobile-home.png" width="390" height="693" alt="ホームと防衛隊：Godotの実画面" loading="lazy"></a><figcaption>ホームと防衛隊</figcaption></figure>
+<figure><a href="0.7.0/37-mobile-collection.png"><img src="0.7.0/37-mobile-collection.png" width="390" height="693" alt="タップで能力・配属：Godotの実画面" loading="lazy"></a><figcaption>タップで能力・配属</figcaption></figure>
+<figure><a href="0.7.0/39-mobile-fusion.png"><img src="0.7.0/39-mobile-fusion.png" width="390" height="693" alt="親と継承を選ぶ：Godotの実画面" loading="lazy"></a><figcaption>親と継承を選ぶ</figcaption></figure>
+<figure><a href="0.7.0/40-parent-child-history.png"><img src="0.7.0/40-parent-child-history.png" width="390" height="693" alt="消費した親も記録：Godotの実画面" loading="lazy"></a><figcaption>消費した親も記録</figcaption></figure>
+<figure><a href="0.7.0/45-rare-birth.png"><img src="0.7.0/45-rare-birth.png" width="390" height="693" alt="確率で変異種が誕生：Godotの実画面" loading="lazy"></a><figcaption>確率で変異種が誕生</figcaption></figure>
+<figure><a href="0.7.0/49-rare-species-defence.png"><img src="0.7.0/49-rare-species-defence.png" width="390" height="693" alt="新個体を防衛で試す：Godotの実画面" loading="lazy"></a><figcaption>新個体を防衛で試す</figcaption></figure>
 </div>
-<h2>今回の改修</h2>
-<p>最終ボス「夜殻の主」を追加。殻→破城の蓄力→核の露出を繰り返します。腐食は増援召喚を止め、狩眼と裂花槍は殻を割ります。霜は予告を遅らせ、霜と雷の共鳴はスキルの中断と本体への火力を助けます。</p>
-<p>予告中にスキルで必要量を削ると「中断成功」。間に合わないと拠点が3損傷します。技の選択・説明・休止では予告も停止。ボスと残った増援を倒すと、成長→因子抽出→合体へ進みます。新しい通貨や操作は追加していません。</p>
+<h2>一周の遊び方</h2>
+<p>ホームから3体で出撃 → 自動攻撃と手動スキルで防衛 → 2・4ウェーブの3択強化 → 6波の最後にボス → 成長と因子1つ抽出 → 親2体を合体 → 能力と親子履歴を確認 → 新個体で再出撃。戦闘右上で1倍／2倍を切り替えられます。</p>
+<p>スキルの照準・3択・能力の説明中は時間停止。合体後も3体を残し、防衛を15秒以上続けると手持ち6体まで新しい個体を補充します。通信、登録、育成用の通貨は不要です。</p>
 <h2>確認できていること</h2>
-<p class="note">PC上のGodotで、440項目が合格。390×844の実タッチで全6波→ボス→予告の中断→勝利→抽出→合体→再出撃を確認しました。1倍と2倍のボス戦も同じ結果。APKのビルド・署名・配布ファイルを検証。Android実機の起動と倍速時の性能は未確認です。</p>
-<p class="fine">試作用の開発署名APKです。前版と同じ署名で上書き更新でき、個体・成長・編成・因子を引き継げます。進行は端末内に自動保存。引き継ぐ場合はアンインストールせず更新してください。</p>
-<p><a href="0.4.0/03-individual-catalog.png">個体の全能力と敵への相性</a> / <a href="0.4.0/05-synergy-explanation.png">器官の組合せの説明（検証用構成）</a></p>
-<p><a href="0.5.0/17-targeted-inheritance.png">合体前の役割予測</a> / <a href="0.5.0/19-vortex-newborn.png">合体後の新個体</a> / <a href="0.4.0/16-phone-dense-field.png">60体の負荷表示</a></p>
-<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.6.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
-<footer>Vesper Garden 0.6.0 · <a href="0.6.0/SHA256SUMS.txt">配布ファイルのSHA-256</a></footer>
+<p class="note">PC上のGodotでスマホサイズのタップ操作を確認。防衛→因子抽出→確率での変異種誕生→消費した親の能力確認→新個体で次の防衛を実行しています。1,000回の合体、変異種の強みと弱点、旧セーブの移行、既存の倍速・合体・ボスをテスト。574項目の検証は失敗0。Android APKのビルド・署名・配布ファイルも照合済み。Android実機の起動と性能は未確認です。</p>
+<p class="fine">開発署名のテストAPK。前版と同じパッケージ・署名で上書き更新できます。今回、ボスの行動調整と新しいキャラクター・VFX素材の適用は保留しています。</p>
+<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.7.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
+<footer>Vesper Garden 0.7.0 · <a href="0.7.0/SHA256SUMS.txt">配布ファイルのSHA-256</a> · ソース元はprivateのまま</footer>
 </main>
 </body>
 </html>
