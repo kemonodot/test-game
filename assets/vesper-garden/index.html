@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101f28">
+<meta name="theme-color" content="#10192e">
 <meta name="description" content="個体の生成・遺伝・突然変異を楽しみ、育てた3体を防衛で試すGodot製ゲーム。">
 <title>Vesper Garden — Androidで遊ぶ</title>
 <style>
-:root { color-scheme: dark; --bg:#101f28; --ink:#ecf0de; --dim:#a6bcb4; --mint:#9cddcb; --gold:#d6b577; }
+:root { color-scheme: dark; --bg:#10192e; --ink:#f0ead7; --dim:#b7c5da; --mint:#57e6ff; --gold:#ffcd63; }
 * { box-sizing:border-box; }
-body { margin:0; background:radial-gradient(ellipse at top,#233a40 0,var(--bg) 62%); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif; line-height:1.8; }
+body { margin:0; background:radial-gradient(ellipse at top,#343456 0,var(--bg) 62%); color:var(--ink); font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif; line-height:1.8; }
 main { max-width:760px; margin:auto; padding:40px 22px 54px; }
 .eyebrow { font-size:12px; letter-spacing:.22em; color:var(--gold); }
 h1 { font-family:Georgia,serif; letter-spacing:.06em; font-size:clamp(30px,8vw,48px); line-height:1.2; margin:12px 0 8px; font-weight:400; }
 .subtitle { color:var(--gold); margin:0 0 24px; }
 p { margin:16px 0; }
 .intro { max-width:560px; }
-.download { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:78px; padding:14px; border:1px solid var(--gold); border-radius:16px; background:linear-gradient(140deg,#bfdcbe,#80c6b5); color:#132a2e; text-decoration:none; font-size:19px; font-weight:700; box-shadow:0 8px 30px #0004; margin:24px 0 12px; }
+.download { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:78px; padding:14px; border:1px solid var(--gold); border-radius:16px; background:linear-gradient(130deg,#b4ffdb,#57e6ff); color:#132a2e; text-decoration:none; font-size:19px; font-weight:700; box-shadow:0 8px 30px #57e6ff22; margin:24px 0 12px; }
 .download small { font-size:12px; font-weight:500; }
 .download:focus-visible,a:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
 .fine { font-size:13px; color:var(--dim); }
@@ -38,8 +38,8 @@ footer { border-top:1px solid #52706b; margin-top:32px; padding-top:14px; font-s
 <div class="eyebrow">GODOT 4 · PLAYABLE PROTOTYPE</div>
 <h1>VESPER GARDEN</h1>
 <p class="subtitle">宵庭の錬成室</p>
-<p class="intro">命を混ぜて、新しい個体を防衛で試すゲーム。属性・集中・散弾・波紋・形質を組み合わせ、親のパーツと突然変異から次の命を生み出します。</p>
-<a class="download" href="0.3.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.3.0 · 約57 MB · Android 7以降</small></a>
+<p class="intro">命を混ぜて、新しい個体を防衛で試すゲーム。役割・得意な敵・動く射撃見本で個体を選び、能力をタップして組み合わせを発見。光る培養槽と属性のスキルで、次の命を育てます。</p>
+<a class="download" href="0.4.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.4.0 · 約57 MB · Android 7以降</small></a>
 <p class="fine">縦画面・タップ操作。OpenGL ES 3.0対応端末向け。Godotのインストール、登録、通信は不要です。</p>
 <h2>スマホに入れる</h2>
 <ol>
@@ -50,25 +50,27 @@ footer { border-top:1px solid #52706b; margin-top:32px; padding-top:14px; font-s
 <p class="fine">リンクがアプリ内ブラウザで開けない場合は、「ブラウザで開く」からChromeへ切り替えてください。APKはインストール用ファイルで、ブラウザ内でゲームを実行する形式ではありません。</p>
 <h2>最初の一周</h2>
 <ul>
+<li>能力の札や個体名の i をタップ。効果・相性・弱点をひとつずつ確認できます。戦闘中の説明は時間停止。</li>
 <li>下段の個体を選び、上段の台座に配属して3体を編成。</li>
 <li>「防衛で性能を試す」。通常攻撃は自動。スキルをタップすると時間が止まり、戦場の好きな位置に発動できます。</li>
 <li>2・4ウェーブ突破で、ランダムな3択強化から1つを選びます。6ウェーブ、約1〜2分の防衛です。</li>
 <li>戦闘後は獲得強化を1つだけ変異因子として抽出。2体の主属性と射撃型を選んで合体し、因子を新個体に定着させて再出撃。</li>
 </ul>
 <div class="gallery">
-<figure><a href="0.3.0/13-phone-battle.png"><img src="0.3.0/13-phone-battle.png" width="540" height="960" alt="単一の戦場を3体で守り、範囲スキルを発動する実画面" loading="lazy"></a><figcaption>自動防衛と範囲スキル</figcaption></figure>
-<figure><a href="0.3.0/05-upgrade-choice.png"><img src="0.3.0/05-upgrade-choice.png" width="540" height="960" alt="時間が停止した状態で3択強化を選ぶ実画面" loading="lazy"></a><figcaption>戦闘中の3択強化</figcaption></figure>
-<figure><a href="0.3.0/08-fusion-choice.png"><img src="0.3.0/08-fusion-choice.png" width="540" height="960" alt="親2体と継承する攻撃、特性、変異因子を選ぶ合体画面" loading="lazy"></a><figcaption>合体と変異因子</figcaption></figure>
+<figure><a href="0.4.0/01-phone-laboratory.png"><img src="0.4.0/01-phone-laboratory.png" width="390" height="693" alt="光る培養槽、個体の役割、性能ゲージとタップできる能力の札" loading="lazy"></a><figcaption>役割が見える培養室</figcaption></figure>
+<figure><a href="0.4.0/02-scatter-explanation.png"><img src="0.4.0/02-scatter-explanation.png" width="390" height="693" alt="散弾を個別タップし、攻撃見本と組合せを見る能力説明" loading="lazy"></a><figcaption>タップで能力の説明</figcaption></figure>
+<figure><a href="0.4.0/10-bright-skill.png"><img src="0.4.0/10-bright-skill.png" width="390" height="693" alt="雪結晶と光る弾、属性色の台座で拠点を守るGodotの実画面" loading="lazy"></a><figcaption>鮮やかなスキル演出</figcaption></figure>
 </div>
 <h2>今回の改修</h2>
-<p>集中は大型、散弾・波紋は群れ、霜は走者、腐食は増殖する繭へ。数値の弱い親も、反響射撃や状態拡散の形質を渡せます。合体前に確定継承と副形質候補を確認でき、変異すると頭部・体色にも新しい特徴が現れます。</p>
+<p>性能の数字の一覧を、役割・一撃と連射のゲージ・動く射撃図へ変更。属性・技・形質・体質・欠点・器官は個別にタップして、条件や組合せを確認できます。敵のアイコンから相性の理由も読めます。合体予測とその防衛だけの強化は、確定した能力と区別して表示します。</p>
+<p>培養液と回転する錬成陣、光る弾と連鎖雷、雪結晶・雷柱・胞子花、敵の死亡演出を強めました。敵の多い時も、輪郭と状態を読めるように調整しています。</p>
 <h2>確認できていること</h2>
-<p class="note">PC上のGodotで、編成・防衛・3択・抽出・合体・再戦を通して確認しました。腐食のない部隊の敗北後、弱い親の散弾・反響を継いだ個体を生成し、次の防衛を突破。モデル117項目、実画面操作63項目、表示・負荷18項目が合格しています。APKのビルドと署名は検証済みですが、Android実機の起動と性能は未確認です。</p>
-<p class="fine">試作用の開発署名APKです。前版と同じ署名で上書き更新でき、現役個体・成長・編成・因子を引き継ぎ、新しい形質と外見を追加します。進行は端末内に自動保存。引き継ぐ場合はアンインストールせず更新してください。</p>
-<p><a href="0.3.0/20-counter-feedback.png">敗北時の対策ヒント</a> / <a href="0.3.0/22-new-role.png">弱い親から生まれた新しい役割</a></p>
-<p><a href="0.3.0/07-extraction.png">因子抽出の実画面</a> / <a href="0.3.0/09-new-generation.png">合体後の新個体</a></p>
-<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.3.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
-<footer>Vesper Garden 0.3.0 · <a href="0.3.0/SHA256SUMS.txt">配布ファイルのSHA-256</a></footer>
+<p class="note">PC上のGodotで、編成・全6ウェーブ・成長・抽出・合体・再防衛と、390×844でのタップ操作を確認。モデル117項目、能力説明と操作101項目、従来の実画面操作63項目、表示・負荷18項目の合計299項目が合格。APKのビルド・署名・配布ファイルも検証しています。Android実機の起動と性能は未確認です。</p>
+<p class="fine">試作用の開発署名APKです。前版と同じ署名で上書き更新でき、個体・成長・編成・因子を引き継げます。進行は端末内に自動保存。引き継ぐ場合はアンインストールせず更新してください。</p>
+<p><a href="0.4.0/03-individual-catalog.png">個体の全能力と敵への相性</a> / <a href="0.4.0/05-synergy-explanation.png">器官の組合せの説明（検証用構成）</a></p>
+<p><a href="0.4.0/08-fusion-choice.png">合体前の役割予測</a> / <a href="0.4.0/09-new-generation.png">合体後の新個体</a> / <a href="0.4.0/16-phone-dense-field.png">60体の負荷表示</a></p>
+<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.4.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
+<footer>Vesper Garden 0.4.0 · <a href="0.4.0/SHA256SUMS.txt">配布ファイルのSHA-256</a></footer>
 </main>
 </body>
 </html>
