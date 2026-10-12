@@ -33,45 +33,30 @@ footer { border-top:1px solid #52706b; margin-top:32px; padding-top:14px; font-s
 @media(max-width:420px) { main { padding:28px 18px 40px; } .gallery { gap:8px; } }
 </style>
 </head>
-<body>
-<main>
-<div class="eyebrow">GODOT 4 · ANDROID PROTOTYPE 0.7</div>
-<h1>VESPER GARDEN</h1>
-<p class="subtitle">つくる。試す。次の世代へ。</p>
-<p class="intro">ホムンクルスの特徴を混ぜて、新しい個体を防衛で試すゲーム。ホーム・個体・合体・親子履歴へUIを整理し、能力名をアイス・サンダー・ポイズンなどへ変更しました。合体では、強みと弱点のある突然変異種が確率で生まれます。</p>
-<a class="download" href="0.7.0/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.7.0 · 約57 MB · Android 7以降</small></a>
-<p class="fine">縦画面・タップ操作。OpenGL ES 3.0対応のARM64・ARMv7端末向け。前版に上書きしてセーブを引き継げます。</p>
-<h2>スマホに入れる</h2>
-<ol>
-<li>上のボタンをChromeなどで開き、APKを保存します。</li>
-<li>ダウンロード完了後、通知かファイルアプリからAPKを開きます。求められた場合、そのアプリに「不明なアプリのインストール」を許可します。</li>
-<li>「Vesper Garden」をインストールして起動します。</li>
-</ol>
-<p class="fine">アプリ内ブラウザで保存できない時はChromeで開いてください。セーブを引き継ぐ場合はアンインストールせず上書き更新します。ゲームはAPKをインストールして遊ぶ形式です。</p>
-<h2>今回の改修</h2>
-<ul>
-<li><strong>4つの画面</strong>：ホーム、個体、合体、親子履歴を下部ナビで移動。カードをタップして役割・能力・配属を確認できます。</li>
-<li><strong>分かりやすい名前</strong>：アイス・サンダー・ポイズン、狙い撃ち・3連ショット・範囲ショット。説明は個別にタップできます。</li>
-<li><strong>バースト種</strong>：通常攻撃が25%弱い代わりに、4回撃つと広い爆発。群れへの攻撃役になります。</li>
-<li><strong>ミスト種</strong>：通常攻撃が40%弱い代わりに、氷と毒を広く長く届けるサポート役。変異種は合体時12〜20%、変異種の親がいると28%。確定の強化ではありません。</li>
-<li><strong>親子履歴</strong>：合体で消費した親の能力・外見もタップで確認。以前の記録で親の詳細が残っていない部分は名前を表示します。</li>
-</ul>
+<body><main>
+<div class="eyebrow">GODOT 4 · ANDROID PROTOTYPE 0.7.1</div>
+<h1>VESPER GARDEN</h1><p class="subtitle">参考素材から、育てる個体へ。</p>
+<p class="intro">今回の変更はキャラクターだけ。支給されたシートの細身の頭身、描き込み、落ち着いた色を参考に、ホムンクルスを共通パーツのドット絵へ変更しました。ゲームシステムとUI操作は前版と同じです。</p>
+<a class="download" href="0.7.1/vesper-garden-android.apk" download="vesper-garden-android.apk">Android APKをダウンロード<small>0.7.1 · 約59 MB · Android 7以降</small></a>
+<p class="fine">ARM64・ARMv7 / OpenGL ES 3.0。前版へ上書きして個体・成長・因子・履歴を引き継げます。</p>
+<h2>スマホに入れる</h2><ol>
+<li>ChromeなどでAPKを保存します。</li>
+<li>通知またはファイルアプリで開き、求められた場合、そのアプリに「不明なアプリのインストール」を許可します。</li>
+<li>Vesper Gardenをインストールして起動。セーブを引き継ぐ場合はアンインストールせず上書き更新します。</li></ol>
+<h2>共通パーツで量産</h2><ul>
+<li>頭部4種、衣装4種、下半身4種、腕と小物4種。少数の素材を組み替えます。</li>
+<li>暗い赤・オリーブ・革色・紺・銀髪と古い金具。顔や服の密度を増やし、既存の外見データで親子の特徴を描き分けます。</li>
+<li>頭・服・脚・腕を別々に描画。待機と攻撃反応を維持し、小さな編成アイコンは胸像にしています。</li>
+<li>能力・成長・合体・変異確率・敵・スキル・倍速・保存形式は前版のままです。</li></ul>
 <div class="gallery">
-<figure><a href="0.7.0/36-mobile-home.png"><img src="0.7.0/36-mobile-home.png" width="390" height="693" alt="ホームと防衛隊：Godotの実画面" loading="lazy"></a><figcaption>ホームと防衛隊</figcaption></figure>
-<figure><a href="0.7.0/37-mobile-collection.png"><img src="0.7.0/37-mobile-collection.png" width="390" height="693" alt="タップで能力・配属：Godotの実画面" loading="lazy"></a><figcaption>タップで能力・配属</figcaption></figure>
-<figure><a href="0.7.0/39-mobile-fusion.png"><img src="0.7.0/39-mobile-fusion.png" width="390" height="693" alt="親と継承を選ぶ：Godotの実画面" loading="lazy"></a><figcaption>親と継承を選ぶ</figcaption></figure>
-<figure><a href="0.7.0/40-parent-child-history.png"><img src="0.7.0/40-parent-child-history.png" width="390" height="693" alt="消費した親も記録：Godotの実画面" loading="lazy"></a><figcaption>消費した親も記録</figcaption></figure>
-<figure><a href="0.7.0/45-rare-birth.png"><img src="0.7.0/45-rare-birth.png" width="390" height="693" alt="確率で変異種が誕生：Godotの実画面" loading="lazy"></a><figcaption>確率で変異種が誕生</figcaption></figure>
-<figure><a href="0.7.0/49-rare-species-defence.png"><img src="0.7.0/49-rare-species-defence.png" width="390" height="693" alt="新個体を防衛で試す：Godotの実画面" loading="lazy"></a><figcaption>新個体を防衛で試す</figcaption></figure>
-</div>
-<h2>一周の遊び方</h2>
-<p>ホームから3体で出撃 → 自動攻撃と手動スキルで防衛 → 2・4ウェーブの3択強化 → 6波の最後にボス → 成長と因子1つ抽出 → 親2体を合体 → 能力と親子履歴を確認 → 新個体で再出撃。戦闘右上で1倍／2倍を切り替えられます。</p>
-<p>スキルの照準・3択・能力の説明中は時間停止。合体後も3体を残し、防衛を15秒以上続けると手持ち6体まで新しい個体を補充します。通信、登録、育成用の通貨は不要です。</p>
-<h2>確認できていること</h2>
-<p class="note">PC上のGodotでスマホサイズのタップ操作を確認。防衛→因子抽出→確率での変異種誕生→消費した親の能力確認→新個体で次の防衛を実行しています。1,000回の合体、変異種の強みと弱点、旧セーブの移行、既存の倍速・合体・ボスをテスト。574項目の検証は失敗0。Android APKのビルド・署名・配布ファイルも照合済み。Android実機の起動と性能は未確認です。</p>
-<p class="fine">開発署名のテストAPK。前版と同じパッケージ・署名で上書き更新できます。今回、ボスの行動調整と新しいキャラクター・VFX素材の適用は保留しています。</p>
-<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.7.0/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
-<footer>Vesper Garden 0.7.0 · <a href="0.7.0/SHA256SUMS.txt">配布ファイルのSHA-256</a> · ソース元はprivateのまま</footer>
-</main>
-</body>
-</html>
+<figure><a href="0.7.1/36-mobile-home.png"><img src="0.7.1/36-mobile-home.png" width="390" height="693" alt="新しい防衛隊：Godotの実画面" loading="lazy"></a><figcaption>新しい防衛隊</figcaption></figure>
+<figure><a href="0.7.1/37-mobile-collection.png"><img src="0.7.1/37-mobile-collection.png" width="390" height="693" alt="個体と小さな胸像：Godotの実画面" loading="lazy"></a><figcaption>個体と小さな胸像</figcaption></figure>
+<figure><a href="0.7.1/00-character-variations.png"><img src="0.7.1/00-character-variations.png" width="390" height="693" alt="共通パーツの24体：Godotの実画面" loading="lazy"></a><figcaption>共通パーツの24体</figcaption></figure>
+<figure><a href="0.7.1/40-parent-child-history.png"><img src="0.7.1/40-parent-child-history.png" width="390" height="693" alt="親子の外見：Godotの実画面" loading="lazy"></a><figcaption>親子の外見</figcaption></figure>
+<figure><a href="0.7.1/45-rare-birth.png"><img src="0.7.1/45-rare-birth.png" width="390" height="693" alt="合体した個体：Godotの実画面" loading="lazy"></a><figcaption>合体した個体</figcaption></figure>
+<figure><a href="0.7.1/49-rare-species-defence.png"><img src="0.7.1/49-rare-species-defence.png" width="390" height="693" alt="戦闘でのサイズ感：Godotの実画面" loading="lazy"></a><figcaption>戦闘でのサイズ感</figcaption></figure>
+</div><h2>操作</h2><p>個体カードをタップして能力・配属を確認し、ホームから出撃。通常攻撃は自動。スキルを選んで時間停止中に戦場をタップ。右上で1倍／2倍。戦闘後に因子1つを保存し、親2体を合体して次の防衛へ進みます。</p>
+<h2>確認範囲</h2><p class="note">PC上のGodotで24体のパーツ組み合わせ、スマホサイズのタップ、全防衛→合体→新個体で全防衛を確認。モデルと描画・操作を220項目で検証。キャラクター以外のゲームロジックが前版と同一であること、APKの署名・更新互換・配布ファイルを照合しています。Android実機の起動と性能は未確認です。</p>
+<p><a href="https://github.com/kemonodot/game-prototype/blob/main/deliveries/vesper-garden/0.7.1/vesper-garden-godot.zip">GodotプロジェクトZIP（非公開・GitHubログインが必要）</a></p>
+<footer>Vesper Garden 0.7.1 · <a href="0.7.1/SHA256SUMS.txt">SHA-256</a> · ソース元はprivateのまま</footer>
+</main></body></html>
