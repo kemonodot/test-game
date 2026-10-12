@@ -2,6 +2,8 @@
 
 Godot 4の縦画面オート戦闘RPG、Android用0.1.1です。4人を編成し、遠征で育成と装備を進め、3体の主に挑みます。初回討伐後は融合か複写で新しい個体を迎えます。
 
+[APKをダウンロード（0.1.1）](https://github.com/kemonodot/test-game/raw/refs/heads/apk-masked-requiem-v0.1.1/MaskedRequiem-v0.1.1.apk)
+
 ## インストール
 
 1. `MaskedRequiem-v0.1.1.apk`を端末へ保存します。
