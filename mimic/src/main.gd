@@ -244,72 +244,95 @@ func item_description(item: Dictionary) -> String:
 func inventory_item_name(item: Dictionary) -> String:
  var t: Dictionary=profile.get_template(item.template)
  return "%s %s  [%s] +%d" % ["◆" if profile.data.equipped.values().has(item.uid) else "◇",t.name,RARITY[int(item.rarity)],item.level]
+func select_equipment_slot(slot: String) -> void:
+ preview_slot=slot;selected_uid=-1;show_inventory()
+func remove_equipment_from_slot() -> void:
+ if profile.unequip(preview_slot):profile.save_game()
+ selected_uid=-1;show_inventory()
+func equip_selected_item() -> void:
+ if profile.equip(selected_uid,preview_slot):profile.save_game()
+ selected_uid=-1;show_inventory()
 func show_inventory() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
- state="inventory";clear_ui();heading("装備の比較・変更")
- if profile.get_item(selected_uid).is_empty() and not profile.data.inventory.is_empty():selected_uid=int(profile.data.inventory[0].uid)
- label("所持品  /  INVENTORY",Vector2(56,93),Vector2(500,30),14).modulate=Color("d0a183")
- var box:=list_panel(Vector2(40,125),Vector2(530,540))
+ if state!="inventory":preview_slot="fang";selected_uid=-1
+ state="inventory";clear_ui();heading("装備を整える")
+ label("①  枠を選ぶ",Vector2(50,103),Vector2(380,32),20).modulate=Color("e6c29c")
+ label("②  装備を選んで比較",Vector2(560,103),Vector2(620,32),20).modulate=Color("e6c29c")
+ var slots_order:=["fang","shell","organ1","organ2","organ3","organ4","core"]
+ for i in slots_order.size():
+  var slot:String=slots_order[i]
+  var locked:bool=slot=="organ4" and not profile.data.upgrades.get("organ_slot",false)
+  var equipped:Dictionary=profile.get_item(int(profile.data.equipped.get(slot,-1)))
+  var description:String="封印中" if locked else ("空き" if equipped.is_empty() else str(profile.get_template(equipped.template).name))
+  var slot_button:=button(("▶ " if preview_slot==slot else "")+SLOTS[slot]+"\n"+description,Vector2(46+(i%2)*238,148+int(i/2)*106),Vector2(226,96),func():select_equipment_slot(slot),locked)
+  slot_button.alignment=HORIZONTAL_ALIGNMENT_LEFT
+  slot_button.add_theme_font_size_override("font_size",17)
+  if not equipped.is_empty():
+   slot_button.icon=icon_textures.get(profile.get_template(equipped.template).family)
+   slot_button.expand_icon=true
+  var style:StyleBoxFlat=theme.get_stylebox("normal","Button").duplicate()
+  style.bg_color=Color("3a2022") if preview_slot==slot else Color("1a1216")
+  style.border_color=Color("e4b37e") if preview_slot==slot else Color("6b4c46")
+  style.set_border_width_all(2 if preview_slot==slot else 1)
+  slot_button.add_theme_stylebox_override("normal",style)
+  if locked:slot_button.tooltip_text="貢ぎ物の祭壇で『異形の器』を解放"
+ label("器官4は貢ぎ物で解放",Vector2(48,598),Vector2(450,28),16).modulate=Color("c3a898")
+ var current:Dictionary=profile.get_item(int(profile.data.equipped.get(preview_slot,-1)))
+ button("選んだ枠の装備を外す",Vector2(46,637),Vector2(464,48),remove_equipment_from_slot,current.is_empty())
+ var expected:String="organ" if preview_slot.begins_with("organ") else preview_slot
+ var candidates:=[]
  for item in profile.data.inventory:
-  var uid: int=item.uid
-  var entry:=list_button(box,inventory_item_name(item),func():selected_uid=uid;preview_slot="";show_inventory())
-  var family:String=profile.get_template(item.template).family
-  entry.icon=icon_textures.get(family)
+  if profile.get_template(item.template).get("slot")==expected:candidates.append(item)
+ label("%sに入る装備  /  %d個" % [SLOTS[preview_slot],candidates.size()],Vector2(560,140),Vector2(640,30),17).modulate=Color("d4b197")
+ var box:=list_panel(Vector2(555,175),Vector2(670,182))
+ if candidates.is_empty():
+  var empty:=Label.new();empty.text="この枠に入る装備はまだありません。";empty.add_theme_font_size_override("font_size",18);box.add_child(empty)
+ for item in candidates:
+  var uid:int=item.uid
+  var source_slot: String=""
+  for existing_slot in profile.data.equipped:
+   if int(profile.data.equipped[existing_slot])==uid:source_slot=existing_slot;break
+  var marker:String=("  【この枠に装備中】" if source_slot==preview_slot else ("  【%sから移動】" % SLOTS[source_slot] if not source_slot.is_empty() else ""))
+  var entry:=list_button(box,"%s  [%s]%s" % [profile.get_template(item.template).name,RARITY[int(item.rarity)],marker],func():selected_uid=uid;show_inventory())
+  entry.add_theme_font_size_override("font_size",18)
+  entry.icon=icon_textures.get(profile.get_template(item.template).family)
   style_item_button(entry,item)
- var selected: Dictionary=profile.get_item(selected_uid)
- label("選択した装備  /  SELECTED",Vector2(600,94),Vector2(600,25),14).modulate=Color("d0a183")
- var detail:=label(item_description(selected),Vector2(600,128),Vector2(465,190),18)
- if not selected.is_empty():detail.modulate=RARITY_COLORS[clampi(int(selected.rarity),0,4)]
- if selected.is_empty(): return
- var t: Dictionary=profile.get_template(selected.template)
- var compatible:Array=[]
- for slot in SLOTS:
-  if ("organ" if slot.begins_with("organ") else slot)==t.slot and (slot!="organ4" or profile.data.upgrades.get("organ_slot",false)):
-   compatible.append(slot)
- if compatible.is_empty():return
- if preview_slot not in compatible:preview_slot=compatible[0]
- var previous:Dictionary=profile.get_item(int(profile.data.equipped.get(preview_slot,-1)))
- var old_t:Dictionary=profile.get_template(previous.template) if not previous.is_empty() else {}
- var before_build: Array=profile.equipped_templates()
- var after_build: Array=[]
- for slot in profile.data.equipped:
-  var equipped:Dictionary=profile.get_item(int(profile.data.equipped[slot]))
-  if not equipped.is_empty() and slot!=preview_slot and int(equipped.uid)!=selected_uid:
-   var template:Dictionary=profile.get_template(equipped.template).duplicate(true)
-   template.item=equipped
-   after_build.append(template)
- var replacement:Dictionary=t.duplicate(true)
- replacement.item=selected
- after_build.append(replacement)
- var current_battle=Battle.new(1)
- current_battle.configure(before_build,profile.data.upgrades)
- var proposed_battle=Battle.new(1)
- proposed_battle.configure(after_build,profile.data.upgrades)
- var delta:float=proposed_battle.damage-current_battle.damage
- var hp_delta:float=proposed_battle.max_hp-current_battle.max_hp
- var cooldown_delta:float=proposed_battle.attack_interval-current_battle.attack_interval
- var reduction_delta:float=(proposed_battle.stats.reduction-current_battle.stats.reduction)*100
- var before_counts:={}
- var after_counts:={}
+ var selected:Dictionary=profile.get_item(selected_uid)
+ if selected.is_empty() or profile.get_template(selected.template).get("slot")!=expected:
+  selected_uid=-1
+  label("装備を選ぶと、今の枠との違いを表示します。",Vector2(560,390),Vector2(650,70),18).modulate=Color("d6c5b3")
+  return
+ var t:Dictionary=profile.get_template(selected.template)
+ var old_name:String=str(profile.get_template(current.template).name) if not current.is_empty() else "空き"
+ label("%s： %s  →  %s" % [SLOTS[preview_slot],old_name,t.name],Vector2(560,375),Vector2(650,30),18).modulate=Color("f1d4ae")
+ var info:=RichTextLabel.new()
+ info.position=Vector2(560,410);info.size=Vector2(650,105);info.text=item_description(selected)
+ info.add_theme_font_size_override("normal_font_size",17);info.add_theme_color_override("default_color",RARITY_COLORS[clampi(int(selected.rarity),0,4)])
+ ui.add_child(info)
+ var before_build:Array=profile.equipped_templates()
+ var after_build:Array=[]
+ var before_counts:={};var after_counts:={}
  for slot in profile.data.equipped:
   var equipped:Dictionary=profile.get_item(int(profile.data.equipped[slot]))
   if equipped.is_empty():continue
-  var family:String=profile.get_template(equipped.template).family
+  var template:Dictionary=profile.get_template(equipped.template)
+  var family:String=template.family
   before_counts[family]=int(before_counts.get(family,0))+1
-  if slot!=preview_slot and int(equipped.uid)!=selected_uid:after_counts[family]=int(after_counts.get(family,0))+1
+  if slot!=preview_slot and int(equipped.uid)!=selected_uid:
+   after_counts[family]=int(after_counts.get(family,0))+1
+   var copy:Dictionary=template.duplicate(true);copy.item=equipped;after_build.append(copy)
+ var replacement:Dictionary=t.duplicate(true);replacement.item=selected;after_build.append(replacement)
  after_counts[t.family]=int(after_counts.get(t.family,0))+1
+ var current_battle=Battle.new(1);current_battle.configure(before_build,profile.data.upgrades)
+ var proposed_battle=Battle.new(1);proposed_battle.configure(after_build,profile.data.upgrades)
  var changes:=""
  for family in Profile.FAMILIES:
-  var before:int=int(before_counts.get(family,0))
-  var after:int=int(after_counts.get(family,0))
+  var before:int=int(before_counts.get(family,0));var after:int=int(after_counts.get(family,0))
   if before!=after:changes+="%s %d→%d%s  " % [FAMILY_NAMES[family],before,after," ★" if (before<2 and after>=2) or (before<4 and after>=4) else ""]
- label("%sへ変更：牙の威力 %+.1f / 間隔 %+.2f秒\nHP %+.0f / 軽減 %+.1f%%\n%s\n2 / 4個でセット発動（★：新規発動）" % [SLOTS[preview_slot],delta,cooldown_delta,hp_delta,reduction_delta,changes],Vector2(600,325),Vector2(620,100),17)
- var x:=600
- for slot in compatible:
-  var target:String=slot
-  button(("◆ " if preview_slot==slot else "")+SLOTS[slot],Vector2(x,435),Vector2(110,52),func():preview_slot=target;show_inventory())
-  x+=120
- button("この枠に装備",Vector2(600,510),Vector2(250,52),func():profile.equip(selected_uid,preview_slot);profile.save_game();show_inventory())
+ if changes.is_empty():changes="系統の数に変化なし"
+ label("牙の威力 %+.1f　間隔 %+.2f秒　HP %+.0f　軽減 %+.1f%%\n%s\n★ は新しいセット効果（2個 / 4個）" % [proposed_battle.damage-current_battle.damage,proposed_battle.attack_interval-current_battle.attack_interval,proposed_battle.max_hp-current_battle.max_hp,(proposed_battle.stats.reduction-current_battle.stats.reduction)*100,changes],Vector2(560,525),Vector2(650,95),17)
+ var already_equipped:bool=int(profile.data.equipped.get(preview_slot,-1))==selected_uid
+ button("装備中" if already_equipped else "%sに装備する" % SLOTS[preview_slot],Vector2(835,630),Vector2(390,54),equip_selected_item,already_equipped)
 func show_forge() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="forge";clear_ui();heading("鍛冶・魔石")
@@ -506,10 +529,10 @@ func _draw() -> void:
    draw_line(Vector2(45,577),Vector2(1230,577),Color("a77b58"),1)
 
   elif state in ["inventory","forge"]:
-   panel(Rect2(30,88,550 if state=="inventory" else 470,592))
-   panel(Rect2(588 if state=="inventory" else 513,88,650 if state=="inventory" else 725,592))
+   panel(Rect2(30,88,490 if state=="inventory" else 470,610))
+   panel(Rect2(540 if state=="inventory" else 513,88,698 if state=="inventory" else 725,610))
    var selected:Dictionary=profile.get_item(selected_uid)
-   if not selected.is_empty():
+   if state=="forge" and not selected.is_empty():
     var family:String=profile.get_template(selected.template).family
     var item_icon:Texture2D=icon_textures.get(family)
     var frame_color:Color=RARITY_COLORS[clampi(int(selected.rarity),0,4)]

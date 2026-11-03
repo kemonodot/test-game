@@ -79,6 +79,10 @@ func equip(uid: int, slot: String) -> bool:
   if int(data.equipped[s]) == uid: data.equipped.erase(s)
  data.equipped[slot] = uid
  return true
+func unequip(slot: String) -> bool:
+ if slot not in SLOTS or not data.equipped.has(slot):return false
+ data.equipped.erase(slot)
+ return true
 func weighted(weights: Array) -> int:
  var total := 0.0
  for w in weights: total += float(w)

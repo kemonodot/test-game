@@ -364,7 +364,7 @@ func cast(a: Dictionary) -> bool:
    projectile(CENTER,aim,power,"arcane")
    for extra in mini(4,int(stats.projectiles)): projectile(CENTER,aim.rotated(0.1*(extra+1)),power*0.7,"arcane")
    if family_counts.get("arcane",0)>=4: projectile(CENTER,aim.rotated(0.16),power*0.8,"arcane")
- if family_counts.get(family,0)>=4: effect(CENTER,CENTER+aim*80,family,35)
+ if family!="devour" and family_counts.get(family,0)>=4: effect(CENTER,CENTER+aim*80,family,35)
  shots += 1
  return true
 
