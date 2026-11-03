@@ -23,6 +23,7 @@ var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
 var previous_shots := 0
 var benchmark_mode := false
+var web_quick_callback
 var mimic_texture: Texture2D
 var concept_texture: Texture2D
 var part_textures := {}
@@ -75,6 +76,9 @@ func _ready() -> void:
  add_child(ui)
  show_title()
  if OS.has_feature("web"):
+  web_quick_callback=JavaScriptBridge.create_callback(_web_quick_start)
+  JavaScriptBridge.get_interface("window").mimicQuickStart=web_quick_callback
+  JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-ready'))")
   benchmark_mode=bool(JavaScriptBridge.eval("new URLSearchParams(location.search).has('stress')",true))
   var inspect_family:String=str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('inspect') || ''",true))
   if inspect_family in ["devour","blade"]:
@@ -90,6 +94,10 @@ func _ready() -> void:
     battle.spawn_enemy("swordsman",Battle.CENTER+Vector2.from_angle(TAU*i/Battle.MAX_ENEMIES)*310.0)
     battle.enemies[i].hp=1000000.0
     battle.enemies[i].max_hp=1000000.0
+func _web_quick_start(_args: Array) -> void:
+ if state=="title":
+  selected_stage=0
+  start_battle()
 func make_sound(frequency: float, duration: float) -> AudioStreamWAV:
  var wav:=AudioStreamWAV.new()
  wav.format=AudioStreamWAV.FORMAT_16_BITS
@@ -146,6 +154,7 @@ func list_button(box: VBoxContainer, text: String, action: Callable, disabled: b
  box.add_child(b)
 func show_title() -> void:
  state="title"; clear_ui()
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-title'))")
  label("M I M I C",Vector2(100,90),Vector2(500,100),64)
  label("宝箱は動かない。飢えだけが進化する。",Vector2(100,190),Vector2(570,45),23)
  label("資金 %d   進化ポイント %d" % [profile.data.gold,profile.data.points],Vector2(100,250),Vector2(500,40),20)
@@ -156,11 +165,13 @@ func show_title() -> void:
  button("収集庫",Vector2(100,480),Vector2(245,62),show_collection)
  button("設定",Vector2(360,480),Vector2(245,62),show_settings)
 func show_stages() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="stages";clear_ui();heading("狩場を選ぶ")
  label("300秒以内にボスを倒す。敗北しても戦利品は残る。",Vector2(60,100),Vector2(1100,40),20)
  button("第一層　忘れられた石室",Vector2(100,180),Vector2(1000,90),func():selected_stage=0;start_battle())
  button("第二層　血の礼拝堂" + ("（未解放）" if int(profile.data.unlocked_stage)<1 else ""),Vector2(100,300),Vector2(1000,90),func():selected_stage=1;start_battle(),int(profile.data.unlocked_stage)<1)
 func start_battle() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  clear_ui()
  battle=Battle.new(Time.get_ticks_usec())
  battle.stage=selected_stage
@@ -182,6 +193,7 @@ func inventory_item_name(item: Dictionary) -> String:
  var t: Dictionary=profile.get_template(item.template)
  return "%s %s  [%s] +%d" % ["◆" if profile.data.equipped.values().has(item.uid) else "◇",t.name,RARITY[int(item.rarity)],item.level]
 func show_inventory() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="inventory";clear_ui();heading("装備の比較・変更")
  var box:=list_panel(Vector2(40,95),Vector2(530,570))
  for item in profile.data.inventory:
@@ -242,6 +254,7 @@ func show_inventory() -> void:
   x+=120
  button("この枠に装備",Vector2(600,510),Vector2(250,52),func():profile.equip(selected_uid,preview_slot);profile.save_game();show_inventory())
 func show_forge() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="forge";clear_ui();heading("鍛冶・魔石")
  var box:=list_panel(Vector2(40,95),Vector2(450,560))
  for item in profile.data.inventory:
@@ -265,6 +278,7 @@ func show_forge() -> void:
   list_button(gems,"%s T%d ×%d　装着" % [FAMILY_NAMES.get(fam,fam),tier,qty],func():profile.socket_gem(selected_uid,fam,tier);profile.save_game();show_forge(),item.is_empty() or item.sockets.size()>=int(item.socket_count))
   list_button(gems,"%s T%d ×3 → T%d　合成" % [FAMILY_NAMES.get(fam,fam),tier,tier+1],func():profile.fuse_gem(fam,tier);profile.save_game();show_forge(),qty<3 or tier>=5 or not profile.data.upgrades.get("fusion",false))
 func show_upgrades() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="upgrades";clear_ui();heading("永続強化")
  var box:=list_panel(Vector2(60,95),Vector2(1120,570))
  var upgrades := [["hp","最大HP"],["damage","攻撃力"],["organ_slot","器官枠 +1"],["reroll","再抽選を解放"],["fusion","魔石合成を解放"],["starting_gold","開始資金"],["drop","ドロップ率"],["family_hex","呪術を解放"],["family_poison","毒・腐食を解放"],["family_summon","召喚を解放"],["family_defense","防御を解放"]]
@@ -273,6 +287,7 @@ func show_upgrades() -> void:
   var cost:int=(8 if key in ["hp","damage"] else 15)*(level+1)
   list_button(box,"%s   Lv%d   /   %d 進化ポイント" % [pair[1],level,cost],func():profile.upgrade(key);profile.save_game();show_upgrades())
 func show_collection() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="collection";clear_ui();heading("伝説の収集庫")
  var box:=list_panel(Vector2(60,95),Vector2(1120,570))
  for t in profile.templates:
@@ -282,6 +297,7 @@ func show_collection() -> void:
    var unique:String=UNIQUE_TEXT.get(t.unique,t.unique) if found else "未発見"
    list_button(box,"%s　%s" % [name,unique],func():pass,true)
 func show_settings() -> void:
+ if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="settings";clear_ui();heading("設定")
  label("照準：マウスの位置 / タッチしてドラッグ\n戦闘中の攻撃は自動。画面比率は16:9です。\nセーブはこのブラウザのローカル領域に保存します。",Vector2(80,120),Vector2(1080,180),22)
  var settings:Dictionary=profile.data.get("settings",{})

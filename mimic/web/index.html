@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
@@ -89,6 +89,12 @@ body {
 	text-align: center;
 	z-index: 1;
 }
+
+#phone-helper { display: none; position: fixed; left: 16px; right: 16px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 5; padding: 16px; background: #181015; border: 1px solid #a45c62; color: #fff4e5; font: 15px/1.5 system-ui, sans-serif; text-align: center; box-shadow: 0 3px 18px #000; }
+#phone-helper p { margin: 0 0 12px; }
+#phone-start { display: block; width: 100%; min-height: 52px; border: 1px solid #e3aa8d; background: #873844; color: white; font: bold 18px system-ui, sans-serif; border-radius: 4px; touch-action: manipulation; }
+#phone-start:disabled { opacity: .6; }
+@media (orientation: portrait) and (pointer: coarse) { #phone-helper.visible { display: block; } }
 		</style>
 		
 	</head>
@@ -97,6 +103,10 @@ body {
 			Your browser does not support the canvas tag.
 		</canvas>
 
+		<div id="phone-helper" role="region" aria-label="スマートフォン向けの開始操作">
+			<p>画面を横向きにすると操作しやすくなります。<br>下のボタンから戦闘を始められます。</p>
+			<button id="phone-start" type="button" disabled>読み込み中…</button>
+		</div>
 		<noscript>
 			Your browser does not support JavaScript.
 		</noscript>
@@ -109,7 +119,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1933820,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1934428,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -117,6 +127,12 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+	const phoneHelper = document.getElementById('phone-helper');
+	const phoneStart = document.getElementById('phone-start');
+	window.addEventListener('mimic-ready', () => { phoneStart.disabled = false; phoneStart.textContent = '第一層を始める'; phoneHelper.classList.add('visible'); });
+	window.addEventListener('mimic-title', () => { if (typeof window.mimicQuickStart === 'function') phoneHelper.classList.add('visible'); });
+	window.addEventListener('mimic-leave-title', () => phoneHelper.classList.remove('visible'));
+	phoneStart.addEventListener('click', () => { if (typeof window.mimicQuickStart === 'function') window.mimicQuickStart(); });
 
 	let initializing = true;
 	let statusMode = '';
