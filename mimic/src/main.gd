@@ -5,6 +5,7 @@ const FAMILY_NAMES := {"devour":"捕食","blade":"刃物","hex":"呪術","poison
 const SLOTS := {"fang":"牙","organ1":"器官1","organ2":"器官2","organ3":"器官3","organ4":"器官4","shell":"甲殻","core":"核"}
 const ABILITY_TEXT := {"bite":"噛みつき", "tongue":"伸びる舌", "maw":"広範囲の捕食", "pull":"敵を引き寄せる", "hide":"防護", "hunger":"飢餓の一撃", "slash":"正面斬り", "orbit":"偏った回転刃", "pierce":"貫く斬撃", "counter":"方向反撃", "curse":"呪い", "mark":"呪印と破裂", "spray":"毒液噴霧", "pool":"毒の残留域", "summon":"小箱召喚", "heal":"再生", "armor":"防御", "bolt":"追尾魔弾", "nova":"魔力の範囲攻撃"}
 const UNIQUE_TEXT := {"devour_chain":"連続捕食で威力・対象数が増加", "extra_blades":"刃物装備の数に応じて回転刃が強化", "curse_spread":"呪印のある敵の死亡時に周囲へ呪印を伝播", "poison_burst":"毒霧に即時腐食ダメージが加わる", "extra_minions":"召喚体の追撃が増加", "wide_counter":"反撃の範囲が拡大", "double_nova":"魔力攻撃が範囲攻撃に変化", "cleave":"刃が進行方向の敵をまとめて斬る", "curse_chain":"呪印を周囲の敵にも刻む", "last_stand":"致命傷を一度だけ耐える"}
+const RARITY_COLORS := [Color("d8cbbd"),Color("8db8cf"),Color("c3a1d4"),Color("e8bb7a"),Color("e78a87")]
 const RARITY := ["コモン","レア","エピック","レジェンダリー","ミシック"]
 var battle: MimicCombat
 var profile
@@ -26,6 +27,7 @@ var benchmark_mode := false
 var web_quick_callback
 var mimic_texture: Texture2D
 var concept_texture: Texture2D
+var dungeon_texture: Texture2D
 var part_textures := {}
 var enemy_textures := {}
 var icon_textures := {}
@@ -41,17 +43,28 @@ func _ready() -> void:
   theme.default_font_size=18
   for mode in ["normal","hover","pressed","focus","disabled"]:
    var style:=StyleBoxFlat.new()
-   style.bg_color=Color("2c151d") if mode in ["hover","pressed"] else Color("171117")
-   style.border_color=Color("e8bc84") if mode in ["hover","focus"] else Color("71434c")
+   style.bg_color=Color("4b242b") if mode in ["hover","pressed"] else Color("20161c")
+   if mode=="disabled":style.bg_color=Color("161218")
+   style.border_color=Color("e8bb8e") if mode in ["hover","focus"] else Color("70505a")
    style.set_border_width_all(2 if mode=="focus" else 1)
-   style.set_content_margin_all(8)
+   style.set_content_margin_all(10)
+   style.shadow_size=2
+   style.shadow_color=Color(0,0,0,0.45)
+   style.shadow_offset=Vector2(0,2)
    theme.set_stylebox(mode,"Button",style)
   theme.set_color("font_color","Button",Color("f1e3d1"))
-  theme.set_color("font_disabled_color","Button",Color("75646a"))
+  theme.set_color("font_disabled_color","Button",Color("86777a"))
+  theme.set_color("font_hover_color","Button",Color("fff2d9"))
+  theme.set_font_size("font_size","Button",19)
  title_font = theme.default_font if theme and theme.default_font else ThemeDB.fallback_font
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  mimic_texture=load("res://assets/art/mimic_base.png")
  concept_texture=load("res://assets/mimic_concept.png")
+ dungeon_texture=load("res://assets/art/dungeon.png")
+ if dungeon_texture:
+  var scene_image:Image=dungeon_texture.get_image()
+  scene_image.resize(1280,720,Image.INTERPOLATE_NEAREST)
+  dungeon_texture=ImageTexture.create_from_image(scene_image)
  for stage_index in 2:
   var img:=Image.create_empty(1280,720,false,Image.FORMAT_RGBA8)
   img.fill(Color("08070b") if stage_index==0 else Color("10080e"))
@@ -132,9 +145,10 @@ func label(text: String, pos: Vector2, size: Vector2, font_size: int = 22) -> La
  ui.add_child(l)
  return l
 func heading(text: String) -> void:
- label(text,Vector2(40,20),Vector2(750,52),32)
- label("資金 %d    進化 %d" % [profile.data.gold,profile.data.points],Vector2(760,30),Vector2(350,40),20)
- button("戻る",Vector2(1100,22),Vector2(140,48),show_title)
+ label("MIMIC   /   THE HUNGRY RELIQUARY",Vector2(44,16),Vector2(630,22),13).modulate=Color("d0a183")
+ label(text,Vector2(40,38),Vector2(700,44),28)
+ label("資金  %d      進化  %d" % [profile.data.gold,profile.data.points],Vector2(760,43),Vector2(320,35),18)
+ button("拠点へ戻る",Vector2(1090,27),Vector2(150,48),show_title)
 func list_panel(pos: Vector2, size: Vector2) -> VBoxContainer:
  var scroll := ScrollContainer.new()
  scroll.position=pos
@@ -145,31 +159,49 @@ func list_panel(pos: Vector2, size: Vector2) -> VBoxContainer:
  box.custom_minimum_size=Vector2(size.x-24,0)
  scroll.add_child(box)
  return box
-func list_button(box: VBoxContainer, text: String, action: Callable, disabled: bool = false) -> void:
+func list_button(box: VBoxContainer, text: String, action: Callable, disabled: bool = false) -> Button:
  var b:=Button.new()
  b.text=text
  b.custom_minimum_size=Vector2(0,48)
  b.disabled=disabled
+ b.alignment=HORIZONTAL_ALIGNMENT_LEFT
+ b.add_theme_font_size_override("font_size",17)
  b.pressed.connect(action)
  box.add_child(b)
+ return b
+func style_item_button(b:Button,item:Dictionary) -> void:
+ var color:Color=RARITY_COLORS[clampi(int(item.rarity),0,4)]
+ b.add_theme_color_override("font_color",color)
+ if selected_uid==int(item.uid):
+  var highlight:StyleBoxFlat=theme.get_stylebox("normal","Button").duplicate()
+  highlight.bg_color=Color("382228")
+  highlight.border_color=color
+  highlight.border_width_left=3
+  b.add_theme_stylebox_override("normal",highlight)
 func show_title() -> void:
  state="title"; clear_ui()
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-title'))")
- label("M I M I C",Vector2(100,90),Vector2(500,100),64)
- label("宝箱は動かない。飢えだけが進化する。",Vector2(100,190),Vector2(570,45),23)
- label("資金 %d   進化ポイント %d" % [profile.data.gold,profile.data.points],Vector2(100,250),Vector2(500,40),20)
- button("ステージ選択",Vector2(100,320),Vector2(245,62),show_stages)
- button("装備",Vector2(360,320),Vector2(245,62),show_inventory)
- button("鍛冶・魔石",Vector2(100,400),Vector2(245,62),show_forge)
- button("永続強化",Vector2(360,400),Vector2(245,62),show_upgrades)
- button("収集庫",Vector2(100,480),Vector2(245,62),show_collection)
- button("設定",Vector2(360,480),Vector2(245,62),show_settings)
+ label("THE HUNGRY RELIQUARY   /   01",Vector2(100,92),Vector2(510,28),14).modulate=Color("dfb18b")
+ label("M I M I C",Vector2(96,118),Vector2(530,100),64)
+ label("宝箱は動かない。飢えだけが進化する。",Vector2(100,208),Vector2(560,42),21).modulate=Color("d9c3af")
+ label("資金  %d     /     進化  %d" % [profile.data.gold,profile.data.points],Vector2(100,258),Vector2(490,35),18).modulate=Color("c6a593")
+ var play:=button("狩場へ進む      →",Vector2(100,318),Vector2(505,64),show_stages)
+ play.add_theme_font_size_override("font_size",22)
+ button("装備と構築",Vector2(100,397),Vector2(245,55),show_inventory)
+ button("鍛冶・魔石",Vector2(360,397),Vector2(245,55),show_forge)
+ button("永続強化",Vector2(100,465),Vector2(245,55),show_upgrades)
+ button("収集庫",Vector2(360,465),Vector2(245,55),show_collection)
+ button("設定",Vector2(100,533),Vector2(505,48),show_settings)
+ label("自動攻撃  /  マウスまたはドラッグで狙う",Vector2(100,615),Vector2(520,30),14).modulate=Color("aa928b")
 func show_stages() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="stages";clear_ui();heading("狩場を選ぶ")
- label("300秒以内にボスを倒す。敗北しても戦利品は残る。",Vector2(60,100),Vector2(1100,40),20)
- button("第一層　忘れられた石室",Vector2(100,180),Vector2(1000,90),func():selected_stage=0;start_battle())
- button("第二層　血の礼拝堂" + ("（未解放）" if int(profile.data.unlocked_stage)<1 else ""),Vector2(100,300),Vector2(1000,90),func():selected_stage=1;start_battle(),int(profile.data.unlocked_stage)<1)
+ label("300秒以内にボスを倒す。敗北しても戦利品は残る。",Vector2(70,105),Vector2(1100,40),19).modulate=Color("d9c3af")
+ label("01   /   THE FORGOTTEN CHAMBER",Vector2(100,170),Vector2(900,28),14).modulate=Color("d0a183")
+ button("第一層　忘れられた石室       →",Vector2(100,208),Vector2(1000,74),func():selected_stage=0;start_battle())
+ label("02   /   THE CHAPEL OF BLOOD",Vector2(100,326),Vector2(900,28),14).modulate=Color("d0a183")
+ button("第二層　血の礼拝堂" + ("　　（未解放）" if int(profile.data.unlocked_stage)<1 else "       →"),Vector2(100,364),Vector2(1000,74),func():selected_stage=1;start_battle(),int(profile.data.unlocked_stage)<1)
+ label("第二層は第一層のボスを倒すと解放されます。",Vector2(100,475),Vector2(900,36),16).modulate=Color("bcaaa1")
 func start_battle() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  clear_ui()
@@ -195,14 +227,19 @@ func inventory_item_name(item: Dictionary) -> String:
 func show_inventory() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="inventory";clear_ui();heading("装備の比較・変更")
- var box:=list_panel(Vector2(40,95),Vector2(530,570))
+ if profile.get_item(selected_uid).is_empty() and not profile.data.inventory.is_empty():selected_uid=int(profile.data.inventory[0].uid)
+ label("所持品  /  INVENTORY",Vector2(56,93),Vector2(500,30),14).modulate=Color("d0a183")
+ var box:=list_panel(Vector2(40,125),Vector2(530,540))
  for item in profile.data.inventory:
   var uid: int=item.uid
-  list_button(box,inventory_item_name(item),func():selected_uid=uid;preview_slot="";show_inventory())
+  var entry:=list_button(box,inventory_item_name(item),func():selected_uid=uid;preview_slot="";show_inventory())
   var family:String=profile.get_template(item.template).family
-  box.get_child(box.get_child_count()-1).icon=icon_textures.get(family)
+  entry.icon=icon_textures.get(family)
+  style_item_button(entry,item)
  var selected: Dictionary=profile.get_item(selected_uid)
- label(item_description(selected),Vector2(600,90),Vector2(620,220),18)
+ label("選択した装備  /  SELECTED",Vector2(600,94),Vector2(600,25),14).modulate=Color("d0a183")
+ var detail:=label(item_description(selected),Vector2(600,128),Vector2(465,190),18)
+ if not selected.is_empty():detail.modulate=RARITY_COLORS[clampi(int(selected.rarity),0,4)]
  if selected.is_empty(): return
  var t: Dictionary=profile.get_template(selected.template)
  var compatible:Array=[]
@@ -259,11 +296,13 @@ func show_forge() -> void:
  var box:=list_panel(Vector2(40,95),Vector2(450,560))
  for item in profile.data.inventory:
   var uid:int=item.uid
-  list_button(box,inventory_item_name(item),func():selected_uid=uid;show_forge())
+  var entry:=list_button(box,inventory_item_name(item),func():selected_uid=uid;show_forge())
   var family:String=profile.get_template(item.template).family
-  box.get_child(box.get_child_count()-1).icon=icon_textures.get(family)
+  entry.icon=icon_textures.get(family)
+  style_item_button(entry,item)
  var item:Dictionary=profile.get_item(selected_uid)
- label(item_description(item),Vector2(525,90),Vector2(690,215),18)
+ var detail:=label(item_description(item),Vector2(525,105),Vector2(525,205),18)
+ if not item.is_empty():detail.modulate=RARITY_COLORS[clampi(int(item.rarity),0,4)]
  if not item.is_empty():
   button("強化 %d 資金" % (25*(int(item.level)+1)),Vector2(525,320),Vector2(250,50),func():profile.upgrade_item(selected_uid);profile.save_game();show_forge())
   button("再抽選 40 資金",Vector2(795,320),Vector2(250,50),func():profile.reroll_item(selected_uid);profile.save_game();show_forge(),not profile.data.upgrades.get("reroll",false))
@@ -353,25 +392,59 @@ func _gui_input(event: InputEvent) -> void:
  if event is InputEventScreenDrag:
   var v:Vector2=event.position-touch_origin
   if v.length()>2:battle.aim=v.normalized()
+func panel(rect:Rect2, accent:bool=false) -> void:
+ draw_rect(rect,Color(0.045,0.025,0.035,0.91))
+ draw_rect(rect,Color("87604f") if accent else Color("503b40"),false,1.0)
+ draw_line(rect.position+Vector2(12,3),rect.position+Vector2(minf(110,rect.size.x-12),3),Color("b88869"),2)
+ draw_rect(Rect2(rect.position+Vector2(5,5),Vector2(3,3)),Color("d2aa81"))
+ draw_rect(Rect2(rect.position+rect.size-Vector2(8,8),Vector2(3,3)),Color("d2aa81"))
 func _draw() -> void:
- draw_texture(backgrounds[selected_stage],Vector2.ZERO)
- if state=="title" and concept_texture:
-  draw_texture_rect(concept_texture,Rect2(680,80,530,530),false)
- if state!="battle":return
+ draw_rect(Rect2(0,0,1280,720),Color("08070b"))
+ if dungeon_texture:
+  var tint:=Color(0.76,0.74,0.78,1.0) if selected_stage==0 else Color(0.82,0.60,0.65,1.0)
+  draw_texture_rect(dungeon_texture,Rect2(0,0,1280,720),false,tint)
+ else:draw_texture(backgrounds[selected_stage],Vector2.ZERO)
+ if state!="battle":
+  draw_rect(Rect2(0,0,1280,720),Color(0.015,0.008,0.015,0.70))
+  draw_line(Vector2(40,84),Vector2(1240,84),Color("6b4d49"),1)
+  if state=="title":
+   panel(Rect2(68,70,568,566),true)
+   if concept_texture:draw_texture_rect(concept_texture,Rect2(680,80,530,530),false)
+  elif state in ["inventory","forge"]:
+   panel(Rect2(30,88,550 if state=="inventory" else 470,592))
+   panel(Rect2(588 if state=="inventory" else 513,88,650 if state=="inventory" else 725,592))
+   var selected:Dictionary=profile.get_item(selected_uid)
+   if not selected.is_empty():
+    var family:String=profile.get_template(selected.template).family
+    var item_icon:Texture2D=icon_textures.get(family)
+    var frame_color:Color=RARITY_COLORS[clampi(int(selected.rarity),0,4)]
+    draw_rect(Rect2(1091,119,100,100),frame_color,false,1)
+    if item_icon:draw_texture_rect(item_icon,Rect2(1093,121,96,96),false)
+  elif state in ["upgrades","collection","settings","stages"]:
+   panel(Rect2(30,88,1210,592))
+  elif state=="result":panel(Rect2(300,125,680,435),true)
+  return
  # Direction guide remains visible beneath the battle effects.
- if profile.data.get("settings",{}).get("aim_guide",true):draw_line(Battle.CENTER,battle.aim*105+Battle.CENTER,Color(0.94,0.55,0.40,0.65),2)
+ if profile.data.get("settings",{}).get("aim_guide",true):
+  draw_line(Battle.CENTER+battle.aim*64,battle.aim*120+Battle.CENTER,Color(0.94,0.55,0.40,0.65),2)
+  var sight:Vector2=Battle.CENTER+battle.aim*125
+  draw_circle(sight,3,Color("f0c392"))
  for e in battle.enemies:
   if e.active:
    var size:float=96.0 if e.boss else 64.0
    var tex:Texture2D=enemy_textures.get(e.kind)
-   if tex:draw_texture_rect(tex,Rect2(e.pos-Vector2(size,size)*0.5,Vector2(size,size)),false)
+   var bob:float=roundf(sin(battle.elapsed*7.0+float(e.index))*1.3)
+   if tex:draw_texture_rect(tex,Rect2(e.pos-Vector2(size,size)*0.5+Vector2(0,bob),Vector2(size,size)),false)
    if e.boss:
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90,6)),Color("301622"))
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90*maxf(0,e.hp/e.max_hp),6)),Color("e45b6e"))
  for p in battle.projectiles:
   if p.active:
    var c:Color=FAM_COLORS.get(p.family,Color("e85f56"))
-   draw_rect(Rect2(p.pos-Vector2(4,4),Vector2(8,8)),c)
+   var direction:Vector2=p.vel.normalized()
+   draw_line(p.pos-direction*13,p.pos,c.darkened(0.5),5)
+   draw_circle(p.pos,5,c)
+   draw_rect(Rect2(p.pos-Vector2(2,2),Vector2(4,4)),Color("fff0d6"))
  for spark in battle.sparks:
   if spark.active and not profile.data.get("settings",{}).get("reduce_fx",false):
    var spark_color:Color=FAM_COLORS.get(spark.family,Color.WHITE)
@@ -379,18 +452,40 @@ func _draw() -> void:
  for fx in battle.effects:
   if fx.active:
    var c:Color=FAM_COLORS.get(fx.family,Color.WHITE)
-   draw_line(fx.from,fx.to,c,4)
-   if fx.radius>0:draw_arc(fx.to,fx.radius,0,TAU,24,c,2)
+   var fade:float=clampf(fx.ttl/0.18,0.25,1.0)
+   c.a=fade
+   if fx.family=="devour":
+    draw_line(fx.from,fx.to,c.darkened(0.55),10)
+    draw_line(fx.from,fx.to,c,5)
+    draw_line(fx.from,fx.to,Color("ffd1b4"),1)
+    draw_arc(fx.to,12,0,TAU,12,c,2)
+   elif fx.family=="blade":
+    var direction:float=(fx.to-fx.from).angle()
+    var r:float=maxf(50.0,fx.radius)
+    draw_arc(fx.from,r,direction-0.9,direction+0.9,20,c.darkened(0.6),9)
+    draw_arc(fx.from,r,direction-0.9,direction+0.9,20,c,4)
+    draw_arc(fx.from,r-7,direction-0.7,direction+0.7,16,Color("fff1d7"),1)
+   elif fx.family in ["poison","defense","arcane","hex","summon"]:
+    if fx.from.distance_to(fx.to)>5:draw_line(fx.from,fx.to,c.darkened(0.45),2)
+    var r:float=maxf(14.0,fx.radius)
+    draw_arc(fx.to,r,0,TAU,28,c.darkened(0.55),5)
+    draw_arc(fx.to,r-3,0,TAU,28,c,2)
+    draw_arc(fx.to,r*0.62,0,TAU,20,c.darkened(0.35),1)
+   else:
+    draw_line(fx.from,fx.to,c,3)
+    if fx.radius>0:draw_arc(fx.to,fx.radius,0,TAU,24,c,2)
  var dominant:String=battle.dominant_family()
  var tint:Color=Color.WHITE
  if int(battle.family_counts.get(dominant,0))>=4: tint=FAM_COLORS.get(dominant,Color.WHITE).lerp(Color.WHITE,0.55)
- if mimic_texture:draw_texture_rect(mimic_texture,Rect2(Battle.CENTER-Vector2(64,64),Vector2(128,128)),false,tint)
+ var mimic_bob:Vector2=Vector2(0,roundf(sin(battle.elapsed*2.2)))
+ draw_circle(Battle.CENTER+Vector2(0,35),47,Color(0,0,0,0.50))
+ if mimic_texture:draw_texture_rect(mimic_texture,Rect2(Battle.CENTER-Vector2(64,64)+mimic_bob,Vector2(128,128)),false,tint)
  if int(battle.family_counts.get(dominant,0))>=4:
   for x in [-28,0,28]:
    draw_rect(Rect2(Battle.CENTER+Vector2(x-4,-45),Vector2(8,5)),FAM_COLORS.get(dominant,Color.WHITE))
  for fam in battle.family_counts:
   var tex:Texture2D=part_textures.get(fam)
-  if tex:draw_texture_rect(tex,Rect2(Battle.CENTER-Vector2(64,64),Vector2(128,128)),false)
+  if tex:draw_texture_rect(tex,Rect2(Battle.CENTER-Vector2(64,64)+mimic_bob,Vector2(128,128)),false)
  if battle.family_counts.get("blade",0)>0:
   var orbit_center:Vector2=Battle.CENTER+battle.aim*45
   var blade_count:int=mini(9,1+int(battle.family_counts.blade)+(int(battle.family_counts.blade) if "extra_blades" in battle.unique_ids else 0))
@@ -402,11 +497,14 @@ func _draw() -> void:
  for pop in battle.popups:
   if not pop.active:continue
   draw_string(title_font,pop.pos,str(pop.value),HORIZONTAL_ALIGNMENT_CENTER,60,16,Color("fff2d3"))
- draw_rect(Rect2(18,16,285,69),Color(0.04,0.02,0.04,0.92))
- draw_string(title_font,Vector2(30,40),"HP %d / %d" % [battle.hp,battle.max_hp],HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color.WHITE)
- draw_rect(Rect2(30,51,250,11),Color("542631"))
- draw_rect(Rect2(30,51,250*maxf(0,battle.hp/battle.max_hp),11),Color("dd465a"))
- draw_string(title_font,Vector2(970,40),"%03d / 300秒  撃破 %d" % [battle.elapsed,battle.kills],HORIZONTAL_ALIGNMENT_LEFT,-1,20,Color.WHITE)
+ panel(Rect2(18,16,310,72),true)
+ draw_string(title_font,Vector2(32,37),"MIMIC   /   VITALITY",HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("d1aa94"))
+ draw_string(title_font,Vector2(32,63),"HP  %d / %d" % [battle.hp,battle.max_hp],HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff0dc"))
+ draw_rect(Rect2(160,48,146,12),Color("3b202a"))
+ draw_rect(Rect2(160,48,146*maxf(0,battle.hp/battle.max_hp),12),Color("d34d5f"))
+ panel(Rect2(952,16,310,72),true)
+ draw_string(title_font,Vector2(970,37),"THE HUNT   /   %s" % ("I" if selected_stage==0 else "II"),HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("d1aa94"))
+ draw_string(title_font,Vector2(970,64),"%03d / 300秒     撃破 %d" % [battle.elapsed,battle.kills],HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff0dc"))
  if benchmark_mode:
   var active_count:int=0
   for e in battle.enemies:
