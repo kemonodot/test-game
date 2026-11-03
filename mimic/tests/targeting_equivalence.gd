@@ -1,16 +1,17 @@
 extends SceneTree
 const Combat=preload("res://src/combat.gd")
 func reference(b,origin:Vector2,direction:Vector2,max_range:float)->int:
- var best:=-1;var best_dist:=INF;var best_front:=-1;var front_dist:=INF
+ if max_range<0.0 or direction.length_squared()<0.0001:return -1
+ var best:=-1;var nearest:=INF
+ var aim:Vector2=direction.normalized()
  for i in b.enemies.size():
   var e:Dictionary=b.enemies[i]
   if not e.active:continue
   var offset:Vector2=e.pos-origin
-  var d:float=offset.length()
-  if d>max_range:continue
-  if d<best_dist:best=i;best_dist=d
-  if direction.dot(offset.normalized())>=0.5 and d<front_dist:best_front=i;front_dist=d
- return best_front if best_front>=0 else best
+  var forward:float=aim.dot(offset)
+  if forward>0 and forward<=max_range and absf(aim.cross(offset))<=32.0 and forward<nearest:
+   best=i;nearest=forward
+ return best
 func _initialize()->void:
  var b=Combat.new(90210);var r=RandomNumberGenerator.new();r.seed=101
  for i in 120:

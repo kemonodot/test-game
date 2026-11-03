@@ -430,7 +430,7 @@
  },
  {
   "id": "orb",
-  "name": "誘導魔弾の目",
+  "name": "照準魔弾の目",
   "slot": "organ",
   "family": "arcane",
   "power": 10,
@@ -452,7 +452,7 @@
  },
  {
   "id": "seeker",
-  "name": "追尾する眼",
+  "name": "狙い澄ます眼",
   "slot": "organ",
   "family": "arcane",
   "power": 8,

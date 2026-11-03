@@ -3,6 +3,20 @@ extends RefCounted
 const PATH := "user://mimic_save.json"
 const SLOTS := ["fang", "organ1", "organ2", "organ3", "organ4", "shell", "core"]
 const FAMILIES := ["devour","blade","hex","poison","summon","defense","arcane"]
+const UPGRADE_DEFS := [
+ {"recipient":"hunter","key":"awakening","name":"飢えの目覚め","desc":"狩人への供物で進化の祭壇を開く","family":"devour","requires":"","max":1,"cost":3},
+ {"recipient":"sister","key":"hp","name":"血肉の器","desc":"最大HPを増やす","family":"defense","requires":"awakening","max":10,"cost":8},
+ {"recipient":"hunter","key":"damage","name":"飢えた牙","desc":"基礎攻撃力を増やす","family":"devour","requires":"awakening","max":10,"cost":8},
+ {"recipient":"researcher","key":"organ_slot","name":"異形の器","desc":"器官の装備枠をひとつ増やす","family":"devour","requires":"damage","max":1,"cost":15},
+ {"recipient":"blacksmith","key":"reroll","name":"歪みの炉","desc":"鍛冶で追加効果を再抽選できる","family":"blade","requires":"damage","max":1,"cost":15},
+ {"recipient":"blacksmith","key":"fusion","name":"魔石の炉","desc":"魔石を三つ合わせて上位化する","family":"arcane","requires":"reroll","max":1,"cost":15},
+ {"recipient":"black_mage","key":"family_hex","name":"呪眼の覚醒","desc":"呪術系の装備が現れる","family":"hex","requires":"damage","max":1,"cost":15},
+ {"recipient":"researcher","key":"family_poison","name":"腐敗の覚醒","desc":"毒・腐食系の装備が現れる","family":"poison","requires":"family_hex","max":1,"cost":15},
+ {"recipient":"fortune_teller","key":"family_summon","name":"眷属の覚醒","desc":"召喚系の装備が現れる","family":"summon","requires":"hp","max":1,"cost":15},
+ {"recipient":"sister","key":"family_defense","name":"甲殻の覚醒","desc":"防御系の装備が現れる","family":"defense","requires":"family_summon","max":1,"cost":15},
+ {"recipient":"merchant","key":"starting_gold","name":"埋蔵された金貨","desc":"狩りの開始時に資金を得る","family":"blade","requires":"hp","max":10,"cost":15},
+ {"recipient":"thief","key":"drop","name":"収集の渇望","desc":"装備のドロップ率を高める","family":"arcane","requires":"starting_gold","max":10,"cost":15},
+]
 var templates: Array = []
 var affix_defs: Array = []
 var balance: Dictionary = {}
@@ -13,12 +27,15 @@ func _init(load_existing: bool = true) -> void:
  templates = JSON.parse_string(FileAccess.get_file_as_string("res://data/items.json"))
  affix_defs = JSON.parse_string(FileAccess.get_file_as_string("res://data/affixes.json"))
  balance = JSON.parse_string(FileAccess.get_file_as_string("res://data/balance.json"))
- data = {"version":1,"gold":0,"points":0,"inventory":[],"equipped":{},"gems":{},"upgrades":{},"unlocked_stage":0,"unlocked_families":["devour","blade","arcane"],"collection":[],"next_id":1}
+ data = {"version":1,"gold":0,"points":0,"inventory":[],"equipped":{},"gems":{},"upgrades":{"awakening":0},"unlocked_stage":0,"unlocked_families":["devour","blade","arcane"],"collection":[],"next_id":1}
  if load_existing and FileAccess.file_exists(PATH):
   var f := FileAccess.open(PATH, FileAccess.READ)
   if f:
    var parsed: Variant = JSON.parse_string(f.get_as_text())
-   if parsed is Dictionary and parsed.get("version") == 1: data = parsed
+   if parsed is Dictionary and parsed.get("version") == 1:
+    data = parsed
+    # Existing saves keep all their upgrades and have already opened the altar.
+    if not data.upgrades.has("awakening"): data.upgrades.awakening=1
  if data.inventory.is_empty():
   var starter := create_item("bite",0)
   data.inventory.append(starter)
@@ -129,12 +146,26 @@ func remove_gem(uid: int, index: int) -> bool:
  var gem:Dictionary=item.sockets.pop_at(index)
  add_gem(gem.family,int(gem.tier))
  return true
+func upgrade_definition(key: String) -> Dictionary:
+ for definition in UPGRADE_DEFS:
+  if definition.key==key:return definition
+ return {}
+func upgrade_cost(key: String) -> int:
+ var definition:=upgrade_definition(key)
+ if definition.is_empty():return -1
+ return int(definition.cost)*(int(data.upgrades.get(key,0))+1)
+func upgrade_unsealed(key: String) -> bool:
+ var definition:=upgrade_definition(key)
+ if definition.is_empty():return false
+ var requirement:String=definition.requires
+ return requirement.is_empty() or int(data.upgrades.get(requirement,0))>0 or int(data.upgrades.get(key,0))>0
 func upgrade(key: String) -> bool:
- var level := int(data.upgrades.get(key,0))
- var one_time: bool = key in ["organ_slot","reroll","fusion"] or key.begins_with("family_")
- if (one_time and level>0) or (not one_time and level>=10): return false
- var cost: int = (8 if key in ["hp","damage"] else 15) * (level+1)
- if int(data.points)<cost: return false
+ var definition:=upgrade_definition(key)
+ if definition.is_empty() or not upgrade_unsealed(key):return false
+ var level:=int(data.upgrades.get(key,0))
+ if level>=int(definition.max):return false
+ var cost:=upgrade_cost(key)
+ if int(data.points)<cost:return false
  data.points -= cost
  data.upgrades[key] = level+1
  if key.begins_with("family_"):

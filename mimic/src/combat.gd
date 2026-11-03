@@ -5,6 +5,11 @@ const MAX_ENEMIES := 120
 const MAX_PROJECTILES := 256
 const MAX_EFFECTS := 64
 const RUN_SECONDS := 300.0
+const AIM_HALF_WIDTH := 32.0
+const BOMB_COOLDOWN := 20.0
+const BOMB_DAMAGE := 85.0
+const BOMB_RADIUS := 135.0
+const BOMB_GOLD_MULTIPLIER := 3
 const STAGE_ROSTERS := [["swordsman","shield","archer","thief","fanatic"],["shield","archer","mage","priest","thief","fanatic","lancer"]]
 const FAMILIES := ["devour","blade","hex","poison","summon","defense","arcane"]
 var rng := RandomNumberGenerator.new()
@@ -29,6 +34,7 @@ var damage := 15.0
 var attack_interval := 0.6
 var attack_range := 330.0
 var shots := 0
+var bomb_remaining := 0.0
 var damage_events := 0
 var boss_spawned := false
 var loot_events: Array = []
@@ -59,7 +65,7 @@ func _init(seed_value: int = 1) -> void:
   effects.append({"active": false, "from": Vector2.ZERO, "to": Vector2.ZERO, "ttl": 0.0, "family": "", "radius": 0.0})
  for i in 12:minions.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"timer":0.0,"power":0.0,"side":0.0})
  for i in 192:sparks.append({"active":false,"pos":Vector2.ZERO,"vel":Vector2.ZERO,"ttl":0.0,"family":""})
- for i in MAX_ENEMIES:loot_events.append({"active":false,"kind":"","boss":false,"position":Vector2.ZERO})
+ for i in MAX_ENEMIES:loot_events.append({"active":false,"kind":"","boss":false,"position":Vector2.ZERO,"bomb":false})
  for i in 16:popups.append({"active":false,"pos":Vector2.ZERO,"value":0,"ttl":0.0,"enemy_index":-1,"generation":-1})
  configure([])
 
@@ -141,48 +147,31 @@ func sync_target_cache() -> void:
   var e:Dictionary=enemies[i]
   target_active[i]=1 if e.active else 0
   if e.active:target_positions[i]=e.pos
-func target_index(origin: Vector2, direction: Vector2, max_range: float) -> int:
- if max_range<0.0:return -1
- if target_cache_active:return target_index_cached(origin,direction,max_range)
- return target_index_linear(origin,direction,max_range)
-func target_index_cached(origin:Vector2,direction:Vector2,max_range:float)->int:
- var best := -1
- var best_dist_sq := INF
- var best_front := -1
- var front_dist_sq := INF
- var range_sq:float=max_range*max_range
+func target_index(origin:Vector2,direction:Vector2,max_range:float)->int:
+ if max_range<0.0 or direction.length_squared()<0.0001:return -1
+ var aim_dir:Vector2=direction.normalized()
+ var best: int=-1
+ var best_forward:float=INF
  for i in enemies.size():
-  if target_active[i]==0:continue
-  var offset:Vector2=target_positions[i]-origin
-  var d_sq:float=offset.length_squared()
-  if d_sq>range_sq:continue
-  if d_sq<best_dist_sq:best=i;best_dist_sq=d_sq
-  var forward:float=direction.dot(offset)
-  if forward>0.0 and forward*forward>=0.25*d_sq and d_sq<front_dist_sq:
-   best_front=i;front_dist_sq=d_sq
- return best_front if best_front>=0 else best
-func target_index_linear(origin:Vector2,direction:Vector2,max_range:float)->int:
- var best := -1
- var best_dist_sq := INF
- var best_front := -1
- var front_dist_sq := INF
- var range_sq:float=max_range*max_range
- for i in enemies.size():
-  var e:Dictionary=enemies[i]
-  if not e.active:continue
-  var offset:Vector2=e.pos-origin
-  var d_sq:float=offset.length_squared()
-  if d_sq>range_sq:continue
-  if d_sq<best_dist_sq:best=i;best_dist_sq=d_sq
-  var forward:float=direction.dot(offset)
-  if forward>0.0 and forward*forward>=0.25*d_sq and d_sq<front_dist_sq:
-   best_front=i;front_dist_sq=d_sq
- return best_front if best_front>=0 else best
+  var pos:Vector2
+  if target_cache_active:
+   if target_active[i]==0:continue
+   pos=target_positions[i]
+  else:
+   var e:Dictionary=enemies[i]
+   if not e.active:continue
+   pos=e.pos
+  var offset:Vector2=pos-origin
+  var forward:float=aim_dir.dot(offset)
+  var lateral:float=absf(aim_dir.cross(offset))
+  if forward>0.0 and forward<=max_range and lateral<=AIM_HALF_WIDTH and forward<best_forward:
+   best=i;best_forward=forward
+ return best
 
-func effect(from: Vector2, to: Vector2, family: String, radius: float = 0.0) -> void:
+func effect(from: Vector2, to: Vector2, family: String, radius: float = 0.0, duration: float = 0.18) -> void:
  for fx in effects:
   if not fx.active:
-   fx.merge({"active":true,"from":from,"to":to,"ttl":0.18,"family":family,"radius":radius},true)
+   fx.merge({"active":true,"from":from,"to":to,"ttl":duration,"family":family,"radius":radius},true)
    return
 func scatter(origin: Vector2, family: String, count: int = 6) -> void:
  var remaining:int=count
@@ -197,7 +186,7 @@ func projectile(origin: Vector2, direction: Vector2, amount: float, family: Stri
   if not p.active:
    p.merge({"active":true,"pos":origin,"vel":direction.normalized() * (210.0 if enemy else 420.0),"ttl":2.0,"damage":amount,"enemy":enemy,"family":family,"pierce":int(stats.pierce)},true)
    return
-func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: String = "devour") -> void:
+func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: String = "devour", bomb_kill: bool = false) -> void:
  if index < 0 or index >= enemies.size() or not enemies[index].active: return
  var e: Dictionary = enemies[index]
  var value: float = amount * float(stats.damage) * float(stats.get(family,1.0))
@@ -231,13 +220,13 @@ func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: 
   pop.value+=int(value)
  hp = minf(max_hp, hp + value * stats.lifesteal)
  if e.hp <= 0:
-  kill_enemy(e)
+  kill_enemy(e,bomb_kill)
   hp = minf(max_hp, hp + stats.heal_kill)
   if "curse_spread" in unique_ids and e.mark>0:
    for other in enemies:
     if other.active and other.pos.distance_to(e.pos)<100: other.mark+=e.mark
 
-func kill_enemy(e: Dictionary) -> void:
+func kill_enemy(e: Dictionary, bomb_kill: bool = false) -> void:
  if not e.active:return
  e.active=false
  if target_cache_active:target_active[int(e.index)]=0
@@ -249,9 +238,21 @@ func kill_enemy(e: Dictionary) -> void:
  kills+=1
  for event in loot_events:
   if not event.active:
-   event.active=true;event.kind=e.kind;event.boss=e.boss;event.position=e.pos
+   event.active=true;event.kind=e.kind;event.boss=e.boss;event.position=e.pos;event.bomb=bomb_kill
    break
  if e.boss: won=true;ended=true
+func use_bomb() -> bool:
+ if ended or bomb_remaining>0.0:return false
+ bomb_remaining=BOMB_COOLDOWN
+ var center:Vector2=CENTER+aim.normalized()*160.0
+ effect(center,center,"bomb",BOMB_RADIUS,0.55)
+ scatter(center,"bomb",24)
+ for i in enemies.size():
+  var enemy:Dictionary=enemies[i]
+  if enemy.active and enemy.pos.distance_squared_to(center)<=BOMB_RADIUS*BOMB_RADIUS:
+   var impulse:Vector2=(enemy.pos-center).normalized()*45.0
+   hit_enemy(i,BOMB_DAMAGE,impulse,"bomb",true)
+ return true
 func hurt_player(amount: float) -> void:
  if debug_invulnerable:return
  hp -= amount*(1.0-clampf(stats.reduction,0.0,0.75))
@@ -269,23 +270,24 @@ func cast(a: Dictionary) -> bool:
   effect(CENTER,CENTER,"defense",42)
   return true
  if ability in ["hide","armor"]: return false
- if index < 0: return false
- var e: Dictionary = enemies[index]
+ var e:Dictionary=enemies[index] if index>=0 else {}
  var power: float = float(a.power)
  if family=="blade" and "extra_blades" in unique_ids:power*=1.0+family_counts.get("blade",0)*0.2
  if family=="blade" and family_counts.get("devour",0)>0:power*=1.15
  if family=="devour" and "devour_chain" in unique_ids:
-  devour_chain=mini(devour_chain+1,5)
+  if index>=0:devour_chain=mini(devour_chain+1,5)
+  else:devour_chain=0
   power*=1.0+devour_chain*0.12
  if family == "devour":
-  effect(CENTER,e.pos,"devour")
-  hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
-  if ability=="pull":
+  var tongue_length:float=reach if index<0 else minf(reach,e.pos.distance_to(CENTER))
+  effect(CENTER,CENTER+aim*tongue_length,"devour")
+  if index>=0:hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
+  if index>=0 and ability=="pull":
    for other in enemies:
     if other.active and other.pos.distance_to(e.pos)<100:
      other.pos+=(CENTER-other.pos).normalized()*35
      if target_cache_active:target_positions[int(other.index)]=other.pos
-  if ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2):
+  if index>=0 and (ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2)):
    for i in enemies.size():
     if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65: hit_enemy(i,power*0.5,Vector2.ZERO,"devour")
  elif family == "blade":
@@ -293,28 +295,31 @@ func cast(a: Dictionary) -> bool:
   effect(CENTER,blade_center,"blade",90 if ability=="orbit" else 60)
   for i in enemies.size():
    var other: Dictionary = enemies[i]
-   if other.active and ((ability=="orbit" and other.pos.distance_to(blade_center)<105) or (ability!="orbit" and other.pos.distance_to(CENTER)<reach and aim.dot((other.pos-CENTER).normalized())>0.4)):
+   if other.active and ((ability=="orbit" and other.pos.distance_to(blade_center)<105) or (ability!="orbit" and aim.dot(other.pos-CENTER)>0 and aim.dot(other.pos-CENTER)<=reach and absf(aim.cross(other.pos-CENTER))<=AIM_HALF_WIDTH)):
     hit_enemy(i,power,(other.pos-CENTER).normalized()*9,"blade")
     if ability == "pierce": continue
     if ability != "orbit" and family_counts.get("blade",0)<4 and "cleave" not in unique_ids and "extra_blades" not in unique_ids: break
  elif family == "hex":
-  e.mark += 1
-  if ability=="mark" and e.mark>=3:
-   power*=2.0
-   e.mark=1
-  if family_counts.get("hex",0)>=4 or "curse_chain" in unique_ids:
-   for other in enemies:
-    if other.active and other!=e and other.pos.distance_to(e.pos)<90: other.mark+=1
-  effect(CENTER,e.pos,"hex",18)
-  hit_enemy(index,power,Vector2.ZERO,"hex")
-  if stats.chain > 0:
-   var chains:int=0
-   for i in enemies.size():
-    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<100:
-     effect(e.pos,enemies[i].pos,"hex")
-     hit_enemy(i,power*0.5,Vector2.ZERO,"hex")
-     chains+=1
-     if chains>=int(stats.chain):break
+  if index<0:
+   effect(CENTER,CENTER+aim*reach,"hex",18)
+  else:
+   e.mark += 1
+   if ability=="mark" and e.mark>=3:
+    power*=2.0
+    e.mark=1
+   if family_counts.get("hex",0)>=4 or "curse_chain" in unique_ids:
+    for other in enemies:
+     if other.active and other!=e and other.pos.distance_to(e.pos)<90: other.mark+=1
+   effect(CENTER,CENTER+aim*minf(reach,e.pos.distance_to(CENTER)),"hex",18)
+   hit_enemy(index,power,Vector2.ZERO,"hex")
+   if stats.chain > 0:
+    var chains:int=0
+    for i in enemies.size():
+     if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<100:
+      effect(e.pos,enemies[i].pos,"hex")
+      hit_enemy(i,power*0.5,Vector2.ZERO,"hex")
+      chains+=1
+      if chains>=int(stats.chain):break
  elif family == "poison":
   var center: Vector2 = CENTER + aim * minf(160,reach*0.6)
   effect(CENTER,center,"poison",65)
@@ -353,9 +358,9 @@ func cast(a: Dictionary) -> bool:
    for i in enemies.size():
     if enemies[i].active and enemies[i].pos.distance_to(center)<80*float(stats.area): hit_enemy(i,power*(1.5 if "double_nova" in unique_ids else 1.0),Vector2.ZERO,"arcane")
   else:
-   projectile(CENTER,(e.pos-CENTER).normalized(),power,"arcane")
-   for extra in mini(4,int(stats.projectiles)): projectile(CENTER,(e.pos-CENTER).normalized().rotated(0.1*(extra+1)),power*0.7,"arcane")
-   if family_counts.get("arcane",0)>=4: projectile(CENTER,(e.pos-CENTER).normalized().rotated(0.16),power*0.8,"arcane")
+   projectile(CENTER,aim,power,"arcane")
+   for extra in mini(4,int(stats.projectiles)): projectile(CENTER,aim.rotated(0.1*(extra+1)),power*0.7,"arcane")
+   if family_counts.get("arcane",0)>=4: projectile(CENTER,aim.rotated(0.16),power*0.8,"arcane")
  if family_counts.get(family,0)>=4: effect(CENTER,CENTER+aim*80,family,35)
  shots += 1
  return true
@@ -364,6 +369,7 @@ func update(delta: float) -> void:
  if ended: return
  if hitstop>0: hitstop-=delta;return
  elapsed += delta
+ bomb_remaining=maxf(0.0,bomb_remaining-delta)
  if elapsed>=240 and not boss_spawned:
   boss_spawned=spawn_enemy("hero" if stage==0 else "captain")
   if not boss_spawned:
@@ -453,16 +459,11 @@ func update(delta: float) -> void:
   minion.pos=CENTER+aim*75+aim.orthogonal()*float(minion.side)
   if minion.ttl<=0:minion.active=false;continue
   if minion.timer<=0:
-   var target:int=target_index(minion.pos,aim,350)
-   if target>=0:
-    projectile(minion.pos,(enemies[target].pos-minion.pos).normalized(),minion.power,"summon")
-    if family_counts.get("arcane",0)>0:projectile(minion.pos,(enemies[target].pos-minion.pos).normalized().rotated(0.12),minion.power*0.5,"arcane")
-    minion.timer=1.0
+   projectile(minion.pos,aim,minion.power,"summon")
+   if family_counts.get("arcane",0)>0:projectile(minion.pos,aim.rotated(0.12),minion.power*0.5,"arcane")
+   minion.timer=1.0
  for p in projectiles:
   if not p.active: continue
-  if not p.enemy and p.family=="arcane":
-   var target := target_index(p.pos,aim,400.0)
-   if target>=0:p.vel=p.vel.lerp((enemies[target].pos-p.pos).normalized()*420.0,minf(1.0,delta*2.0))
   p.pos += p.vel * delta
   p.ttl -= delta
   if p.ttl<=0: p.active=false; continue

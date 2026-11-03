@@ -4,6 +4,8 @@ const Combat = preload("res://src/combat.gd")
 func _initialize() -> void:
  var p = Profile.new(false)
  p.data.gold=1000; p.data.points=100
+ assert(not p.upgrade("damage"))
+ assert(p.upgrade("awakening") and p.upgrade("damage"))
  var item: Dictionary = p.create_item("bite",3)
  item.socket_count=2
  p.data.inventory.append(item)

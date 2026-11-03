@@ -2,8 +2,9 @@ extends Control
 const Battle = preload("res://src/combat.gd")
 const Profile = preload("res://src/profile.gd")
 const FAMILY_NAMES := {"devour":"捕食","blade":"刃物","hex":"呪術","poison":"毒・腐食","summon":"召喚","defense":"防御","arcane":"魔力"}
+const COMPANIONS := {"black_mage":"黒魔法使い", "thief":"盗賊", "sister":"シスター", "blacksmith":"鍛冶屋", "merchant":"商人", "researcher":"研究者", "hunter":"狩人", "fortune_teller":"占い師"}
 const SLOTS := {"fang":"牙","organ1":"器官1","organ2":"器官2","organ3":"器官3","organ4":"器官4","shell":"甲殻","core":"核"}
-const ABILITY_TEXT := {"bite":"噛みつき", "tongue":"伸びる舌", "maw":"広範囲の捕食", "pull":"敵を引き寄せる", "hide":"防護", "hunger":"飢餓の一撃", "slash":"正面斬り", "orbit":"偏った回転刃", "pierce":"貫く斬撃", "counter":"方向反撃", "curse":"呪い", "mark":"呪印と破裂", "spray":"毒液噴霧", "pool":"毒の残留域", "summon":"小箱召喚", "heal":"再生", "armor":"防御", "bolt":"追尾魔弾", "nova":"魔力の範囲攻撃"}
+const ABILITY_TEXT := {"bite":"噛みつき", "tongue":"伸びる舌", "maw":"広範囲の捕食", "pull":"敵を引き寄せる", "hide":"防護", "hunger":"飢餓の一撃", "slash":"正面斬り", "orbit":"偏った回転刃", "pierce":"貫く斬撃", "counter":"方向反撃", "curse":"呪い", "mark":"呪印と破裂", "spray":"毒液噴霧", "pool":"毒の残留域", "summon":"小箱召喚", "heal":"再生", "armor":"防御", "bolt":"照準魔弾", "nova":"魔力の範囲攻撃"}
 const UNIQUE_TEXT := {"devour_chain":"連続捕食で威力・対象数が増加", "extra_blades":"刃物装備の数に応じて回転刃が強化", "curse_spread":"呪印のある敵の死亡時に周囲へ呪印を伝播", "poison_burst":"毒霧に即時腐食ダメージが加わる", "extra_minions":"召喚体の追撃が増加", "wide_counter":"反撃の範囲が拡大", "double_nova":"魔力攻撃が範囲攻撃に変化", "cleave":"刃が進行方向の敵をまとめて斬る", "curse_chain":"呪印を周囲の敵にも刻む", "last_stand":"致命傷を一度だけ耐える"}
 const RARITY_COLORS := [Color("d8cbbd"),Color("8db8cf"),Color("c3a1d4"),Color("e8bb7a"),Color("e78a87")]
 const RARITY := ["コモン","レア","エピック","レジェンダリー","ミシック"]
@@ -28,11 +29,14 @@ var web_quick_callback
 var mimic_texture: Texture2D
 var concept_texture: Texture2D
 var dungeon_texture: Texture2D
+var hub_texture: Texture2D
+var bomb_button: Button
 var part_textures := {}
 var enemy_textures := {}
 var icon_textures := {}
+var companion_textures := {}
 var backgrounds := []
-const FAM_COLORS := {"devour":Color("e75c72"),"blade":Color("dbccb0"),"hex":Color("d483da"),"poison":Color("8dc26e"),"summon":Color("e6ad68"),"defense":Color("d5cb98"),"arcane":Color("8eb5ef"),"enemy":Color("e85656")}
+const FAM_COLORS := {"devour":Color("e75c72"),"blade":Color("dbccb0"),"hex":Color("d483da"),"poison":Color("8dc26e"),"summon":Color("e6ad68"),"defense":Color("d5cb98"),"arcane":Color("8eb5ef"),"enemy":Color("e85656"),"bomb":Color("f3a44e")}
 
 func _ready() -> void:
  mouse_filter = Control.MOUSE_FILTER_STOP
@@ -61,6 +65,7 @@ func _ready() -> void:
  mimic_texture=load("res://assets/art/mimic_base.png")
  concept_texture=load("res://assets/mimic_concept.png")
  dungeon_texture=load("res://assets/art/dungeon.png")
+ hub_texture=load("res://assets/art/hub.png")
  if dungeon_texture:
   var scene_image:Image=dungeon_texture.get_image()
   scene_image.resize(1280,720,Image.INTERPOLATE_NEAREST)
@@ -78,6 +83,9 @@ func _ready() -> void:
  for fam in Profile.FAMILIES:
   part_textures[fam]=load("res://assets/art/parts/%s.png" % fam)
   icon_textures[fam]=load("res://assets/art/icons/%s.png" % fam)
+ for role in COMPANIONS:
+  var portrait_path:String="res://assets/art/companions/%s.png" % role
+  if ResourceLoader.exists(portrait_path):companion_textures[role]=load(portrait_path)
  for kind in ["swordsman","shield","archer","mage","priest","thief","fanatic","lancer","hero","captain"]:
   enemy_textures[kind]=load("res://assets/art/enemies/%s.png" % kind)
  profile = Profile.new()
@@ -193,7 +201,7 @@ func show_title() -> void:
  button("永続強化",Vector2(100,465),Vector2(245,55),show_upgrades)
  button("収集庫",Vector2(360,465),Vector2(245,55),show_collection)
  button("設定",Vector2(100,533),Vector2(505,48),show_settings)
- label("自動攻撃  /  マウスまたはドラッグで狙う",Vector2(100,615),Vector2(520,30),14).modulate=Color("aa928b")
+ label("照準：マウス / ドラッグ　　ボム：SPACE",Vector2(100,615),Vector2(520,30),14).modulate=Color("aa928b")
 func show_stages() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="stages";clear_ui();heading("狩場を選ぶ")
@@ -210,6 +218,8 @@ func start_battle() -> void:
  battle.stage=selected_stage
  battle.configure(profile.equipped_templates(),profile.data.upgrades)
  state="battle";run_gold=0;reward_given=false;previous_shots=0
+ bomb_button=button("破滅の供物   READY\nSPACE / 撃破資金 ×3",Vector2(990,610),Vector2(270,90),try_bomb)
+ bomb_button.add_theme_font_size_override("font_size",20)
  var starting:int=int(profile.data.upgrades.get("starting_gold",0))*10
  profile.data.gold+=starting
  run_gold+=starting
@@ -319,13 +329,58 @@ func show_forge() -> void:
   list_button(gems,"%s T%d ×3 → T%d　合成" % [FAMILY_NAMES.get(fam,fam),tier,tier+1],func():profile.fuse_gem(fam,tier);profile.save_game();show_forge(),qty<3 or tier>=5 or not profile.data.upgrades.get("fusion",false))
 func show_upgrades() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
- state="upgrades";clear_ui();heading("永続強化")
- var box:=list_panel(Vector2(60,95),Vector2(1120,570))
- var upgrades := [["hp","最大HP"],["damage","攻撃力"],["organ_slot","器官枠 +1"],["reroll","再抽選を解放"],["fusion","魔石合成を解放"],["starting_gold","開始資金"],["drop","ドロップ率"],["family_hex","呪術を解放"],["family_poison","毒・腐食を解放"],["family_summon","召喚を解放"],["family_defense","防御を解放"]]
- for pair in upgrades:
-  var key:String=pair[0];var level:int=int(profile.data.upgrades.get(key,0))
-  var cost:int=(8 if key in ["hp","damage"] else 15)*(level+1)
-  list_button(box,"%s   Lv%d   /   %d 進化ポイント" % [pair[1],level,cost],func():profile.upgrade(key);profile.save_game();show_upgrades())
+ state="upgrades";clear_ui();heading("貢ぎ物の祭壇")
+ label("OFFERINGS   /   進化ポイントを彼女たちに捧げ、封印を解く",Vector2(65,96),Vector2(1050,30),16).modulate=Color("d6ab8b")
+ var scroll:=ScrollContainer.new()
+ scroll.position=Vector2(56,132);scroll.size=Vector2(1168,525)
+ scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+ ui.add_child(scroll)
+ var grid:=GridContainer.new();grid.columns=3
+ grid.add_theme_constant_override("h_separation",12);grid.add_theme_constant_override("v_separation",12)
+ scroll.add_child(grid)
+ for definition in Profile.UPGRADE_DEFS:
+  var key:String=definition.key
+  var level:int=int(profile.data.upgrades.get(key,0))
+  var unsealed:bool=profile.upgrade_unsealed(key)
+  var complete:bool=level>=int(definition.max)
+  var requirement:Dictionary=profile.upgrade_definition(definition.requires)
+  var status:String="封印  /  %s が必要" % requirement.get("name", "") if not unsealed else ("解放済み" if complete else ("無償で封印を解く" if profile.upgrade_cost(key)==0 else "供物 %d 進化ポイント" % profile.upgrade_cost(key)))
+  var entry:=Button.new()
+  entry.text="%sに捧ぐ  /  %s\n%s\n%s" % [COMPANIONS[definition.recipient],definition.name,definition.desc,status]
+  entry.icon=companion_textures.get(definition.recipient,icon_textures.get(definition.family))
+  entry.expand_icon=true
+  entry.custom_minimum_size=Vector2(365,112)
+  entry.alignment=HORIZONTAL_ALIGNMENT_LEFT
+  entry.add_theme_font_size_override("font_size",15)
+  entry.add_theme_color_override("font_disabled_color",Color("c1aba3") if unsealed else Color("a08c89"))
+  entry.disabled=not unsealed or complete or int(profile.data.points)<profile.upgrade_cost(key)
+  var card:StyleBoxFlat=theme.get_stylebox("normal","Button").duplicate()
+  card.bg_color=Color("281719") if unsealed else Color("141116")
+  card.border_color=Color("ad7855") if unsealed else Color("49353a")
+  card.border_width_left=3 if unsealed else 1
+  entry.add_theme_stylebox_override("normal",card)
+  entry.add_theme_stylebox_override("disabled",card)
+  entry.pressed.connect(func():purchase_upgrade(key))
+  grid.add_child(entry)
+func purchase_upgrade(key: String) -> void:
+ var definition:Dictionary=profile.upgrade_definition(key)
+ if not profile.upgrade(key):return
+ profile.save_game()
+ show_upgrades()
+ show_unlock_celebration(definition)
+func show_unlock_celebration(definition: Dictionary) -> void:
+ var veil:=ColorRect.new()
+ veil.color=Color(0.01,0.005,0.01,0.84);veil.size=Vector2(1280,720)
+ veil.mouse_filter=Control.MOUSE_FILTER_STOP;ui.add_child(veil)
+ var card:=Panel.new();card.position=Vector2(360,150);card.size=Vector2(560,410)
+ var style:=StyleBoxFlat.new();style.bg_color=Color("201116");style.border_color=Color("d4a16c");style.set_border_width_all(2);style.shadow_size=20;style.shadow_color=Color(0,0,0,0.8)
+ card.add_theme_stylebox_override("panel",style);veil.add_child(card)
+ var icon:=TextureRect.new();icon.texture=companion_textures.get(definition.recipient,icon_textures.get(definition.family));icon.position=Vector2(232,42);icon.size=Vector2(96,96);icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;card.add_child(icon)
+ var caption:=Label.new();caption.text="✦   OFFERING ACCEPTED   ✦\n"+str(COMPANIONS[definition.recipient])+"への供物\n"+str(definition.name)+"\n"+str(definition.desc);caption.position=Vector2(30,151);caption.size=Vector2(500,150);caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;caption.add_theme_font_size_override("font_size",22);card.add_child(caption)
+ var close:=Button.new();close.text="進化を刻む";close.position=Vector2(150,320);close.size=Vector2(260,55);close.pressed.connect(veil.queue_free);card.add_child(close)
+ if not profile.data.get("settings",{}).get("reduce_fx",false):
+  card.pivot_offset=card.size/2;card.scale=Vector2(0.88,0.88);card.modulate.a=0.0
+  var tween:=create_tween().set_parallel();tween.tween_property(card,"modulate:a",1.0,0.3);tween.tween_property(card,"scale",Vector2.ONE,0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 func show_collection() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="collection";clear_ui();heading("伝説の収集庫")
@@ -339,7 +394,7 @@ func show_collection() -> void:
 func show_settings() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="settings";clear_ui();heading("設定")
- label("照準：マウスの位置 / タッチしてドラッグ\n戦闘中の攻撃は自動。画面比率は16:9です。\nセーブはこのブラウザのローカル領域に保存します。",Vector2(80,120),Vector2(1080,180),22)
+ label("照準：マウスの位置 / タッチしてドラッグ\n照準方向へ自動発射。SPACE / ボムボタンで破滅の供物。\nボムは20秒ごと、爆破撃破の資金は3倍。\nセーブはこのブラウザのローカル領域に保存します。",Vector2(80,120),Vector2(1080,180),22)
  var settings:Dictionary=profile.data.get("settings",{})
  var guide:bool=settings.get("aim_guide",true)
  var reduced:bool=settings.get("reduce_fx",false)
@@ -352,6 +407,9 @@ func _process(delta: float) -> void:
  if state=="battle":
   if benchmark_mode: battle.hp=battle.max_hp
   battle.update(minf(delta,0.05))
+  if is_instance_valid(bomb_button):
+   bomb_button.disabled=battle.bomb_remaining>0 or battle.ended
+   bomb_button.text=("破滅の供物   %.1f秒\n撃破資金 ×3" % battle.bomb_remaining) if battle.bomb_remaining>0 else "破滅の供物   READY\nSPACE / 撃破資金 ×3"
   if battle.shots>previous_shots:
    if profile.data.get("settings",{}).get("sound",true):shot_sound.play()
    previous_shots=battle.shots
@@ -361,7 +419,8 @@ func _process(delta: float) -> void:
    needs_save=true
    event.active=false
    if profile.data.get("settings",{}).get("sound",true):kill_sound.play()
-   var gold:int=5+selected_stage*3
+   var gold:int=(5+selected_stage*3)*(Battle.BOMB_GOLD_MULTIPLIER if event.get("bomb",false) else 1)
+   if event.get("bomb",false):toast="爆破撃破！  資金 ×3";toast_t=2
    profile.data.gold+=gold;run_gold+=gold
    if event.boss or battle.rng.randf()<float(profile.balance.drop_chance[selected_stage])+float(profile.data.upgrades.get("drop",0))*0.02+float(battle.stats.drop):
     var item:Dictionary=profile.drop(selected_stage,event.boss)
@@ -385,6 +444,11 @@ func show_result() -> void:
  button("もう一度",Vector2(320,380),Vector2(300,60),start_battle)
  button("装備を確認",Vector2(650,380),Vector2(300,60),show_inventory)
  button("拠点へ",Vector2(485,460),Vector2(300,60),show_title)
+func try_bomb() -> void:
+ if state=="battle" and battle.use_bomb():queue_redraw()
+func _input(event: InputEvent) -> void:
+ if state=="battle" and event is InputEventKey and event.keycode==KEY_SPACE and event.pressed and not event.echo:
+  try_bomb();get_viewport().set_input_as_handled()
 func _gui_input(event: InputEvent) -> void:
  if state!="battle":return
  if event is InputEventMouseMotion:
@@ -403,16 +467,18 @@ func panel(rect:Rect2, accent:bool=false) -> void:
  draw_rect(Rect2(rect.position+rect.size-Vector2(8,8),Vector2(3,3)),Color("d2aa81"))
 func _draw() -> void:
  draw_rect(Rect2(0,0,1280,720),Color("08070b"))
- if dungeon_texture:
+ if state=="title" and hub_texture:
+  draw_texture_rect(hub_texture,Rect2(0,0,1280,720),false)
+ elif dungeon_texture:
   var tint:=Color(0.76,0.74,0.78,1.0) if selected_stage==0 else Color(0.82,0.60,0.65,1.0)
   draw_texture_rect(dungeon_texture,Rect2(0,0,1280,720),false,tint)
  else:draw_texture(backgrounds[selected_stage],Vector2.ZERO)
  if state!="battle":
-  draw_rect(Rect2(0,0,1280,720),Color(0.015,0.008,0.015,0.70))
+  draw_rect(Rect2(0,0,1280,720),Color(0.015,0.008,0.015,0.10 if state=="title" else 0.70))
   draw_line(Vector2(40,84),Vector2(1240,84),Color("6b4d49"),1)
   if state=="title":
    panel(Rect2(68,70,568,566),true)
-   if concept_texture:draw_texture_rect(concept_texture,Rect2(680,80,530,530),false)
+
   elif state in ["inventory","forge"]:
    panel(Rect2(30,88,550 if state=="inventory" else 470,592))
    panel(Rect2(588 if state=="inventory" else 513,88,650 if state=="inventory" else 725,592))
@@ -473,6 +539,14 @@ func _draw() -> void:
     draw_arc(fx.from,r,direction-0.9,direction+0.9,20,c.darkened(0.6),9)
     draw_arc(fx.from,r,direction-0.9,direction+0.9,20,c,4)
     draw_arc(fx.from,r-7,direction-0.7,direction+0.7,16,Color("fff1d7"),1)
+   elif fx.family=="bomb":
+    var r:float=fx.radius*(1.0-clampf(fx.ttl/0.55,0.0,1.0)*0.3)
+    draw_circle(fx.to,r,Color(0.65,0.12,0.07,0.18*fade))
+    draw_arc(fx.to,r,0,TAU,40,c.darkened(0.5),9)
+    draw_arc(fx.to,r-5,0,TAU,40,c,3)
+    for n in 8:
+     var ray:=Vector2.from_angle(n*TAU/8.0)
+     draw_line(fx.to+ray*(r*0.65),fx.to+ray*(r*1.08),c,3)
    elif fx.family in ["poison","defense","arcane","hex","summon"]:
     if fx.from.distance_to(fx.to)>5:draw_line(fx.from,fx.to,c.darkened(0.45),2)
     var r:float=maxf(14.0,fx.radius)

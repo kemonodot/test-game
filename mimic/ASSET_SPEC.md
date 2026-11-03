@@ -24,3 +24,14 @@
 - 背景：`assets/art/dungeon.png`
 
 `tools/create_art.gd` は同じパスへ画像を生成するため、外部から受け取った素材を配置した後は、そのまま実行すると上書きされる。
+
+## 貢ぎ物の相手（追加規格）
+
+女性キャラクターの肖像は、透過PNG・128×128 px、顔と上半身が見える正面寄りの静止画。重要な顔・シルエットは中央に収める。祭壇のカードでは縮小され、解放演出では最大96×96 pxで表示される。現在は肖像未配置時に系統アイコンを表示する。
+
+`assets/art/companions/` に以下のファイル名で配置する：
+
+- 黒魔法使い `black_mage.png`、盗賊 `thief.png`、シスター `sister.png`、鍛冶屋 `blacksmith.png`
+- 商人 `merchant.png`、研究者 `researcher.png`、狩人 `hunter.png`、占い師 `fortune_teller.png`
+
+肖像の自動表示は実装済みだが、差し替え後はGodotでインポートしてWeb版を再書き出しする。立ち絵・表情差分・イベントは未接続。

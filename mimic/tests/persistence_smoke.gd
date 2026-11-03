@@ -6,6 +6,7 @@ func run() -> void:
  root.add_child(app)
  app.profile=Profile.new(false)
  app.profile.data.points=30
+ assert(app.profile.upgrade("awakening"))
  assert(app.profile.upgrade("damage"))
  var before_gold:int=app.profile.data.gold
  var drop:Dictionary=app.profile.create_item("tongue",1)
