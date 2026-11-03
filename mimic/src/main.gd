@@ -2,6 +2,7 @@ extends Control
 const Battle = preload("res://src/combat.gd")
 const Profile = preload("res://src/profile.gd")
 const HubButton = preload("res://src/hub_button.gd")
+const BenchmarkProfile = preload("res://benchmark/profile.gd")
 const FAMILY_NAMES := {"devour":"捕食","blade":"刃物","hex":"呪術","poison":"毒・腐食","summon":"召喚","defense":"防御","arcane":"魔力"}
 const COMPANIONS := {"black_mage":"黒魔法使い", "thief":"盗賊", "sister":"シスター", "blacksmith":"鍛冶屋", "merchant":"商人", "researcher":"研究者", "hunter":"狩人", "fortune_teller":"占い師"}
 const SLOTS := {"fang":"牙","organ1":"器官1","organ2":"器官2","organ3":"器官3","organ4":"器官4","shell":"甲殻","core":"核"}
@@ -90,7 +91,8 @@ func _ready() -> void:
   if ResourceLoader.exists(portrait_path):companion_textures[role]=load(portrait_path)
  for kind in ["swordsman","shield","archer","mage","priest","thief","fanatic","lancer","hero","captain"]:
   enemy_textures[kind]=load("res://assets/art/enemies/%s.png" % kind)
- profile = Profile.new()
+ var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
+ profile = BenchmarkProfile.new() if bench_requested else Profile.new()
  shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(155.0,0.055);shot_sound.volume_db=-18;add_child(shot_sound)
  kill_sound=AudioStreamPlayer.new();kill_sound.stream=make_sound(78.0,0.13);kill_sound.volume_db=-16;add_child(kill_sound)
  ui = Control.new()
@@ -98,6 +100,9 @@ func _ready() -> void:
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(ui)
  show_title()
+ if bench_requested:
+  call_deferred("start_benchmark_mode")
+  return
  if OS.has_feature("web"):
   web_quick_callback=JavaScriptBridge.create_callback(_web_quick_start)
   JavaScriptBridge.get_interface("window").mimicQuickStart=web_quick_callback
@@ -117,6 +122,9 @@ func _ready() -> void:
     battle.spawn_enemy("swordsman",Battle.CENTER+Vector2.from_angle(TAU*i/Battle.MAX_ENEMIES)*310.0)
     battle.enemies[i].hp=1000000.0
     battle.enemies[i].max_hp=1000000.0
+func start_benchmark_mode() -> void:
+ var controller=load("res://benchmark/benchmark.gd").new()
+ add_child(controller)
 func _web_quick_start(_args: Array) -> void:
  if state=="title":
   selected_stage=0
