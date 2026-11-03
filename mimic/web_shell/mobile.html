@@ -120,6 +120,8 @@ body {
 		<script src="$GODOT_URL"></script>
 		<script>
 const GODOT_CONFIG = $GODOT_CONFIG;
+// Request the updated pack even if a previous version is cached.
+GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?mobile-start=1`;
 const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 const engine = new Engine(GODOT_CONFIG);
 
