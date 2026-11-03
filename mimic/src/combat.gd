@@ -40,13 +40,19 @@ var devour_chain := 0
 var last_stand_used := false
 var hitstop := 0.0
 var debug_invulnerable := false
+# Packed snapshots accelerate frequent projectile targeting. The enemy pool remains authoritative.
+var target_cache_active := false
+var target_positions := PackedVector2Array()
+var target_active := PackedByteArray()
 
 func _init(seed_value: int = 1) -> void:
  rng.seed = seed_value
+ target_positions.resize(MAX_ENEMIES)
+ target_active.resize(MAX_ENEMIES)
  enemy_data = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
  balance = JSON.parse_string(FileAccess.get_file_as_string("res://data/balance.json"))
  for i in MAX_ENEMIES:
-  enemies.append({"index":i, "active": false, "pos": Vector2.ZERO, "hp": 0.0, "max_hp": 0.0, "cooldown": 0.0, "speed": 0.0, "damage": 0.0, "kind": "swordsman", "boss": false, "poison": 0.0, "mark": 0, "dot_tick": 0.0, "phase": 0, "timer": 0.0})
+  enemies.append({"index":i, "generation":0, "popup_index":-1, "active": false, "pos": Vector2.ZERO, "hp": 0.0, "max_hp": 0.0, "cooldown": 0.0, "speed": 0.0, "damage": 0.0, "kind": "swordsman", "boss": false, "poison": 0.0, "mark": 0, "dot_tick": 0.0, "phase": 0, "timer": 0.0})
  for i in MAX_PROJECTILES:
   projectiles.append({"active": false, "pos": Vector2.ZERO, "vel": Vector2.ZERO, "ttl": 0.0, "damage": 0.0, "enemy": false, "family": "", "pierce": 0})
  for i in MAX_EFFECTS:
@@ -54,7 +60,7 @@ func _init(seed_value: int = 1) -> void:
  for i in 12:minions.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"timer":0.0,"power":0.0,"side":0.0})
  for i in 192:sparks.append({"active":false,"pos":Vector2.ZERO,"vel":Vector2.ZERO,"ttl":0.0,"family":""})
  for i in MAX_ENEMIES:loot_events.append({"active":false,"kind":"","boss":false,"position":Vector2.ZERO})
- for i in 40:popups.append({"active":false,"pos":Vector2.ZERO,"value":0,"ttl":0.0})
+ for i in 16:popups.append({"active":false,"pos":Vector2.ZERO,"value":0,"ttl":0.0,"enemy_index":-1,"generation":-1})
  configure([])
 
 func configure(equipment: Array, upgrades: Dictionary = {}) -> void:
@@ -113,7 +119,12 @@ func spawn_enemy(kind: String = "swordsman", position := Vector2.INF) -> bool:
     if elapsed>=float(step.at): scale=float(step.mult)
    var boss: bool=def.get("boss",false)
    var health: float=float(def.hp)*float(balance.stage_scaling[stage].hp)*(1.0 if boss else scale)
+   e.generation=int(e.generation)+1
+   e.popup_index=-1
    e.merge({"active":true,"pos":position,"max_hp":health,"hp":health,"speed":float(def.speed),"damage":float(def.damage)*float(balance.stage_scaling[stage].damage)*(1.0 if boss else scale),"cooldown":1.5,"kind":kind,"boss":boss,"poison":0.0,"mark":0,"dot_tick":0.0,"phase":0,"timer":0.0},true)
+   if target_cache_active:
+    target_active[int(e.index)]=1
+    target_positions[int(e.index)]=e.pos
    return true
  return false
 
@@ -125,20 +136,48 @@ func dominant_family() -> String:
    best=family
    count=int(family_counts[family])
  return best
-func target_index(origin: Vector2, direction: Vector2, max_range: float) -> int:
- var best := -1
- var best_dist := INF
- var best_front := -1
- var front_dist := INF
+func sync_target_cache() -> void:
  for i in enemies.size():
-  var e: Dictionary = enemies[i]
-  if not e.active: continue
-  var offset: Vector2 = e.pos - origin
-  var d: float = offset.length()
-  if d > max_range: continue
-  if d < best_dist: best = i; best_dist = d
-  if direction.dot(offset.normalized()) >= 0.5 and d < front_dist: best_front = i; front_dist = d
- return best_front if best_front >= 0 else best
+  var e:Dictionary=enemies[i]
+  target_active[i]=1 if e.active else 0
+  if e.active:target_positions[i]=e.pos
+func target_index(origin: Vector2, direction: Vector2, max_range: float) -> int:
+ if max_range<0.0:return -1
+ if target_cache_active:return target_index_cached(origin,direction,max_range)
+ return target_index_linear(origin,direction,max_range)
+func target_index_cached(origin:Vector2,direction:Vector2,max_range:float)->int:
+ var best := -1
+ var best_dist_sq := INF
+ var best_front := -1
+ var front_dist_sq := INF
+ var range_sq:float=max_range*max_range
+ for i in enemies.size():
+  if target_active[i]==0:continue
+  var offset:Vector2=target_positions[i]-origin
+  var d_sq:float=offset.length_squared()
+  if d_sq>range_sq:continue
+  if d_sq<best_dist_sq:best=i;best_dist_sq=d_sq
+  var forward:float=direction.dot(offset)
+  if forward>0.0 and forward*forward>=0.25*d_sq and d_sq<front_dist_sq:
+   best_front=i;front_dist_sq=d_sq
+ return best_front if best_front>=0 else best
+func target_index_linear(origin:Vector2,direction:Vector2,max_range:float)->int:
+ var best := -1
+ var best_dist_sq := INF
+ var best_front := -1
+ var front_dist_sq := INF
+ var range_sq:float=max_range*max_range
+ for i in enemies.size():
+  var e:Dictionary=enemies[i]
+  if not e.active:continue
+  var offset:Vector2=e.pos-origin
+  var d_sq:float=offset.length_squared()
+  if d_sq>range_sq:continue
+  if d_sq<best_dist_sq:best=i;best_dist_sq=d_sq
+  var forward:float=direction.dot(offset)
+  if forward>0.0 and forward*forward>=0.25*d_sq and d_sq<front_dist_sq:
+   best_front=i;front_dist_sq=d_sq
+ return best_front if best_front>=0 else best
 
 func effect(from: Vector2, to: Vector2, family: String, radius: float = 0.0) -> void:
  for fx in effects:
@@ -167,12 +206,29 @@ func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: 
  if rng.randf() < stats.crit: value *= stats.crit_damage
  e.hp -= value
  e.pos += push
+ if target_cache_active:target_positions[index]=e.pos
  damage_events += 1
  hitstop = maxf(hitstop,0.018)
- for pop in popups:
-  if not pop.active:
-   pop.active=true;pop.pos=e.pos;pop.value=int(value);pop.ttl=0.45
-   break
+ # Combine rapid hits on the same living enemy into one readable number.
+ var popup_index:int=int(e.popup_index)
+ var existing_hit:=false
+ if popup_index>=0:
+  var existing:Dictionary=popups[popup_index]
+  if not existing.active or int(existing.enemy_index)!=index or int(existing.generation)!=int(e.generation):popup_index=-1
+  else:existing_hit=true
+ if popup_index<0:
+  for i in popups.size():
+   if not popups[i].active:
+    popup_index=i
+    e.popup_index=i
+    popups[i].value=0
+    popups[i].enemy_index=index
+    popups[i].generation=e.generation
+    break
+ if popup_index>=0:
+  var pop:Dictionary=popups[popup_index]
+  if not existing_hit:pop.active=true;pop.pos=e.pos;pop.ttl=0.45
+  pop.value+=int(value)
  hp = minf(max_hp, hp + value * stats.lifesteal)
  if e.hp <= 0:
   kill_enemy(e)
@@ -184,6 +240,7 @@ func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: 
 func kill_enemy(e: Dictionary) -> void:
  if not e.active:return
  e.active=false
+ if target_cache_active:target_active[int(e.index)]=0
  if family_counts.get("hex",0)>0 and family_counts.get("poison",0)>0 and e.mark>0 and e.poison>0:
   effect(e.pos,e.pos,"poison",52)
   for other in enemies:
@@ -225,7 +282,9 @@ func cast(a: Dictionary) -> bool:
   hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
   if ability=="pull":
    for other in enemies:
-    if other.active and other.pos.distance_to(e.pos)<100:other.pos+=(CENTER-other.pos).normalized()*35
+    if other.active and other.pos.distance_to(e.pos)<100:
+     other.pos+=(CENTER-other.pos).normalized()*35
+     if target_cache_active:target_positions[int(other.index)]=other.pos
   if ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2):
    for i in enemies.size():
     if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65: hit_enemy(i,power*0.5,Vector2.ZERO,"devour")
@@ -323,6 +382,7 @@ func update(delta: float) -> void:
    if float(enemy_data[candidate].cost)<=spawn_budget:kind=candidate;break
   if kind.is_empty() or not spawn_enemy(kind):break
   spawn_budget -= float(enemy_data[kind].cost)
+ # Abilities run directly against the pool; most frames have only a few casts.
  for a in abilities:
   a.timer -= delta
   if a.timer <= 0.0 and cast(a): a.timer = float(a.cooldown)/float(stats.speed)
@@ -375,6 +435,18 @@ func update(delta: float) -> void:
     effect(e.pos,blast,"enemy",85)
     if blast.distance_to(CENTER)<85:hurt_player(e.damage)
     effect(e.pos,e.pos,"defense",100)
+ # Build the packed view only when friendly projectiles or minions need repeated searches.
+ var query_count:=0
+ for minion in minions:
+  if minion.active:query_count+=1
+ if query_count<4:
+  for candidate in projectiles:
+   if candidate.active and not candidate.enemy:
+    query_count+=1
+    if query_count>=4:break
+ if query_count>=4:
+  sync_target_cache()
+  target_cache_active=true
  for minion in minions:
   if not minion.active:continue
   minion.ttl-=delta;minion.timer-=delta
@@ -398,12 +470,17 @@ func update(delta: float) -> void:
    if p.pos.distance_to(CENTER)<30:
     hurt_player(p.damage); p.active=false
   else:
-   for i in enemies.size():
-    if enemies[i].active and enemies[i].pos.distance_to(p.pos)<16:
-     hit_enemy(i,p.damage,p.vel.normalized()*8,p.family)
-     if p.pierce>0: p.pierce-=1
-     else: p.active=false
-     break
+   var hit_index: int=-1
+   if target_cache_active:
+    for i in enemies.size():
+     if target_active[i]!=0 and target_positions[i].distance_squared_to(p.pos)<256.0:hit_index=i;break
+   else:
+    for i in enemies.size():
+     if enemies[i].active and enemies[i].pos.distance_squared_to(p.pos)<256.0:hit_index=i;break
+   if hit_index>=0:
+    hit_enemy(hit_index,p.damage,p.vel.normalized()*8,p.family)
+    if p.pierce>0: p.pierce-=1
+    else: p.active=false
  for spark in sparks:
   if spark.active:
    spark.pos+=spark.vel*delta;spark.vel*=0.95;spark.ttl-=delta
@@ -419,5 +496,6 @@ func update(delta: float) -> void:
      if enemy.active and enemy.pos.distance_to(fx.to)<fx.radius:enemy.poison=maxf(enemy.poison,1.5)
    fx.ttl-=delta
    if fx.ttl<=0: fx.active=false
+ target_cache_active=false
  if hp <= 0: hp=0; ended=true
  elif elapsed >= RUN_SECONDS: ended=true

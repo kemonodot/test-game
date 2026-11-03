@@ -126,6 +126,7 @@ func make_sound(frequency: float, duration: float) -> AudioStreamWAV:
  return wav
 func clear_ui() -> void:
  for child in ui.get_children():child.queue_free()
+ queue_redraw()
 func button(text: String, pos: Vector2, size: Vector2, action: Callable, disabled: bool = false) -> Button:
  var b := Button.new()
  b.text = text
@@ -354,8 +355,10 @@ func _process(delta: float) -> void:
   if battle.shots>previous_shots:
    if profile.data.get("settings",{}).get("sound",true):shot_sound.play()
    previous_shots=battle.shots
+  var needs_save:=false
   for event in battle.loot_events:
    if not event.active:continue
+   needs_save=true
    event.active=false
    if profile.data.get("settings",{}).get("sound",true):kill_sound.play()
    var gold:int=5+selected_stage*3
@@ -366,9 +369,9 @@ func _process(delta: float) -> void:
      toast="獲得："+profile.get_template(item.template).name;toast_t=3
      battle.scatter(event.position,"arcane",5)
    if battle.rng.randf()<0.12: profile.add_gem(Profile.FAMILIES[battle.rng.randi_range(0,6)])
-   profile.save_game()
+  if needs_save:profile.save_game()
   if battle.ended: show_result()
- queue_redraw()
+  queue_redraw()
 func show_result() -> void:
  state="result"
  if not reward_given:
@@ -432,6 +435,8 @@ func _draw() -> void:
  for e in battle.enemies:
   if e.active:
    var size:float=96.0 if e.boss else 64.0
+   var margin:float=70.0 if e.boss else size*0.5
+   if e.pos.x < -margin or e.pos.x > 1280+margin or e.pos.y < -margin or e.pos.y > 720+margin:continue
    var tex:Texture2D=enemy_textures.get(e.kind)
    var bob:float=roundf(sin(battle.elapsed*7.0+float(e.index))*1.3)
    if tex:draw_texture_rect(tex,Rect2(e.pos-Vector2(size,size)*0.5+Vector2(0,bob),Vector2(size,size)),false)
@@ -440,13 +445,16 @@ func _draw() -> void:
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90*maxf(0,e.hp/e.max_hp),6)),Color("e45b6e"))
  for p in battle.projectiles:
   if p.active:
+   if p.pos.x < -20 or p.pos.x > 1300 or p.pos.y < -20 or p.pos.y > 740:continue
    var c:Color=FAM_COLORS.get(p.family,Color("e85f56"))
    var direction:Vector2=p.vel.normalized()
    draw_line(p.pos-direction*13,p.pos,c.darkened(0.5),5)
    draw_circle(p.pos,5,c)
    draw_rect(Rect2(p.pos-Vector2(2,2),Vector2(4,4)),Color("fff0d6"))
+ var reduced_fx:bool=profile.data.get("settings",{}).get("reduce_fx",false)
  for spark in battle.sparks:
-  if spark.active and not profile.data.get("settings",{}).get("reduce_fx",false):
+  if spark.active and not reduced_fx:
+   if spark.pos.x < -4 or spark.pos.x > 1284 or spark.pos.y < -4 or spark.pos.y > 724:continue
    var spark_color:Color=FAM_COLORS.get(spark.family,Color.WHITE)
    draw_rect(Rect2(spark.pos,Vector2(3,3)),spark_color)
  for fx in battle.effects:
