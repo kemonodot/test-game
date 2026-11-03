@@ -9,6 +9,8 @@ func run()->void:
  app.battle.spawn_enemy("hero",Vector2(760,360))
  app.battle.hit_enemy(0,1000000)
  app._process(0.01)
+ assert(app.battle.won and app.profile.data.unlocked_stage==1)
+ for i in 45:app._process(0.05)
  assert(app.state=="result" and app.battle.won)
  assert(app.profile.data.unlocked_stage==1)
  var reloaded=Profile.new(true)

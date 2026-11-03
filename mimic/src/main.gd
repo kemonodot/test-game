@@ -1,5 +1,6 @@
 extends Control
 const Battle = preload("res://src/combat.gd")
+const RewardFX = preload("res://src/reward_presentation.gd")
 const Profile = preload("res://src/profile.gd")
 const HubButton = preload("res://src/hub_button.gd")
 const BenchmarkProfile = preload("res://benchmark/profile.gd")
@@ -25,6 +26,11 @@ var run_gold := 0
 var reward_given := false
 var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
+var rarity_sound: AudioStreamPlayer
+var legendary_sounds: Array = []
+var legendary_sound_index := 0
+var boss_sound: AudioStreamPlayer
+var reward_fx: RewardPresentation
 var previous_shots := 0
 var benchmark_mode := false
 var web_quick_callback
@@ -95,6 +101,11 @@ func _ready() -> void:
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
  shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(155.0,0.055);shot_sound.volume_db=-18;add_child(shot_sound)
  kill_sound=AudioStreamPlayer.new();kill_sound.stream=make_sound(78.0,0.13);kill_sound.volume_db=-16;add_child(kill_sound)
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=make_sound(620.0,0.16);rarity_sound.volume_db=-19;add_child(rarity_sound)
+ var legendary_stream:=make_sound(440.0,0.38)
+ for i in 4:
+  var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-16;add_child(voice);legendary_sounds.append(voice)
+ boss_sound=AudioStreamPlayer.new();boss_sound.stream=make_sound(105.0,0.42);boss_sound.volume_db=-13;add_child(boss_sound)
  ui = Control.new()
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -235,6 +246,7 @@ func start_battle() -> void:
  battle.stage=selected_stage
  battle.configure(profile.equipped_templates(),profile.data.upgrades)
  state="battle";run_gold=0;reward_given=false;previous_shots=0
+ reward_fx=RewardFX.new()
  bomb_button=button("破滅の供物   READY\nSPACE / 撃破資金 ×3",Vector2(990,610),Vector2(270,90),try_bomb)
  bomb_button.add_theme_font_size_override("font_size",20)
  var starting:int=int(profile.data.upgrades.get("starting_gold",0))*10
@@ -443,14 +455,49 @@ func show_settings() -> void:
  button("エフェクト："+("控えめ" if reduced else "通常"),Vector2(80,400),Vector2(420,55),func():settings.reduce_fx=not reduced;profile.data.settings=settings;profile.save_game();show_settings())
  var sound_enabled:bool=settings.get("sound",true)
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;profile.save_game();show_settings())
+func play_rarity_sound(rarity: int) -> void:
+ if not profile.data.get("settings",{}).get("sound",true):return
+ if rarity>=3:
+  var voice:AudioStreamPlayer=legendary_sounds[legendary_sound_index]
+  legendary_sound_index=(legendary_sound_index+1)%legendary_sounds.size()
+  voice.pitch_scale=1.2 if rarity==4 else 1.0
+  voice.play()
+ elif rarity>=1:
+  rarity_sound.pitch_scale=1.25 if rarity==2 else 1.0
+  rarity_sound.play()
+
+# After victory the combat simulation has ended; keep only its visual debris moving.
+func animate_victory_effects(delta: float) -> void:
+ for spark in battle.sparks:
+  if spark.active:
+   spark.pos+=spark.vel*delta;spark.vel*=0.95;spark.ttl-=delta
+   if spark.ttl<=0:spark.active=false
+ for fx in battle.effects:
+  if fx.active:
+   fx.ttl-=delta
+   if fx.ttl<=0:fx.active=false
+ for pop in battle.popups:
+  if pop.active:
+   pop.ttl-=delta;pop.pos.y-=delta*30
+   if pop.ttl<=0:pop.active=false
+
 func _process(delta: float) -> void:
  toast_t=maxf(0,toast_t-delta)
  if state=="title" and not profile.data.get("settings",{}).get("reduce_fx",false):
   hub_time+=delta;hub_redraw_clock+=delta
   if hub_redraw_clock>=0.05:hub_redraw_clock=0.0;queue_redraw()
  if state=="battle":
+  var reduced:bool=profile.data.get("settings",{}).get("reduce_fx",false)
+  reward_fx.update(delta)
+  if reward_fx.pending_sound_rarity>=0:
+   play_rarity_sound(reward_fx.pending_sound_rarity)
+   reward_fx.pending_sound_rarity=-1
   if benchmark_mode: battle.hp=battle.max_hp
-  battle.update(minf(delta,0.05))
+  var speed:float=0.35 if reward_fx.slow_remaining>0.0 and not reduced else 1.0
+  if battle.ended and reward_fx.boss_full_reveal and reward_fx.boss_result_wait>0.0:
+   animate_victory_effects(minf(delta,0.05)*speed)
+  else:
+   battle.update(minf(delta,0.05)*speed)
   if is_instance_valid(bomb_button):
    bomb_button.disabled=battle.bomb_remaining>0 or battle.ended
    bomb_button.text=("破滅の供物   %.1f秒\n撃破資金 ×3" % battle.bomb_remaining) if battle.bomb_remaining>0 else "破滅の供物   READY\nSPACE / 撃破資金 ×3"
@@ -462,29 +509,42 @@ func _process(delta: float) -> void:
    if not event.active:continue
    needs_save=true
    event.active=false
-   if profile.data.get("settings",{}).get("sound",true):kill_sound.play()
+   var pitch:float=reward_fx.on_kill()
+   if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):kill_sound.pitch_scale=pitch;kill_sound.play()
+   if event.boss:
+    reward_fx.boss(event.position,event.kind,reduced)
+    if profile.data.get("settings",{}).get("sound",true):boss_sound.play()
    var gold:int=(5+selected_stage*3)*(Battle.BOMB_GOLD_MULTIPLIER if event.get("bomb",false) else 1)
-   if event.get("bomb",false):toast="爆破撃破！  資金 ×3";toast_t=2
+   reward_fx.money(event.position,gold,event.get("bomb",false))
    profile.data.gold+=gold;run_gold+=gold
    if event.boss or battle.rng.randf()<float(profile.balance.drop_chance[selected_stage])+float(profile.data.upgrades.get("drop",0))*0.02+float(battle.stats.drop):
     var item:Dictionary=profile.drop(selected_stage,event.boss)
     if not item.is_empty():
-     toast="獲得："+profile.get_template(item.template).name;toast_t=3
+     if reward_fx.item(int(item.rarity),profile.get_template(item.template).name,event.position,reduced,event.boss):play_rarity_sound(int(item.rarity))
      battle.scatter(event.position,"arcane",5)
    if battle.rng.randf()<0.12: profile.add_gem(Profile.FAMILIES[battle.rng.randi_range(0,6)])
   if needs_save:profile.save_game()
-  if battle.ended: show_result()
+  if battle.ended:
+   if not reward_given and not reduced and reward_fx.banners.any(func(b):return b.active):
+    reward_fx.boss_result_wait=maxf(reward_fx.boss_result_wait,1.0)
+   finalize_battle_rewards()
+   if reward_fx.boss_result_wait<=0.0:show_result()
   queue_redraw()
+func finalize_battle_rewards() -> void:
+ if reward_given:return
+ var points:int=int(battle.kills/5)+int(battle.elapsed/30)+(20 if battle.won else 0)
+ profile.data.points+=points
+ if battle.won:profile.data.unlocked_stage=maxi(int(profile.data.unlocked_stage),mini(1,selected_stage+1))
+ profile.save_game();reward_given=true
 func show_result() -> void:
+ finalize_battle_rewards()
  state="result"
- if not reward_given:
-  var points:int=int(battle.kills/5)+int(battle.elapsed/30)+(20 if battle.won else 0)
-  profile.data.points+=points
-  if battle.won:profile.data.unlocked_stage=maxi(int(profile.data.unlocked_stage),mini(1,selected_stage+1))
-  profile.save_game();reward_given=true
  clear_ui()
  label("狩りの成功" if battle.won else "宝箱は沈黙した",Vector2(380,150),Vector2(600,70),42)
  label("撃破 %d  /  獲得資金 %d  /  経過 %d秒\n装備、資金、魔石、進化ポイントは保持されます。" % [battle.kills,run_gold,battle.elapsed],Vector2(340,250),Vector2(720,90),21)
+ if reward_fx and reward_fx.boss_item_rarity>=0:
+  var boss_loot:=label("ボスの戦利品：%s  [%s]" % [reward_fx.boss_item_name,RARITY[reward_fx.boss_item_rarity]],Vector2(340,335),Vector2(720,34),18)
+  boss_loot.modulate=RARITY_COLORS[reward_fx.boss_item_rarity]
  button("もう一度",Vector2(320,380),Vector2(300,60),start_battle)
  button("装備を確認",Vector2(650,380),Vector2(300,60),show_inventory)
  button("拠点へ",Vector2(485,460),Vector2(300,60),show_title)
@@ -557,6 +617,16 @@ func _draw() -> void:
   var side:Vector2=battle.aim.orthogonal()
   draw_line(sight-battle.aim*7-side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
   draw_line(sight-battle.aim*7+side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
+ if reward_fx.beam_remaining>0.0 and reward_fx.beam_remaining<0.35 and not profile.data.get("settings",{}).get("reduce_fx",false):
+  var beam_color:Color=RARITY_COLORS[reward_fx.beam_rarity]
+  beam_color.a=0.15*clampf(reward_fx.beam_remaining/0.35,0.0,1.0)
+  var beam_pos:Vector2=reward_fx.beam_position.clamp(Vector2(20,140),Vector2(1260,650))
+  draw_rect(Rect2(beam_pos+Vector2(-10,-120),Vector2(20,120)),beam_color)
+ if reward_fx.boss_reveal_remaining>0.0:
+  var boss_tex:Texture2D=enemy_textures.get(reward_fx.boss_kind)
+  if boss_tex:
+   var ghost_alpha:float=clampf(reward_fx.boss_reveal_remaining/reward_fx.boss_reveal_total,0.0,1.0)
+   draw_texture_rect(boss_tex,Rect2(reward_fx.boss_position-Vector2(48,48),Vector2(96,96)),false,Color(1,0.8,0.7,ghost_alpha))
  for e in battle.enemies:
   if e.active:
    var size:float=96.0 if e.boss else 64.0
@@ -675,4 +745,58 @@ func _draw() -> void:
   for e in battle.enemies:
    if e.active:active_count+=1
   draw_string(title_font,Vector2(20,110),"BENCHMARK: %d ENEMIES" % active_count,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color.WHITE)
+ draw_reward_overlay()
  if toast_t>0:draw_string(title_font,Vector2(900,75),toast,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("f1d99a"))
+
+func draw_reward_overlay() -> void:
+ var reduced:bool=profile.data.get("settings",{}).get("reduce_fx",false)
+ if reward_fx.edge_remaining>0.0 and not reduced:
+  var glow:Color=RARITY_COLORS[reward_fx.edge_rarity]
+  glow.a=0.11*clampf(reward_fx.edge_remaining/0.32,0.0,1.0)
+  draw_rect(Rect2(0,0,14,720),glow);draw_rect(Rect2(1266,0,14,720),glow)
+  draw_rect(Rect2(0,0,1280,10),glow);draw_rect(Rect2(0,710,1280,10),glow)
+ for pop in reward_fx.money_popups:
+  if not pop.active:continue
+  var age:float=pop.age
+  var rise:float=minf(1.0,age/0.20)
+  var bounce:float=sin(rise*PI)*12.0 if pop.bomb and not reduced else 0.0
+  var alpha:float=clampf(float(pop.ttl)/0.20,0.0,1.0)
+  var color:Color=Color("ffcf65") if pop.bomb else Color("c3b5a5")
+  color.a=alpha
+  var rise_offset:float=0.0 if reduced else age*32.0
+  var point:Vector2=pop.pos+Vector2(-30,-18-rise_offset-bounce)
+  draw_string(title_font,point,"+%d" % int(pop.value),HORIZONTAL_ALIGNMENT_CENTER,80,25 if pop.bomb else 16,color)
+ var row:=0
+ for notice in reward_fx.notifications:
+  if not notice.active:continue
+  var r:int=notice.rarity
+  var displayed:int=maxi(0,r-1) if notice.reveal>0.0 else r
+  var col:Color=RARITY_COLORS[displayed]
+  var rect:=Rect2(22,106+row*38,295,34)
+  draw_rect(rect,Color(0.04,0.025,0.035,0.88))
+  if r>=1:draw_rect(rect,col,false,2 if r>=1 and r<=2 else 1)
+  var rank:String="？？？" if notice.reveal>0.0 else RARITY[r]
+  draw_string(title_font,rect.position+Vector2(10,24),"%s　装備 ×%d" % [rank,notice.count],HORIZONTAL_ALIGNMENT_LEFT,275,19,col)
+  row+=1
+ if reduced:return
+ var banner_row:=0
+ for banner in reward_fx.banners:
+  if not banner.active or banner.delay>0.0:continue
+  var banner_y:float=200.0 if reward_fx.boss_full_reveal and reward_fx.boss_result_wait>0.0 else 112.0
+  var rect:=Rect2(430,banner_y+banner_row*42,420,36)
+  var col:Color=RARITY_COLORS[int(banner.rarity)]
+  draw_rect(rect,Color(0.055,0.025,0.035,0.92));draw_rect(rect,col,false,2)
+  var extra:String="  他 +%d" % int(banner.extra) if int(banner.extra)>0 else ""
+  draw_string(title_font,rect.position+Vector2(12,25),"◆ %s%s" % [banner.name,extra],HORIZONTAL_ALIGNMENT_CENTER,396,18,col)
+  banner_row+=1
+ if reward_fx.boss_full_reveal and reward_fx.boss_result_wait>0.0:
+  var rect:=Rect2(450,105,380,82)
+  draw_rect(rect,Color(0.045,0.02,0.035,0.94));draw_rect(rect,Color("d6ac7a"),false,2)
+  var spinning:bool=reward_fx.boss_reveal_remaining>0.0
+  draw_string(title_font,rect.position+Vector2(15,22),"BOSS DROP   /   %s" % ("鑑定中" if spinning else "確定"),HORIZONTAL_ALIGNMENT_LEFT,350,15,Color("eee1cf"))
+  var cycle:int=int((reward_fx.boss_reveal_total-reward_fx.boss_reveal_remaining)*12.0)%RARITY_COLORS.size()
+  var revealed:int=reward_fx.boss_item_rarity
+  var slot_color:Color=RARITY_COLORS[cycle] if spinning else (RARITY_COLORS[revealed] if revealed>=0 else Color("6e6165"))
+  draw_rect(Rect2(rect.position+Vector2(18,37),Vector2(32,20)),slot_color)
+  var result:String="戦利品を開示" if spinning else (RARITY[revealed]+"  "+reward_fx.boss_item_name if revealed>=0 else "装備なし")
+  draw_string(title_font,rect.position+Vector2(65,54),result,HORIZONTAL_ALIGNMENT_LEFT,300,16,Color("e9dccd") if spinning else slot_color)
