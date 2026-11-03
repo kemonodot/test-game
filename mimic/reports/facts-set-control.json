@@ -1,0 +1,5946 @@
+{
+  "builds": {
+    "arcane": [
+      [
+        "sparkfang",
+        "fang"
+      ],
+      [
+        "orb",
+        "organ1"
+      ],
+      [
+        "seeker",
+        "organ2"
+      ],
+      [
+        "astral",
+        "core"
+      ]
+    ],
+    "blade": [
+      [
+        "cleaver",
+        "fang"
+      ],
+      [
+        "spindle",
+        "organ1"
+      ],
+      [
+        "knife",
+        "organ2"
+      ],
+      [
+        "edgecore",
+        "core"
+      ]
+    ],
+    "defense": [
+      [
+        "spikefang",
+        "fang"
+      ],
+      [
+        "shellorgan",
+        "organ1"
+      ],
+      [
+        "rebound",
+        "organ2"
+      ],
+      [
+        "aegis",
+        "core"
+      ]
+    ],
+    "devour": [
+      [
+        "bite",
+        "fang"
+      ],
+      [
+        "mouth",
+        "organ1"
+      ],
+      [
+        "suction",
+        "organ2"
+      ],
+      [
+        "hunger",
+        "core"
+      ]
+    ],
+    "hex": [
+      [
+        "eyefang",
+        "fang"
+      ],
+      [
+        "eye",
+        "organ1"
+      ],
+      [
+        "mark",
+        "organ2"
+      ],
+      [
+        "hexcore",
+        "core"
+      ]
+    ],
+    "poison": [
+      [
+        "acidfang",
+        "fang"
+      ],
+      [
+        "gland",
+        "organ1"
+      ],
+      [
+        "rot",
+        "organ2"
+      ],
+      [
+        "rotcore",
+        "core"
+      ]
+    ],
+    "summon": [
+      [
+        "callfang",
+        "fang"
+      ],
+      [
+        "minion",
+        "organ1"
+      ],
+      [
+        "ghost",
+        "organ2"
+      ],
+      [
+        "broodcore",
+        "core"
+      ]
+    ]
+  },
+  "kind": "supplementary pre-equipped 4-piece builds; not normal new-save progression",
+  "runs": [
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 116.22,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 17,
+      "gold_gained": 770,
+      "hp": 0.0,
+      "items": 21,
+      "kills": 132,
+      "max_hp": 100.0,
+      "metric_damage": 3523.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 88.0
+      },
+      "metric_inventory_end": 26,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 88.0
+        },
+        {
+          "before": 10,
+          "hp": 82.0
+        },
+        {
+          "before": 5,
+          "hp": 40.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 28.0,
+      "metric_raw_damage": 5329.99999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 196.2,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 29,
+      "primary_damage": 19.2,
+      "simulated_wall": 124.22,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 106.35,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 12,
+      "gold_gained": 625,
+      "hp": 0.0,
+      "items": 15,
+      "kills": 113,
+      "max_hp": 100.0,
+      "metric_damage": 3005.99999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 88.0
+      },
+      "metric_inventory_end": 20,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 88.0
+        },
+        {
+          "before": 15,
+          "hp": 88.0
+        },
+        {
+          "before": 10,
+          "hp": 64.0
+        },
+        {
+          "before": 5,
+          "hp": 52.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 34.0,
+      "metric_raw_damage": 4425.59999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 137.4,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 25,
+      "primary_damage": 19.2,
+      "simulated_wall": 113.62,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 112.02,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 10,
+      "gold_gained": 705,
+      "hp": 0.0,
+      "items": 20,
+      "kills": 123,
+      "max_hp": 100.0,
+      "metric_damage": 3284.39999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 52.0
+      },
+      "metric_inventory_end": 25,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 70.0
+        },
+        {
+          "before": 25,
+          "hp": 70.0
+        },
+        {
+          "before": 20,
+          "hp": 64.0
+        },
+        {
+          "before": 15,
+          "hp": 52.0
+        },
+        {
+          "before": 10,
+          "hp": 46.0
+        },
+        {
+          "before": 5,
+          "hp": 46.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 34.0,
+      "metric_raw_damage": 4946.79999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 138.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 27,
+      "primary_damage": 19.2,
+      "simulated_wall": 119.62,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 109.37,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 16,
+      "gold_gained": 665,
+      "hp": 0.0,
+      "items": 18,
+      "kills": 121,
+      "max_hp": 100.0,
+      "metric_damage": 3226.79999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 88.0
+      },
+      "metric_inventory_end": 23,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 88.0
+        },
+        {
+          "before": 25,
+          "hp": 88.0
+        },
+        {
+          "before": 20,
+          "hp": 88.0
+        },
+        {
+          "before": 15,
+          "hp": 88.0
+        },
+        {
+          "before": 10,
+          "hp": 88.0
+        },
+        {
+          "before": 5,
+          "hp": 76.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 64.0,
+      "metric_raw_damage": 4616.69999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 237.9,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 27,
+      "primary_damage": 19.2,
+      "simulated_wall": 116.83,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 102.05,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 6,
+      "gold_gained": 595,
+      "hp": 0.0,
+      "items": 23,
+      "kills": 107,
+      "max_hp": 100.0,
+      "metric_damage": 2821.2,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 70.0
+      },
+      "metric_inventory_end": 28,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 70.0
+        },
+        {
+          "before": 10,
+          "hp": 70.0
+        },
+        {
+          "before": 5,
+          "hp": 58.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 34.0,
+      "metric_raw_damage": 4142.19999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 105.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 24,
+      "primary_damage": 19.2,
+      "simulated_wall": 108.85,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 115.55,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 15,
+      "gold_gained": 740,
+      "hp": 0.0,
+      "items": 27,
+      "kills": 130,
+      "max_hp": 100.0,
+      "metric_damage": 3475.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 88.0
+      },
+      "metric_inventory_end": 32,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 94.0
+        },
+        {
+          "before": 20,
+          "hp": 88.0
+        },
+        {
+          "before": 15,
+          "hp": 88.0
+        },
+        {
+          "before": 10,
+          "hp": 64.0
+        },
+        {
+          "before": 5,
+          "hp": 58.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 46.0,
+      "metric_raw_damage": 5073.89999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 186.3,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 29,
+      "primary_damage": 19.2,
+      "simulated_wall": 123.48,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 104.87,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 13,
+      "gold_gained": 625,
+      "hp": 0.0,
+      "items": 20,
+      "kills": 111,
+      "max_hp": 100.0,
+      "metric_damage": 2927.99999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 76.0
+      },
+      "metric_inventory_end": 25,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 76.0
+        },
+        {
+          "before": 20,
+          "hp": 76.0
+        },
+        {
+          "before": 15,
+          "hp": 76.0
+        },
+        {
+          "before": 10,
+          "hp": 40.0
+        },
+        {
+          "before": 5,
+          "hp": 22.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 16.0,
+      "metric_raw_damage": 4267.59999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 132.6,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 25,
+      "primary_damage": 19.2,
+      "simulated_wall": 111.7,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 109.22,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 16,
+      "gold_gained": 710,
+      "hp": 0.0,
+      "items": 17,
+      "kills": 122,
+      "max_hp": 100.0,
+      "metric_damage": 3235.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 76.0
+      },
+      "metric_inventory_end": 22,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 88.0
+        },
+        {
+          "before": 20,
+          "hp": 88.0
+        },
+        {
+          "before": 15,
+          "hp": 76.0
+        },
+        {
+          "before": 10,
+          "hp": 46.0
+        },
+        {
+          "before": 5,
+          "hp": 22.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 16.0,
+      "metric_raw_damage": 4838.49999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 200.1,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 27,
+      "primary_damage": 19.2,
+      "simulated_wall": 116.52,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 112.02,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 10,
+      "gold_gained": 695,
+      "hp": 0.0,
+      "items": 13,
+      "kills": 123,
+      "max_hp": 100.0,
+      "metric_damage": 3275.99999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 64.0
+      },
+      "metric_inventory_end": 18,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 94.0
+        },
+        {
+          "before": 15,
+          "hp": 64.0
+        },
+        {
+          "before": 10,
+          "hp": 58.0
+        },
+        {
+          "before": 5,
+          "hp": 22.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 10.0,
+      "metric_raw_damage": 4761.79999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 135.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 27,
+      "primary_damage": 19.2,
+      "simulated_wall": 119.68,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.6,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 118.05,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "devour",
+      "gems": 15,
+      "gold_gained": 780,
+      "hp": 0.0,
+      "items": 24,
+      "kills": 136,
+      "max_hp": 100.0,
+      "metric_damage": 3655.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "devour": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 58.0
+      },
+      "metric_inventory_end": 29,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 94.0
+        },
+        {
+          "before": 25,
+          "hp": 94.0
+        },
+        {
+          "before": 20,
+          "hp": 76.0
+        },
+        {
+          "before": 15,
+          "hp": 58.0
+        },
+        {
+          "before": 10,
+          "hp": 58.0
+        },
+        {
+          "before": 5,
+          "hp": 46.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 40.0,
+      "metric_raw_damage": 5410.49999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 222.6,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 30,
+      "primary_damage": 19.2,
+      "simulated_wall": 126.08,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 114.03,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 18,
+      "gold_gained": 705,
+      "hp": 0.0,
+      "items": 18,
+      "kills": 125,
+      "max_hp": 100.0,
+      "metric_damage": 3403.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 77.0
+      },
+      "metric_inventory_end": 23,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 77.0
+        },
+        {
+          "before": 25,
+          "hp": 77.0
+        },
+        {
+          "before": 20,
+          "hp": 77.0
+        },
+        {
+          "before": 15,
+          "hp": 77.0
+        },
+        {
+          "before": 10,
+          "hp": 53.0
+        },
+        {
+          "before": 5,
+          "hp": 41.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 17.0,
+      "metric_raw_damage": 4499.59999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 597.600000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 28,
+      "primary_damage": 9.6,
+      "simulated_wall": 123.17,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 113.65,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 13,
+      "gold_gained": 690,
+      "hp": 0.0,
+      "items": 19,
+      "kills": 124,
+      "max_hp": 100.0,
+      "metric_damage": 3364.79999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 35.0
+      },
+      "metric_inventory_end": 24,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 47.0
+        },
+        {
+          "before": 25,
+          "hp": 47.0
+        },
+        {
+          "before": 20,
+          "hp": 47.0
+        },
+        {
+          "before": 15,
+          "hp": 35.0
+        },
+        {
+          "before": 10,
+          "hp": 17.0
+        },
+        {
+          "before": 5,
+          "hp": 17.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 17.0,
+      "metric_raw_damage": 4420.59999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 640.800000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 27,
+      "primary_damage": 9.6,
+      "simulated_wall": 122.65,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 122.72,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 12,
+      "gold_gained": 800,
+      "hp": 0.0,
+      "items": 24,
+      "kills": 142,
+      "max_hp": 100.0,
+      "metric_damage": 3832.79999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 35.0
+      },
+      "metric_inventory_end": 29,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 59.0
+        },
+        {
+          "before": 25,
+          "hp": 59.0
+        },
+        {
+          "before": 20,
+          "hp": 47.0
+        },
+        {
+          "before": 15,
+          "hp": 35.0
+        },
+        {
+          "before": 10,
+          "hp": 17.0
+        },
+        {
+          "before": 5,
+          "hp": 11.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 11.0,
+      "metric_raw_damage": 5050.20000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 657.600000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 32,
+      "primary_damage": 9.6,
+      "simulated_wall": 132.65,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 86.78,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 11,
+      "gold_gained": 485,
+      "hp": 0.0,
+      "items": 13,
+      "kills": 83,
+      "max_hp": 100.0,
+      "metric_damage": 2128.8,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 18,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 70.0
+        },
+        {
+          "before": 5,
+          "hp": 34.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 16.0,
+      "metric_raw_damage": 3108.79999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 175.2,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 18,
+      "primary_damage": 9.6,
+      "simulated_wall": 93.25,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 120.33,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 17,
+      "gold_gained": 775,
+      "hp": 0.0,
+      "items": 26,
+      "kills": 139,
+      "max_hp": 100.0,
+      "metric_damage": 3748.79999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 31.0
+      },
+      "metric_inventory_end": 31,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 55.0
+        },
+        {
+          "before": 25,
+          "hp": 37.0
+        },
+        {
+          "before": 20,
+          "hp": 31.0
+        },
+        {
+          "before": 15,
+          "hp": 31.0
+        },
+        {
+          "before": 10,
+          "hp": 31.0
+        },
+        {
+          "before": 5,
+          "hp": 25.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 13.0,
+      "metric_raw_damage": 4969.3,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 849.600000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 31,
+      "primary_damage": 9.6,
+      "simulated_wall": 129.83,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 123.27,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 18,
+      "gold_gained": 825,
+      "hp": 0.0,
+      "items": 20,
+      "kills": 141,
+      "max_hp": 100.0,
+      "metric_damage": 3829.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 76.0
+      },
+      "metric_inventory_end": 25,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 88.0
+        },
+        {
+          "before": 25,
+          "hp": 88.0
+        },
+        {
+          "before": 20,
+          "hp": 82.0
+        },
+        {
+          "before": 15,
+          "hp": 76.0
+        },
+        {
+          "before": 10,
+          "hp": 46.0
+        },
+        {
+          "before": 5,
+          "hp": 4.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 4.0,
+      "metric_raw_damage": 5398.6,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 638.400000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 32,
+      "primary_damage": 9.6,
+      "simulated_wall": 133.0,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 104.1,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 16,
+      "gold_gained": 625,
+      "hp": 0.0,
+      "items": 14,
+      "kills": 109,
+      "max_hp": 100.0,
+      "metric_damage": 2925.59999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 16.0
+      },
+      "metric_inventory_end": 19,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 58.0
+        },
+        {
+          "before": 25,
+          "hp": 46.0
+        },
+        {
+          "before": 20,
+          "hp": 40.0
+        },
+        {
+          "before": 15,
+          "hp": 16.0
+        },
+        {
+          "before": 10,
+          "hp": 10.0
+        },
+        {
+          "before": 5,
+          "hp": 10.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 10.0,
+      "metric_raw_damage": 4015.29999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 422.4,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 24,
+      "primary_damage": 9.6,
+      "simulated_wall": 112.1,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 114.68,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 14,
+      "gold_gained": 770,
+      "hp": 0.0,
+      "items": 21,
+      "kills": 128,
+      "max_hp": 100.0,
+      "metric_damage": 3465.59999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 14.0
+      },
+      "metric_inventory_end": 26,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 68.0
+        },
+        {
+          "before": 25,
+          "hp": 68.0
+        },
+        {
+          "before": 20,
+          "hp": 20.0
+        },
+        {
+          "before": 15,
+          "hp": 14.0
+        },
+        {
+          "before": 10,
+          "hp": 14.0
+        },
+        {
+          "before": 5,
+          "hp": 14.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 14.0,
+      "metric_raw_damage": 4907.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 571.2,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 28,
+      "primary_damage": 9.6,
+      "simulated_wall": 123.62,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 104.12,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 9,
+      "gold_gained": 630,
+      "hp": 0.0,
+      "items": 17,
+      "kills": 108,
+      "max_hp": 100.0,
+      "metric_damage": 2841.59999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 8.0
+      },
+      "metric_inventory_end": 22,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 56.0
+        },
+        {
+          "before": 25,
+          "hp": 8.0
+        },
+        {
+          "before": 20,
+          "hp": 8.0
+        },
+        {
+          "before": 15,
+          "hp": 8.0
+        },
+        {
+          "before": 10,
+          "hp": 8.0
+        },
+        {
+          "before": 5,
+          "hp": 8.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 8.0,
+      "metric_raw_damage": 3896.99999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 384.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 24,
+      "primary_damage": 9.6,
+      "simulated_wall": 112.02,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 6,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 125.7,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "blade",
+      "gems": 23,
+      "gold_gained": 815,
+      "hp": 0.0,
+      "items": 26,
+      "kills": 147,
+      "max_hp": 100.0,
+      "metric_damage": 3967.19999999999,
+      "metric_dead": true,
+      "metric_families": {
+        "blade": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 24.0
+      },
+      "metric_inventory_end": 31,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 30.0
+        },
+        {
+          "before": 25,
+          "hp": 30.0
+        },
+        {
+          "before": 20,
+          "hp": 24.0
+        },
+        {
+          "before": 15,
+          "hp": 24.0
+        },
+        {
+          "before": 10,
+          "hp": 18.0
+        },
+        {
+          "before": 5,
+          "hp": 12.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 12.0,
+      "metric_raw_damage": 5209.30000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 840.000000000001,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 33,
+      "primary_damage": 9.6,
+      "simulated_wall": 136.17,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 99.0,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 15,
+      "gold_gained": 560,
+      "hp": 0.0,
+      "items": 21,
+      "kills": 98,
+      "max_hp": 100.0,
+      "metric_damage": 2587.2,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 58.0
+      },
+      "metric_inventory_end": 26,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 94.0
+        },
+        {
+          "before": 20,
+          "hp": 88.0
+        },
+        {
+          "before": 15,
+          "hp": 58.0
+        },
+        {
+          "before": 10,
+          "hp": 52.0
+        },
+        {
+          "before": 5,
+          "hp": 40.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 34.0,
+      "metric_raw_damage": 4049.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 64.8,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 22,
+      "primary_damage": 9.6,
+      "simulated_wall": 107.63,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 81.97,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 6,
+      "gold_gained": 415,
+      "hp": 0.0,
+      "items": 15,
+      "kills": 73,
+      "max_hp": 100.0,
+      "metric_damage": 1824.0,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 70.0
+      },
+      "metric_inventory_end": 20,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 85.0
+        },
+        {
+          "before": 25,
+          "hp": 85.0
+        },
+        {
+          "before": 20,
+          "hp": 70.0
+        },
+        {
+          "before": 15,
+          "hp": 70.0
+        },
+        {
+          "before": 10,
+          "hp": 64.0
+        },
+        {
+          "before": 5,
+          "hp": 41.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 41.0,
+      "metric_raw_damage": 2979.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 4.8,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 16,
+      "primary_damage": 9.6,
+      "simulated_wall": 88.47,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 97.93,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 10,
+      "gold_gained": 585,
+      "hp": 0.0,
+      "items": 18,
+      "kills": 97,
+      "max_hp": 100.0,
+      "metric_damage": 2527.2,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 46.0
+      },
+      "metric_inventory_end": 23,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 94.0
+        },
+        {
+          "before": 20,
+          "hp": 52.0
+        },
+        {
+          "before": 15,
+          "hp": 46.0
+        },
+        {
+          "before": 10,
+          "hp": 46.0
+        },
+        {
+          "before": 5,
+          "hp": 46.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 40.0,
+      "metric_raw_damage": 4267.6,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 38.4,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 22,
+      "primary_damage": 9.6,
+      "simulated_wall": 106.43,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 73.57,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 9,
+      "gold_gained": 405,
+      "hp": 0.0,
+      "items": 7,
+      "kills": 63,
+      "max_hp": 100.0,
+      "metric_damage": 1567.2,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 12,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 95.0
+        },
+        {
+          "before": 5,
+          "hp": 50.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 29.0,
+      "metric_raw_damage": 2889.0,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 9.6,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 14,
+      "primary_damage": 9.6,
+      "simulated_wall": 78.97,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 84.08,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 11,
+      "gold_gained": 435,
+      "hp": 0.0,
+      "items": 14,
+      "kills": 77,
+      "max_hp": 100.0,
+      "metric_damage": 1958.4,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 54.0
+      },
+      "metric_inventory_end": 19,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 85.0
+        },
+        {
+          "before": 25,
+          "hp": 85.0
+        },
+        {
+          "before": 20,
+          "hp": 75.0
+        },
+        {
+          "before": 15,
+          "hp": 54.0
+        },
+        {
+          "before": 10,
+          "hp": 54.0
+        },
+        {
+          "before": 5,
+          "hp": 54.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 54.0,
+      "metric_raw_damage": 3246.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 45.6,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 17,
+      "primary_damage": 9.6,
+      "simulated_wall": 90.95,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 77.43,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 8,
+      "gold_gained": 375,
+      "hp": 0.0,
+      "items": 10,
+      "kills": 67,
+      "max_hp": 100.0,
+      "metric_damage": 1672.8,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 70.0
+      },
+      "metric_inventory_end": 15,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 85.0
+        },
+        {
+          "before": 15,
+          "hp": 70.0
+        },
+        {
+          "before": 10,
+          "hp": 54.0
+        },
+        {
+          "before": 5,
+          "hp": 31.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 25.0,
+      "metric_raw_damage": 2833.6,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 45.6,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 15,
+      "primary_damage": 9.6,
+      "simulated_wall": 83.33,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 90.35,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 15,
+      "gold_gained": 490,
+      "hp": 0.0,
+      "items": 13,
+      "kills": 86,
+      "max_hp": 100.0,
+      "metric_damage": 2203.2,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 18,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 82.0
+        },
+        {
+          "before": 5,
+          "hp": 46.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 40.0,
+      "metric_raw_damage": 3669.6,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 33.6,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 20,
+      "primary_damage": 9.6,
+      "simulated_wall": 98.15,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 70.13,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 4,
+      "gold_gained": 350,
+      "hp": 0.0,
+      "items": 9,
+      "kills": 60,
+      "max_hp": 100.0,
+      "metric_damage": 1454.4,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 14,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 85.0
+        },
+        {
+          "before": 5,
+          "hp": 55.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 25.0,
+      "metric_raw_damage": 2509.4,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 28.8,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 14,
+      "primary_damage": 9.6,
+      "simulated_wall": 75.43,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 75.07,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 8,
+      "gold_gained": 365,
+      "hp": 0.0,
+      "items": 6,
+      "kills": 63,
+      "max_hp": 100.0,
+      "metric_damage": 1555.2,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 11,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 95.0
+        },
+        {
+          "before": 5,
+          "hp": 79.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 68.0,
+      "metric_raw_damage": 2697.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 28.8,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 14,
+      "primary_damage": 9.6,
+      "simulated_wall": 80.67,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 77.07,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "hex",
+      "gems": 6,
+      "gold_gained": 410,
+      "hp": 0.0,
+      "items": 19,
+      "kills": 70,
+      "max_hp": 100.0,
+      "metric_damage": 1755.6,
+      "metric_dead": true,
+      "metric_families": {
+        "hex": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 24,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 75.0
+        },
+        {
+          "before": 5,
+          "hp": 35.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 23.0,
+      "metric_raw_damage": 2876.4,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 43.2,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 16,
+      "primary_damage": 9.6,
+      "simulated_wall": 83.13,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 59.18,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 4,
+      "gold_gained": 270,
+      "hp": 0.0,
+      "items": 5,
+      "kills": 42,
+      "max_hp": 100.0,
+      "metric_damage": 1082.8,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 70.0
+      },
+      "metric_inventory_end": 10,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 95.0
+        },
+        {
+          "before": 25,
+          "hp": 85.0
+        },
+        {
+          "before": 20,
+          "hp": 80.0
+        },
+        {
+          "before": 15,
+          "hp": 70.0
+        },
+        {
+          "before": 10,
+          "hp": 65.0
+        },
+        {
+          "before": 5,
+          "hp": 55.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 45.0,
+      "metric_raw_damage": 1660.0,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 536.4,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 9,
+      "primary_damage": 9.6,
+      "simulated_wall": 59.28,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 61.62,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 8,
+      "gold_gained": 250,
+      "hp": 0.0,
+      "items": 5,
+      "kills": 44,
+      "max_hp": 100.0,
+      "metric_damage": 1066.8,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 85.0
+      },
+      "metric_inventory_end": 10,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 95.0
+        },
+        {
+          "before": 25,
+          "hp": 90.0
+        },
+        {
+          "before": 20,
+          "hp": 85.0
+        },
+        {
+          "before": 15,
+          "hp": 85.0
+        },
+        {
+          "before": 10,
+          "hp": 80.0
+        },
+        {
+          "before": 5,
+          "hp": 70.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 45.0,
+      "metric_raw_damage": 1485.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 592.4,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 10,
+      "primary_damage": 9.6,
+      "simulated_wall": 61.72,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 62.08,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 8,
+      "gold_gained": 270,
+      "hp": 0.0,
+      "items": 10,
+      "kills": 48,
+      "max_hp": 100.0,
+      "metric_damage": 1186.8,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 60.0
+      },
+      "metric_inventory_end": 15,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 75.0
+        },
+        {
+          "before": 25,
+          "hp": 75.0
+        },
+        {
+          "before": 20,
+          "hp": 65.0
+        },
+        {
+          "before": 15,
+          "hp": 60.0
+        },
+        {
+          "before": 10,
+          "hp": 45.0
+        },
+        {
+          "before": 5,
+          "hp": 30.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 20.0,
+      "metric_raw_damage": 1701.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 606.8,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 11,
+      "primary_damage": 9.6,
+      "simulated_wall": 62.18,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 38.03,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 2,
+      "gold_gained": 135,
+      "hp": 0.0,
+      "items": 2,
+      "kills": 21,
+      "max_hp": 100.0,
+      "metric_damage": 526.4,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 95.0
+      },
+      "metric_inventory_end": 7,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 95.0
+        },
+        {
+          "before": 15,
+          "hp": 95.0
+        },
+        {
+          "before": 10,
+          "hp": 65.0
+        },
+        {
+          "before": 5,
+          "hp": 45.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 30.0,
+      "metric_raw_damage": 805.000000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 255.2,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 38.1,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 44.88,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 4,
+      "gold_gained": 175,
+      "hp": 0.0,
+      "items": 4,
+      "kills": 27,
+      "max_hp": 100.0,
+      "metric_damage": 689.200000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 75.0
+      },
+      "metric_inventory_end": 9,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 95.0
+        },
+        {
+          "before": 15,
+          "hp": 75.0
+        },
+        {
+          "before": 10,
+          "hp": 75.0
+        },
+        {
+          "before": 5,
+          "hp": 60.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 50.0,
+      "metric_raw_damage": 1072.4,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 322.8,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 6,
+      "primary_damage": 9.6,
+      "simulated_wall": 44.95,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 36.43,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 1,
+      "gold_gained": 105,
+      "hp": 0.0,
+      "items": 2,
+      "kills": 17,
+      "max_hp": 100.0,
+      "metric_damage": 430.0,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 95.0
+      },
+      "metric_inventory_end": 7,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 95.0
+        },
+        {
+          "before": 10,
+          "hp": 85.0
+        },
+        {
+          "before": 5,
+          "hp": 65.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 50.0,
+      "metric_raw_damage": 639.600000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 240.8,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 4,
+      "primary_damage": 9.6,
+      "simulated_wall": 36.5,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 42.45,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 3,
+      "gold_gained": 150,
+      "hp": 0.0,
+      "items": 8,
+      "kills": 26,
+      "max_hp": 100.0,
+      "metric_damage": 639.600000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 95.0
+      },
+      "metric_inventory_end": 13,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 95.0
+        },
+        {
+          "before": 10,
+          "hp": 95.0
+        },
+        {
+          "before": 5,
+          "hp": 65.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 35.0,
+      "metric_raw_damage": 901.600000000002,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 343.6,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 6,
+      "primary_damage": 9.6,
+      "simulated_wall": 42.52,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 55.73,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 4,
+      "gold_gained": 230,
+      "hp": 0.0,
+      "items": 6,
+      "kills": 38,
+      "max_hp": 100.0,
+      "metric_damage": 952.000000000002,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 80.0
+      },
+      "metric_inventory_end": 11,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 95.0
+        },
+        {
+          "before": 25,
+          "hp": 95.0
+        },
+        {
+          "before": 20,
+          "hp": 90.0
+        },
+        {
+          "before": 15,
+          "hp": 80.0
+        },
+        {
+          "before": 10,
+          "hp": 70.0
+        },
+        {
+          "before": 5,
+          "hp": 70.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 55.0,
+      "metric_raw_damage": 1439.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 488.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 8,
+      "primary_damage": 9.6,
+      "simulated_wall": 55.83,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 37.93,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 4,
+      "gold_gained": 120,
+      "hp": 0.0,
+      "items": 4,
+      "kills": 20,
+      "max_hp": 100.0,
+      "metric_damage": 516.000000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 9,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 90.0
+        },
+        {
+          "before": 5,
+          "hp": 75.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 60.0,
+      "metric_raw_damage": 786.900000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 247.6,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 38.0,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 46.43,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "poison",
+      "gems": 3,
+      "gold_gained": 170,
+      "hp": 0.0,
+      "items": 5,
+      "kills": 28,
+      "max_hp": 100.0,
+      "metric_damage": 700.400000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "poison": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 80.0
+      },
+      "metric_inventory_end": 10,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 85.0
+        },
+        {
+          "before": 15,
+          "hp": 80.0
+        },
+        {
+          "before": 10,
+          "hp": 80.0
+        },
+        {
+          "before": 5,
+          "hp": 55.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 30.0,
+      "metric_raw_damage": 1028.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 364.8,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 6,
+      "primary_damage": 9.6,
+      "simulated_wall": 46.5,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 42.4,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 2,
+      "gold_gained": 145,
+      "hp": 0.0,
+      "items": 3,
+      "kills": 25,
+      "max_hp": 100.0,
+      "metric_damage": 650.4,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 8,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 85.0
+        },
+        {
+          "before": 5,
+          "hp": 60.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 35.0,
+      "metric_raw_damage": 944.0,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 40.8
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 6,
+      "primary_damage": 9.6,
+      "simulated_wall": 44.2,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 39.17,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 1,
+      "gold_gained": 130,
+      "hp": 0.0,
+      "items": 3,
+      "kills": 20,
+      "max_hp": 100.0,
+      "metric_damage": 542.4,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 8,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 70.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 45.0,
+      "metric_raw_damage": 893.4,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 19.2
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 40.73,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 44.05,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 1,
+      "gold_gained": 140,
+      "hp": 0.0,
+      "items": 4,
+      "kills": 24,
+      "max_hp": 100.0,
+      "metric_damage": 631.2,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 9,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 75.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 65.0,
+      "metric_raw_damage": 928.4,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 12.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 45.98,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 44.12,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 3,
+      "gold_gained": 140,
+      "hp": 0.0,
+      "items": 5,
+      "kills": 24,
+      "max_hp": 100.0,
+      "metric_damage": 602.4,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 10,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 75.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 55.0,
+      "metric_raw_damage": 894.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 14.4
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 45.88,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 39.48,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 2,
+      "gold_gained": 135,
+      "hp": 0.0,
+      "items": 1,
+      "kills": 21,
+      "max_hp": 100.0,
+      "metric_damage": 582.6,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 6,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 90.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 65.0,
+      "metric_raw_damage": 934.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 47.4
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 41.12,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 1,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 30.9,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 2,
+      "gold_gained": 75,
+      "hp": 0.0,
+      "items": 0,
+      "kills": 13,
+      "max_hp": 100.0,
+      "metric_damage": 384.0,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 5,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 85.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 55.0,
+      "metric_raw_damage": 536.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 4.8
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 3,
+      "primary_damage": 9.6,
+      "simulated_wall": 32.03,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 51.27,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 5,
+      "gold_gained": 200,
+      "hp": 0.0,
+      "items": 6,
+      "kills": 34,
+      "max_hp": 100.0,
+      "metric_damage": 856.8,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 11,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 70.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 45.0,
+      "metric_raw_damage": 1266.6,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 31.2
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 7,
+      "primary_damage": 9.6,
+      "simulated_wall": 53.7,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 47.1,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 6,
+      "gold_gained": 170,
+      "hp": 0.0,
+      "items": 3,
+      "kills": 28,
+      "max_hp": 100.0,
+      "metric_damage": 753.6,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 8,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 95.0
+        },
+        {
+          "before": 5,
+          "hp": 75.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 55.0,
+      "metric_raw_damage": 1117.1,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 26.4
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 6,
+      "primary_damage": 9.6,
+      "simulated_wall": 49.07,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 42.33,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 3,
+      "gold_gained": 140,
+      "hp": 0.0,
+      "items": 7,
+      "kills": 24,
+      "max_hp": 100.0,
+      "metric_damage": 600.0,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 12,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 85.0
+        },
+        {
+          "before": 5,
+          "hp": 55.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 40.0,
+      "metric_raw_damage": 879.199999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 22.8
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 5,
+      "primary_damage": 9.6,
+      "simulated_wall": 44.07,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 2,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 35.07,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "summon",
+      "gems": 1,
+      "gold_gained": 100,
+      "hp": 0.0,
+      "items": 5,
+      "kills": 16,
+      "max_hp": 100.0,
+      "metric_damage": 446.4,
+      "metric_dead": true,
+      "metric_families": {
+        "summon": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 10,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 65.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 45.0,
+      "metric_raw_damage": 654.8,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 7.2
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 4,
+      "primary_damage": 9.6,
+      "simulated_wall": 36.3,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 11,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 212.33,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 37,
+      "gold_gained": 1965,
+      "hp": 0.0,
+      "items": 64,
+      "kills": 341,
+      "max_hp": 100.0,
+      "metric_damage": 11166.0000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 113.0
+      },
+      "metric_inventory_end": 69,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 92.5
+        },
+        {
+          "before": 25,
+          "hp": 82.25
+        },
+        {
+          "before": 20,
+          "hp": 71.75
+        },
+        {
+          "before": 15,
+          "hp": 21.0
+        },
+        {
+          "before": 10,
+          "hp": 42.25
+        },
+        {
+          "before": 5,
+          "hp": 39.25
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 20.25,
+      "metric_raw_damage": 14656.0000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 75,
+      "primary_damage": 9.6,
+      "simulated_wall": 231.1,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 10,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 206.1,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 34,
+      "gold_gained": 1870,
+      "hp": 0.0,
+      "items": 53,
+      "kills": 324,
+      "max_hp": 100.0,
+      "metric_damage": 10514.4000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 127.5
+      },
+      "metric_inventory_end": 58,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 54.5
+        },
+        {
+          "before": 25,
+          "hp": 41.0
+        },
+        {
+          "before": 20,
+          "hp": 47.75
+        },
+        {
+          "before": 15,
+          "hp": 35.5
+        },
+        {
+          "before": 10,
+          "hp": 39.25
+        },
+        {
+          "before": 5,
+          "hp": 36.25
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 56.25,
+      "metric_raw_damage": 13824.8000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 70,
+      "primary_damage": 9.6,
+      "simulated_wall": 224.03,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 13,
+      "boss_spawned": true,
+      "drop_chance": 0.16,
+      "elapsed": 255.67,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 55,
+      "gold_gained": 2670,
+      "hp": 0.0,
+      "items": 81,
+      "kills": 470,
+      "max_hp": 100.0,
+      "metric_damage": 16843.2000000002,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "hero": 12.0,
+        "swordsman": 110.0
+      },
+      "metric_inventory_end": 86,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 69.25
+        },
+        {
+          "before": 25,
+          "hp": 55.5
+        },
+        {
+          "before": 20,
+          "hp": 61.25
+        },
+        {
+          "before": 15,
+          "hp": 30.0
+        },
+        {
+          "before": 10,
+          "hp": 60.0
+        },
+        {
+          "before": 5,
+          "hp": 81.5
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 30.75,
+      "metric_raw_damage": 21237.6999999999,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 102,
+      "primary_damage": 9.6,
+      "simulated_wall": 279.23,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 11,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 225.98,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 48,
+      "gold_gained": 2145,
+      "hp": 0.0,
+      "items": 54,
+      "kills": 379,
+      "max_hp": 100.0,
+      "metric_damage": 12817.2000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 172.25
+      },
+      "metric_inventory_end": 59,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 81.0
+        },
+        {
+          "before": 25,
+          "hp": 69.25
+        },
+        {
+          "before": 20,
+          "hp": 79.75
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 89.75
+        },
+        {
+          "before": 5,
+          "hp": 81.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 42.5,
+      "metric_raw_damage": 16365.4000000002,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 82,
+      "primary_damage": 9.6,
+      "simulated_wall": 246.22,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 10,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 200.22,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 37,
+      "gold_gained": 1810,
+      "hp": 0.0,
+      "items": 54,
+      "kills": 312,
+      "max_hp": 100.0,
+      "metric_damage": 9991.2000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 166.5
+      },
+      "metric_inventory_end": 59,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 87.0
+        },
+        {
+          "before": 20,
+          "hp": 73.5
+        },
+        {
+          "before": 15,
+          "hp": 76.5
+        },
+        {
+          "before": 10,
+          "hp": 61.5
+        },
+        {
+          "before": 5,
+          "hp": 63.25
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 39.5,
+      "metric_raw_damage": 13286.0000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 68,
+      "primary_damage": 9.6,
+      "simulated_wall": 217.08,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 10,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 200.47,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 31,
+      "gold_gained": 1795,
+      "hp": 0.0,
+      "items": 58,
+      "kills": 309,
+      "max_hp": 100.0,
+      "metric_damage": 9865.2000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 179.75
+      },
+      "metric_inventory_end": 63,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 95.75
+        },
+        {
+          "before": 25,
+          "hp": 85.75
+        },
+        {
+          "before": 20,
+          "hp": 72.25
+        },
+        {
+          "before": 15,
+          "hp": 89.75
+        },
+        {
+          "before": 10,
+          "hp": 79.0
+        },
+        {
+          "before": 5,
+          "hp": 95.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 91.5,
+      "metric_raw_damage": 13226.7000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 67,
+      "primary_damage": 9.6,
+      "simulated_wall": 217.67,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 11,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 217.78,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 46,
+      "gold_gained": 2030,
+      "hp": 0.0,
+      "items": 60,
+      "kills": 360,
+      "max_hp": 100.0,
+      "metric_damage": 11995.2000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 185.75
+      },
+      "metric_inventory_end": 65,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 88.5
+        },
+        {
+          "before": 25,
+          "hp": 95.25
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 95.25
+        },
+        {
+          "before": 10,
+          "hp": 99.0
+        },
+        {
+          "before": 5,
+          "hp": 68.25
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 49.25,
+      "metric_raw_damage": 15596.2000000002,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 79,
+      "primary_damage": 9.6,
+      "simulated_wall": 236.92,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 11,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 219.13,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 40,
+      "gold_gained": 2055,
+      "hp": 0.0,
+      "items": 61,
+      "kills": 363,
+      "max_hp": 100.0,
+      "metric_damage": 12020.4000000001,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 122.75
+      },
+      "metric_inventory_end": 66,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 87.5
+        },
+        {
+          "before": 25,
+          "hp": 84.5
+        },
+        {
+          "before": 20,
+          "hp": 35.75
+        },
+        {
+          "before": 15,
+          "hp": 32.75
+        },
+        {
+          "before": 10,
+          "hp": 45.25
+        },
+        {
+          "before": 5,
+          "hp": 5.25
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 13.75,
+      "metric_raw_damage": 15291.6000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 79,
+      "primary_damage": 9.6,
+      "simulated_wall": 238.77,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 10,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 195.38,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 22,
+      "gold_gained": 1720,
+      "hp": 0.0,
+      "items": 50,
+      "kills": 298,
+      "max_hp": 100.0,
+      "metric_damage": 9362.40000000009,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 152.75
+      },
+      "metric_inventory_end": 55,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 62.75
+        },
+        {
+          "before": 10,
+          "hp": 40.0
+        },
+        {
+          "before": 5,
+          "hp": 72.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 63.25,
+      "metric_raw_damage": 12417.6000000001,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 65,
+      "primary_damage": 9.6,
+      "simulated_wall": 212.05,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 12,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 238.98,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "defense",
+      "gems": 48,
+      "gold_gained": 2410,
+      "hp": 0.0,
+      "items": 73,
+      "kills": 416,
+      "max_hp": 100.0,
+      "metric_damage": 14289.6000000002,
+      "metric_dead": true,
+      "metric_families": {
+        "defense": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 151.0
+      },
+      "metric_inventory_end": 78,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 79.75
+        },
+        {
+          "before": 20,
+          "hp": 92.25
+        },
+        {
+          "before": 15,
+          "hp": 59.0
+        },
+        {
+          "before": 10,
+          "hp": 47.25
+        },
+        {
+          "before": 5,
+          "hp": 33.5
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 27.25,
+      "metric_raw_damage": 18497.2,
+      "metric_set_damage": {
+        "arcane": 0.0,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 90,
+      "primary_damage": 9.6,
+      "simulated_wall": 260.32,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 90.05,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 12,
+      "gold_gained": 505,
+      "hp": 0.0,
+      "items": 9,
+      "kills": 87,
+      "max_hp": 100.0,
+      "metric_damage": 2293.44,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 41.0
+      },
+      "metric_inventory_end": 14,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 85.0
+        },
+        {
+          "before": 25,
+          "hp": 80.0
+        },
+        {
+          "before": 20,
+          "hp": 58.0
+        },
+        {
+          "before": 15,
+          "hp": 41.0
+        },
+        {
+          "before": 10,
+          "hp": 35.0
+        },
+        {
+          "before": 5,
+          "hp": 35.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 35.0,
+      "metric_raw_damage": 3204.51999999999,
+      "metric_set_damage": {
+        "arcane": 419.04,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 20,
+      "primary_damage": 9.6,
+      "simulated_wall": 98.25,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 1,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 86.6,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 10,
+      "gold_gained": 465,
+      "hp": 0.0,
+      "items": 10,
+      "kills": 81,
+      "max_hp": 100.0,
+      "metric_damage": 2111.04,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 15,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 90.0
+        },
+        {
+          "before": 25,
+          "hp": 90.0
+        },
+        {
+          "before": 20,
+          "hp": 90.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 72.0
+        },
+        {
+          "before": 5,
+          "hp": 30.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 24.0,
+      "metric_raw_damage": 2958.71999999999,
+      "metric_set_damage": {
+        "arcane": 517.44,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 18,
+      "primary_damage": 9.6,
+      "simulated_wall": 94.6,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 2,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 5,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 107.58,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 13,
+      "gold_gained": 660,
+      "hp": 0.0,
+      "items": 16,
+      "kills": 116,
+      "max_hp": 100.0,
+      "metric_damage": 3087.36,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 30.0
+      },
+      "metric_inventory_end": 21,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 48.0
+        },
+        {
+          "before": 25,
+          "hp": 48.0
+        },
+        {
+          "before": 20,
+          "hp": 42.0
+        },
+        {
+          "before": 15,
+          "hp": 30.0
+        },
+        {
+          "before": 10,
+          "hp": 30.0
+        },
+        {
+          "before": 5,
+          "hp": 24.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 12.0,
+      "metric_raw_damage": 4163.59999999999,
+      "metric_set_damage": {
+        "arcane": 641.28,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 26,
+      "primary_damage": 9.6,
+      "simulated_wall": 118.68,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 3,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 80.47,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 9,
+      "gold_gained": 400,
+      "hp": 0.0,
+      "items": 16,
+      "kills": 72,
+      "max_hp": 100.0,
+      "metric_damage": 1837.2,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 21,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 84.0
+        },
+        {
+          "before": 5,
+          "hp": 84.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 54.0,
+      "metric_raw_damage": 2536.48,
+      "metric_set_damage": {
+        "arcane": 313.92,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 16,
+      "primary_damage": 9.6,
+      "simulated_wall": 87.53,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 4,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 83.47,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 8,
+      "gold_gained": 470,
+      "hp": 0.0,
+      "items": 16,
+      "kills": 80,
+      "max_hp": 100.0,
+      "metric_damage": 2057.28,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 95.0
+      },
+      "metric_inventory_end": 21,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 95.0
+        },
+        {
+          "before": 20,
+          "hp": 95.0
+        },
+        {
+          "before": 15,
+          "hp": 95.0
+        },
+        {
+          "before": 10,
+          "hp": 95.0
+        },
+        {
+          "before": 5,
+          "hp": 71.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 47.0,
+      "metric_raw_damage": 2999.09999999999,
+      "metric_set_damage": {
+        "arcane": 355.2,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 18,
+      "primary_damage": 9.6,
+      "simulated_wall": 91.0,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 5,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 75.05,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 6,
+      "gold_gained": 360,
+      "hp": 0.0,
+      "items": 12,
+      "kills": 62,
+      "max_hp": 100.0,
+      "metric_damage": 1610.88,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 100.0
+      },
+      "metric_inventory_end": 17,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 100.0
+        },
+        {
+          "before": 15,
+          "hp": 100.0
+        },
+        {
+          "before": 10,
+          "hp": 100.0
+        },
+        {
+          "before": 5,
+          "hp": 100.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 78.0,
+      "metric_raw_damage": 2326.76,
+      "metric_set_damage": {
+        "arcane": 187.68,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": true,
+      "partial": false,
+      "points": 14,
+      "primary_damage": 9.6,
+      "simulated_wall": 81.08,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 6,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 96.18,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 22,
+      "gold_gained": 545,
+      "hp": 0.0,
+      "items": 11,
+      "kills": 97,
+      "max_hp": 100.0,
+      "metric_damage": 2552.16,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 47.0
+      },
+      "metric_inventory_end": 16,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 70.0
+        },
+        {
+          "before": 25,
+          "hp": 53.0
+        },
+        {
+          "before": 20,
+          "hp": 53.0
+        },
+        {
+          "before": 15,
+          "hp": 47.0
+        },
+        {
+          "before": 10,
+          "hp": 35.0
+        },
+        {
+          "before": 5,
+          "hp": 5.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 5.0,
+      "metric_raw_damage": 3475.19999999999,
+      "metric_set_damage": {
+        "arcane": 465.6,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 22,
+      "primary_damage": 9.6,
+      "simulated_wall": 105.35,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 7,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 83.97,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 6,
+      "gold_gained": 435,
+      "hp": 0.0,
+      "items": 8,
+      "kills": 77,
+      "max_hp": 100.0,
+      "metric_damage": 1939.2,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 13,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 90.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 84.0
+        },
+        {
+          "before": 5,
+          "hp": 54.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 48.0,
+      "metric_raw_damage": 2668.03999999999,
+      "metric_set_damage": {
+        "arcane": 464.64,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 17,
+      "primary_damage": 9.6,
+      "simulated_wall": 91.33,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 8,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 4,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 92.87,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 14,
+      "gold_gained": 535,
+      "hp": 0.0,
+      "items": 16,
+      "kills": 93,
+      "max_hp": 100.0,
+      "metric_damage": 2424.96,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 40.0
+      },
+      "metric_inventory_end": 21,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 75.0
+        },
+        {
+          "before": 25,
+          "hp": 75.0
+        },
+        {
+          "before": 20,
+          "hp": 58.0
+        },
+        {
+          "before": 15,
+          "hp": 40.0
+        },
+        {
+          "before": 10,
+          "hp": 34.0
+        },
+        {
+          "before": 5,
+          "hp": 34.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 10.0,
+      "metric_raw_damage": 3406.59999999999,
+      "metric_set_damage": {
+        "arcane": 433.92,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 21,
+      "primary_damage": 9.6,
+      "simulated_wall": 101.77,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 9,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    },
+    {
+      "attack_interval": 0.55,
+      "bombs": 3,
+      "boss_spawned": false,
+      "drop_chance": 0.16,
+      "elapsed": 79.98,
+      "equipped": {
+        "core": 5,
+        "fang": 2,
+        "organ1": 3,
+        "organ2": 4
+      },
+      "family": "arcane",
+      "gems": 4,
+      "gold_gained": 405,
+      "hp": 0.0,
+      "items": 19,
+      "kills": 73,
+      "max_hp": 100.0,
+      "metric_damage": 1838.4,
+      "metric_dead": true,
+      "metric_families": {
+        "arcane": 4
+      },
+      "metric_incoming_last15": {
+        "swordsman": 90.0
+      },
+      "metric_inventory_end": 24,
+      "metric_inventory_start": 5,
+      "metric_last30": [
+        {
+          "before": 30,
+          "hp": 100.0
+        },
+        {
+          "before": 25,
+          "hp": 100.0
+        },
+        {
+          "before": 20,
+          "hp": 90.0
+        },
+        {
+          "before": 15,
+          "hp": 90.0
+        },
+        {
+          "before": 10,
+          "hp": 90.0
+        },
+        {
+          "before": 5,
+          "hp": 84.0
+        },
+        {
+          "before": 0,
+          "hp": 0.0
+        }
+      ],
+      "metric_peak3": 48.0,
+      "metric_raw_damage": 2553.05999999999,
+      "metric_set_damage": {
+        "arcane": 148.8,
+        "blade": 0.0,
+        "defense": 0.0,
+        "devour": 0.0,
+        "hex": 0.0,
+        "poison": 0.0,
+        "summon": 0.0
+      },
+      "metric_sudden": false,
+      "partial": false,
+      "points": 16,
+      "primary_damage": 9.6,
+      "simulated_wall": 86.72,
+      "stage": 1,
+      "step_cap": false,
+      "trial": 10,
+      "upgrades_at_start": {
+        "awakening": 0
+      },
+      "won": false
+    }
+  ],
+  "samples_per_family": 10,
+  "stage": 1
+}
