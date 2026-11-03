@@ -1,6 +1,7 @@
 extends Control
 const Battle = preload("res://src/combat.gd")
 const Profile = preload("res://src/profile.gd")
+const HubButton = preload("res://src/hub_button.gd")
 const FAMILY_NAMES := {"devour":"捕食","blade":"刃物","hex":"呪術","poison":"毒・腐食","summon":"召喚","defense":"防御","arcane":"魔力"}
 const COMPANIONS := {"black_mage":"黒魔法使い", "thief":"盗賊", "sister":"シスター", "blacksmith":"鍛冶屋", "merchant":"商人", "researcher":"研究者", "hunter":"狩人", "fortune_teller":"占い師"}
 const SLOTS := {"fang":"牙","organ1":"器官1","organ2":"器官2","organ3":"器官3","organ4":"器官4","shell":"甲殻","core":"核"}
@@ -31,6 +32,8 @@ var concept_texture: Texture2D
 var dungeon_texture: Texture2D
 var hub_texture: Texture2D
 var bomb_button: Button
+var hub_time := 0.0
+var hub_redraw_clock := 0.0
 var part_textures := {}
 var enemy_textures := {}
 var icon_textures := {}
@@ -187,21 +190,28 @@ func style_item_button(b:Button,item:Dictionary) -> void:
   highlight.border_color=color
   highlight.border_width_left=3
   b.add_theme_stylebox_override("normal",highlight)
+func hub_button(title: String, subtitle: String, family: String, pos: Vector2, size: Vector2, action: Callable, primary: bool=false) -> Button:
+ var b=HubButton.new()
+ b.title=title;b.subtitle=subtitle;b.emblem=icon_textures.get(family);b.primary=primary
+ b.position=pos;b.size=size;b.pressed.connect(action);ui.add_child(b)
+ return b
 func show_title() -> void:
  state="title"; clear_ui()
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-title'))")
- label("THE HUNGRY RELIQUARY   /   01",Vector2(100,92),Vector2(510,28),14).modulate=Color("dfb18b")
- label("M I M I C",Vector2(96,118),Vector2(530,100),64)
- label("宝箱は動かない。飢えだけが進化する。",Vector2(100,208),Vector2(560,42),21).modulate=Color("d9c3af")
- label("資金  %d     /     進化  %d" % [profile.data.gold,profile.data.points],Vector2(100,258),Vector2(490,35),18).modulate=Color("c6a593")
- var play:=button("狩場へ進む      →",Vector2(100,318),Vector2(505,64),show_stages)
- play.add_theme_font_size_override("font_size",22)
- button("装備と構築",Vector2(100,397),Vector2(245,55),show_inventory)
- button("鍛冶・魔石",Vector2(360,397),Vector2(245,55),show_forge)
- button("永続強化",Vector2(100,465),Vector2(245,55),show_upgrades)
- button("収集庫",Vector2(360,465),Vector2(245,55),show_collection)
- button("設定",Vector2(100,533),Vector2(505,48),show_settings)
- label("照準：マウス / ドラッグ　　ボム：SPACE",Vector2(100,615),Vector2(520,30),14).modulate=Color("aa928b")
+ var mark:=label("MIMIC",Vector2(58,42),Vector2(450,80),64)
+ mark.add_theme_color_override("font_color",Color("f1d2a5"))
+ mark.add_theme_color_override("font_shadow_color",Color("1b080b"))
+ mark.add_theme_constant_override("shadow_offset_x",3);mark.add_theme_constant_override("shadow_offset_y",3)
+ label("THE HUNGRY RELIQUARY",Vector2(64,123),Vector2(420,26),14).modulate=Color("d0a078")
+ label("宝箱は、獲物を待っている。",Vector2(64,168),Vector2(450,38),20).modulate=Color("e2c6aa")
+ label("資金  %d    ◆    進化  %d" % [profile.data.gold,profile.data.points],Vector2(930,30),Vector2(320,40),17).modulate=Color("e8cfac")
+ hub_button("狩場へ進む","HUNT  /  獲物を迎える","devour",Vector2(58,423),Vector2(350,92),show_stages,true)
+ hub_button("装備", "EQUIP", "blade",Vector2(45,589),Vector2(226,88),show_inventory)
+ hub_button("鍛冶", "FORGE", "defense",Vector2(285,589),Vector2(226,88),show_forge)
+ var offering:=hub_button("貢ぎ物", "OFFERING", "hex",Vector2(525,589),Vector2(226,88),show_upgrades)
+ if companion_textures.has("black_mage"):offering.emblem=companion_textures.black_mage
+ hub_button("収集庫", "COLLECTION", "arcane",Vector2(765,589),Vector2(226,88),show_collection)
+ hub_button("設定", "SETTINGS", "summon",Vector2(1005,589),Vector2(226,88),show_settings)
 func show_stages() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="stages";clear_ui();heading("狩場を選ぶ")
@@ -404,6 +414,9 @@ func show_settings() -> void:
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;profile.save_game();show_settings())
 func _process(delta: float) -> void:
  toast_t=maxf(0,toast_t-delta)
+ if state=="title" and not profile.data.get("settings",{}).get("reduce_fx",false):
+  hub_time+=delta;hub_redraw_clock+=delta
+  if hub_redraw_clock>=0.05:hub_redraw_clock=0.0;queue_redraw()
  if state=="battle":
   if benchmark_mode: battle.hp=battle.max_hp
   battle.update(minf(delta,0.05))
@@ -477,7 +490,19 @@ func _draw() -> void:
   draw_rect(Rect2(0,0,1280,720),Color(0.015,0.008,0.015,0.10 if state=="title" else 0.70))
   draw_line(Vector2(40,84),Vector2(1240,84),Color("6b4d49"),1)
   if state=="title":
-   panel(Rect2(68,70,568,566),true)
+   # Shadowed left vignette keeps the title readable while leaving the lair visible.
+   draw_rect(Rect2(0,0,450,300),Color(0.015,0.006,0.012,0.35))
+   draw_line(Vector2(64,153),Vector2(315,153),Color("a47754"),1)
+   # Small embers rise from the candles; reduced-effects mode leaves the scene still.
+   if not profile.data.get("settings",{}).get("reduce_fx",false):
+    for i in 7:
+     var phase:float=fposmod(hub_time*16.0+i*13.0,82.0)
+     var x:float=675.0+i*48.0+sin(hub_time*0.7+i)*4.0
+     var y:float=442.0-(i%3)*27.0-phase
+     var alpha:float=0.45*(1.0-phase/82.0)
+     draw_rect(Rect2(roundf(x),roundf(y),2,2),Color(1.0,0.53,0.25,alpha))
+   draw_rect(Rect2(0,563,1280,157),Color(0.025,0.008,0.012,0.68))
+   draw_line(Vector2(45,577),Vector2(1230,577),Color("a77b58"),1)
 
   elif state in ["inventory","forge"]:
    panel(Rect2(30,88,550 if state=="inventory" else 470,592))
