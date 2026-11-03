@@ -6,6 +6,8 @@ const MAX_PROJECTILES := 256
 const MAX_EFFECTS := 64
 const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
+const DEVOUR_HALF_WIDTH := 68.0
+const TONGUE_DURATION := 0.30
 const BOMB_COOLDOWN := 20.0
 const BOMB_DAMAGE := 85.0
 const BOMB_RADIUS := 135.0
@@ -147,7 +149,7 @@ func sync_target_cache() -> void:
   var e:Dictionary=enemies[i]
   target_active[i]=1 if e.active else 0
   if e.active:target_positions[i]=e.pos
-func target_index(origin:Vector2,direction:Vector2,max_range:float)->int:
+func target_index(origin:Vector2,direction:Vector2,max_range:float,half_width:float=AIM_HALF_WIDTH)->int:
  if max_range<0.0 or direction.length_squared()<0.0001:return -1
  var aim_dir:Vector2=direction.normalized()
  var best: int=-1
@@ -164,7 +166,7 @@ func target_index(origin:Vector2,direction:Vector2,max_range:float)->int:
   var offset:Vector2=pos-origin
   var forward:float=aim_dir.dot(offset)
   var lateral:float=absf(aim_dir.cross(offset))
-  if forward>0.0 and forward<=max_range and lateral<=AIM_HALF_WIDTH and forward<best_forward:
+  if forward>0.0 and forward<=max_range and lateral<=half_width and forward<best_forward:
    best=i;best_forward=forward
  return best
 
@@ -264,7 +266,7 @@ func cast(a: Dictionary) -> bool:
  var family: String = a.family
  var ability: String = a.ability
  var reach: float = float(a.get("range",300)) * float(stats.range)
- var index := target_index(CENTER, aim, reach)
+ var index := target_index(CENTER, aim, reach, DEVOUR_HALF_WIDTH if family=="devour" else AIM_HALF_WIDTH)
  if ability == "heal":
   hp = minf(max_hp,hp + 1.0 + float(a.power)*0.1)
   effect(CENTER,CENTER,"defense",42)
@@ -279,8 +281,9 @@ func cast(a: Dictionary) -> bool:
   else:devour_chain=0
   power*=1.0+devour_chain*0.12
  if family == "devour":
-  var tongue_length:float=reach if index<0 else minf(reach,e.pos.distance_to(CENTER))
-  effect(CENTER,CENTER+aim*tongue_length,"devour")
+  # The tip bends toward a target inside the player's aimed strike corridor.
+  var tongue_tip:Vector2=CENTER+aim*reach if index<0 else e.pos
+  effect(CENTER,tongue_tip,"devour",0.0,TONGUE_DURATION)
   if index>=0:hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
   if index>=0 and ability=="pull":
    for other in enemies:

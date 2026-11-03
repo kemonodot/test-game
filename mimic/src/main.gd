@@ -74,15 +74,14 @@ func _ready() -> void:
   scene_image.resize(1280,720,Image.INTERPOLATE_NEAREST)
   dungeon_texture=ImageTexture.create_from_image(scene_image)
  for stage_index in 2:
-  var img:=Image.create_empty(1280,720,false,Image.FORMAT_RGBA8)
-  img.fill(Color("08070b") if stage_index==0 else Color("10080e"))
-  var tile_color:=Color("17121a") if stage_index==0 else Color("1b1017")
-  for y in range(0,720,80):
-   for x in range(0,1280,80):
-    var offset:int=40 if int(y/80)%2 else 0
-    img.fill_rect(Rect2i(x+offset,y,78,1),tile_color)
-    img.fill_rect(Rect2i(x+offset,y,1,78),tile_color)
-  backgrounds.append(ImageTexture.create_from_image(img))
+  var gradient:=Gradient.new()
+  gradient.offsets=PackedFloat32Array([0.0,0.58,1.0])
+  gradient.colors=PackedColorArray([Color("292027"),Color("151018"),Color("060509")]) if stage_index==0 else PackedColorArray([Color("2b1922"),Color("170d15"),Color("080508")])
+  var backdrop:=GradientTexture2D.new()
+  backdrop.width=1280;backdrop.height=720;backdrop.gradient=gradient
+  backdrop.fill=GradientTexture2D.FILL_RADIAL
+  backdrop.fill_from=Vector2(0.5,0.5);backdrop.fill_to=Vector2(1.0,1.0)
+  backgrounds.append(backdrop)
  for fam in Profile.FAMILIES:
   part_textures[fam]=load("res://assets/art/parts/%s.png" % fam)
   icon_textures[fam]=load("res://assets/art/icons/%s.png" % fam)
@@ -480,7 +479,9 @@ func panel(rect:Rect2, accent:bool=false) -> void:
  draw_rect(Rect2(rect.position+rect.size-Vector2(8,8),Vector2(3,3)),Color("d2aa81"))
 func _draw() -> void:
  draw_rect(Rect2(0,0,1280,720),Color("08070b"))
- if state=="title" and hub_texture:
+ if state=="battle":
+  draw_texture_rect(backgrounds[selected_stage],Rect2(0,0,1280,720),false)
+ elif state=="title" and hub_texture:
   draw_texture_rect(hub_texture,Rect2(0,0,1280,720),false)
  elif dungeon_texture:
   var tint:=Color(0.76,0.74,0.78,1.0) if selected_stage==0 else Color(0.82,0.60,0.65,1.0)
@@ -520,9 +521,10 @@ func _draw() -> void:
   return
  # Direction guide remains visible beneath the battle effects.
  if profile.data.get("settings",{}).get("aim_guide",true):
-  draw_line(Battle.CENTER+battle.aim*64,battle.aim*120+Battle.CENTER,Color(0.94,0.55,0.40,0.65),2)
   var sight:Vector2=Battle.CENTER+battle.aim*125
-  draw_circle(sight,3,Color("f0c392"))
+  var side:Vector2=battle.aim.orthogonal()
+  draw_line(sight-battle.aim*7-side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
+  draw_line(sight-battle.aim*7+side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
  for e in battle.enemies:
   if e.active:
    var size:float=96.0 if e.boss else 64.0
@@ -554,10 +556,31 @@ func _draw() -> void:
    var fade:float=clampf(fx.ttl/0.18,0.25,1.0)
    c.a=fade
    if fx.family=="devour":
-    draw_line(fx.from,fx.to,c.darkened(0.55),10)
-    draw_line(fx.from,fx.to,c,5)
-    draw_line(fx.from,fx.to,Color("ffd1b4"),1)
-    draw_arc(fx.to,12,0,TAU,12,c,2)
+    var direction:Vector2=(fx.to-fx.from).normalized()
+    var side:Vector2=direction.orthogonal()
+    var extension:float=clampf(fx.ttl/0.09,0.0,1.0)
+    var tip:Vector2=fx.from.lerp(fx.to,extension)
+    var length:float=fx.from.distance_to(tip)
+    var bend:float=minf(15.0,length*0.04)
+    var positions:=[0.0,0.18,0.40,0.65,0.85,1.0]
+    var widths:=[9.0,14.0,18.0,17.0,14.0,9.0]
+    var left:=PackedVector2Array();var right:=PackedVector2Array()
+    var inner_left:=PackedVector2Array();var inner_right:=PackedVector2Array()
+    var ridge:=PackedVector2Array()
+    for i in positions.size():
+     var t:float=positions[i]
+     var center:Vector2=fx.from.lerp(tip,t)+side*(sin(t*PI*1.7)*bend)
+     var width:float=widths[i]
+     left.append(center+side*width);right.insert(0,center-side*width)
+     inner_left.append(center+side*(width-4));inner_right.insert(0,center-side*(width-4))
+     ridge.append(center-side*3.0)
+    left.append_array(right);inner_left.append_array(inner_right)
+    draw_colored_polygon(left,Color("531923"))
+    draw_colored_polygon(inner_left,Color("b53b50"))
+    draw_polyline(ridge,Color("e17980"),4.0)
+    draw_circle(tip,9,Color("b53b50"))
+    draw_circle(tip-direction*3-side*2,4,Color("ef9a97"))
+    draw_line(tip-direction*3,tip+direction*4,Color("6b2531"),2)
    elif fx.family=="blade":
     var direction:float=(fx.to-fx.from).angle()
     var r:float=maxf(50.0,fx.radius)
