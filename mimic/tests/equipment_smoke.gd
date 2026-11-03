@@ -1,0 +1,17 @@
+extends SceneTree
+const Profile = preload("res://src/profile.gd")
+const Combat = preload("res://src/combat.gd")
+func _initialize() -> void:
+ var p = Profile.new(false)
+ assert(p.data.inventory.size() == 1)
+ var item: Dictionary = p.create_item("tongue", 0)
+ p.data.inventory.append(item)
+ assert(p.equip(item.uid, "fang"))
+ assert(p.equipped_templates()[0].id == "tongue")
+ var b = Combat.new(2)
+ b.configure(p.equipped_templates())
+ assert(is_equal_approx(b.attack_range,420.0) and is_equal_approx(b.attack_interval,0.48))
+ var loot: Dictionary = p.drop()
+ assert(loot.has("template") and p.data.inventory.size() == 3)
+ print("EQUIPMENT SMOKE: drop, equip and changed attack range/cooldown passed")
+ quit(0)

@@ -1,0 +1,18 @@
+extends SceneTree
+const Profile=preload("res://src/profile.gd")
+func _initialize()->void:call_deferred("run")
+func run()->void:
+ var app=load("res://main.tscn").instantiate();root.add_child(app)
+ app.profile=Profile.new(false)
+ app.profile.data.settings={"sound":false}
+ app.selected_stage=0;app.start_battle()
+ app.battle.spawn_enemy("hero",Vector2(760,360))
+ app.battle.hit_enemy(0,1000000)
+ app._process(0.01)
+ assert(app.state=="result" and app.battle.won)
+ assert(app.profile.data.unlocked_stage==1)
+ var reloaded=Profile.new(true)
+ assert(reloaded.data.unlocked_stage==1)
+ assert(reloaded.data.inventory.size()>=2)
+ print("STAGE SMOKE: boss defeat unlocks next stage, grants loot and persists")
+ app.free();quit(0)

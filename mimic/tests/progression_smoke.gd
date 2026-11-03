@@ -1,0 +1,28 @@
+extends SceneTree
+const Profile = preload("res://src/profile.gd")
+const Combat = preload("res://src/combat.gd")
+func _initialize() -> void:
+ var p = Profile.new(false)
+ p.data.gold=1000; p.data.points=100
+ var item: Dictionary = p.create_item("bite",3)
+ item.socket_count=2
+ p.data.inventory.append(item)
+ assert(item.affixes.size()==3)
+ assert(p.upgrade_item(item.uid) and item.level==1)
+ assert(not p.reroll_item(item.uid))
+ assert(p.upgrade("reroll") and p.reroll_item(item.uid))
+ assert(p.upgrade("fusion"))
+ p.add_gem("devour");p.add_gem("devour");p.add_gem("devour")
+ assert(p.fuse_gem("devour",1))
+ assert(p.socket_gem(item.uid,"devour",2))
+ assert(p.equip(item.uid,"fang"))
+ var b=Combat.new(42)
+ b.configure(p.equipped_templates(),{"hp":2,"damage":1})
+ assert(b.max_hp>=120.0 and b.stats.devour>1.0)
+ assert(p.upgrade("family_hex") and "hex" in p.data.unlocked_families)
+ assert(p.save_game())
+ var loaded=Profile.new(true)
+ assert(loaded.get_item(item.uid).sockets.size()==1)
+ assert("hex" in loaded.data.unlocked_families)
+ print("PROGRESSION SMOKE: upgrade, reroll, fusion, socket, unlock and reload passed")
+ quit(0)

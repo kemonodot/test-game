@@ -1,0 +1,12 @@
+{
+ "swordsman":{"name":"剣士","hp":24,"speed":55,"damage":5,"cost":1,"color":"c4aaa0"},
+ "shield":{"name":"盾兵","hp":62,"speed":28,"damage":7,"cost":3,"color":"8f909a"},
+ "archer":{"name":"弓手","hp":20,"speed":44,"damage":6,"cost":2,"color":"a7a36d"},
+ "mage":{"name":"魔法使い","hp":17,"speed":36,"damage":7,"cost":3,"color":"a682be"},
+ "priest":{"name":"僧侶","hp":28,"speed":30,"damage":3,"cost":3,"color":"e1d8bc"},
+ "thief":{"name":"盗賊","hp":16,"speed":82,"damage":4,"cost":2,"color":"80676c"},
+ "fanatic":{"name":"狂信者","hp":22,"speed":54,"damage":14,"cost":2,"color":"c4504c"},
+ "lancer":{"name":"槍騎兵","hp":35,"speed":39,"damage":9,"cost":3,"color":"c5a173"},
+ "hero":{"name":"勇者","hp":1000,"speed":30,"damage":12,"cost":0,"color":"e6d6ad","boss":true},
+ "captain":{"name":"聖騎士団長","hp":1550,"speed":24,"damage":16,"cost":0,"color":"d8cbd3","boss":true}
+}

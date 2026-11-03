@@ -1,0 +1,117 @@
+[
+ {
+  "id": "damage",
+  "name": "攻撃力",
+  "per_tier": 0.04
+ },
+ {
+  "id": "speed",
+  "name": "攻撃速度",
+  "per_tier": 0.04
+ },
+ {
+  "id": "range",
+  "name": "射程",
+  "per_tier": 0.04
+ },
+ {
+  "id": "area",
+  "name": "範囲",
+  "per_tier": 0.04
+ },
+ {
+  "id": "crit",
+  "name": "会心率",
+  "per_tier": 0.04
+ },
+ {
+  "id": "crit_damage",
+  "name": "会心倍率",
+  "per_tier": 0.04
+ },
+ {
+  "id": "stationary",
+  "name": "静止敵特効",
+  "per_tier": 0.04
+ },
+ {
+  "id": "lifesteal",
+  "name": "吸血",
+  "per_tier": 0.04
+ },
+ {
+  "id": "projectiles",
+  "name": "追加弾",
+  "per_tier": 1.0
+ },
+ {
+  "id": "pierce",
+  "name": "貫通",
+  "per_tier": 1.0
+ },
+ {
+  "id": "chain",
+  "name": "連鎖",
+  "per_tier": 1.0
+ },
+ {
+  "id": "dot",
+  "name": "継続ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "hp",
+  "name": "最大HP",
+  "per_tier": 0.04
+ },
+ {
+  "id": "reduction",
+  "name": "軽減",
+  "per_tier": 0.04
+ },
+ {
+  "id": "heal_kill",
+  "name": "撃破時回復",
+  "per_tier": 0.04
+ },
+ {
+  "id": "devour",
+  "name": "捕食ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "blade",
+  "name": "刃物ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "hex",
+  "name": "呪術ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "poison",
+  "name": "毒ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "summon",
+  "name": "召喚ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "defense",
+  "name": "防御ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "arcane",
+  "name": "魔力ダメージ",
+  "per_tier": 0.04
+ },
+ {
+  "id": "drop",
+  "name": "ドロップ率",
+  "per_tier": 0.04
+ }
+]
