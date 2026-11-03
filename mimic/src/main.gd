@@ -338,7 +338,8 @@ func show_inventory() -> void:
   var before:int=int(before_counts.get(family,0));var after:int=int(after_counts.get(family,0))
   if before!=after:changes+="%s %d→%d%s  " % [FAMILY_NAMES[family],before,after," ★" if (before<2 and after>=2) or (before<4 and after>=4) else ""]
  if changes.is_empty():changes="系統の数に変化なし"
- label("牙の威力 %+.1f　間隔 %+.2f秒　HP %+.0f　軽減 %+.1f%%\n%s\n★ は新しいセット効果（2個 / 4個）" % [proposed_battle.damage-current_battle.damage,proposed_battle.attack_interval-current_battle.attack_interval,proposed_battle.max_hp-current_battle.max_hp,(proposed_battle.stats.reduction-current_battle.stats.reduction)*100,changes],Vector2(560,525),Vector2(650,95),17)
+ var set_detail:String="\n召喚4：眷属の連鎖 / 命中時、周囲に威力50%" if int(after_counts.get("summon",0))>=4 else ""
+ label("牙の威力 %+.1f　間隔 %+.2f秒　HP %+.0f　軽減 %+.1f%%\n%s\n★ は新しいセット効果（2個 / 4個）%s" % [proposed_battle.damage-current_battle.damage,proposed_battle.attack_interval-current_battle.attack_interval,proposed_battle.max_hp-current_battle.max_hp,(proposed_battle.stats.reduction-current_battle.stats.reduction)*100,changes,set_detail],Vector2(560,525),Vector2(650,95),17)
  var already_equipped:bool=int(profile.data.equipped.get(preview_slot,-1))==selected_uid
  button("装備中" if already_equipped else "%sに装備する" % SLOTS[preview_slot],Vector2(835,630),Vector2(390,54),equip_selected_item,already_equipped)
 func show_forge() -> void:
@@ -564,6 +565,9 @@ func _draw() -> void:
    var tex:Texture2D=enemy_textures.get(e.kind)
    var bob:float=roundf(sin(battle.elapsed*7.0+float(e.index))*1.3)
    if tex:draw_texture_rect(tex,Rect2(e.pos-Vector2(size,size)*0.5+Vector2(0,bob),Vector2(size,size)),false)
+   if e.kind=="shield":
+    var facing:Vector2=(Battle.CENTER-e.pos).normalized()
+    if facing.length_squared()>0.0:draw_arc(e.pos,32.0,facing.angle()-PI/4,facing.angle()+PI/4,12,Color("b9a782"),2.0)
    if e.boss:
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90,6)),Color("301622"))
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90*maxf(0,e.hp/e.max_hp),6)),Color("e45b6e"))

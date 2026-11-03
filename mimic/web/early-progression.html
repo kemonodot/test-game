@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>MIMIC 序盤バランス実測</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="spec.css" />
+</head>
+<body>
+<nav><a href="spec.html">← 現在の仕様書</a></nav>
+<h1 id="mimic-仕様修正と序盤バランス実測">MIMIC
+仕様修正と序盤バランス実測</h1>
+<p>実施：2026-11-03 ／ 10試行・新規セーブ相当 ／ 数値調整なし</p>
+<h2 id="第1部仕様と実装の修正">第1部：仕様と実装の修正</h2>
+<ul>
+<li><strong>盾兵</strong>：ミミックへの方向を正面とし、盾兵から攻撃元への方向が正面から左右45度以内（合計90度、境界含む）の場合だけダメージを0.55倍にする。側面・背面は等倍。盾兵に正面の弧を表示する。投射物は命中直前の位置、ボムや範囲攻撃・毒はそれぞれの発生位置で判定する。同一点など方向が定まらない場合は等倍。毒の継続・関連する範囲ダメージも同じ判定を使う。</li>
+<li><strong>召喚4個セット「眷属の連鎖」</strong>：召喚体の弾が命中すると、命中位置から半径60px（範囲補正を適用）以内の<strong>他の敵</strong>に、その弾の基礎威力の50%を召喚ダメージとして与える。命中対象への二重ダメージはない。召喚数に応じた上限増加と2個セットの補正は従来どおり。追加範囲にはリングを表示する。</li>
+<li>正面・±45度境界・46度・側面・背面・背後からの弾・回転刃・毒・召喚3個／4個セットを自動テストした。</li>
+</ul>
+<h2 id="第2部測定方法">第2部：測定方法</h2>
+<p>各試行は <code>Profile.new(false)</code>
+による独立した新規プロフィールから開始し、結果・戦利品をラン間で保持する。プレイヤーのセーブは読み書きしない。Godotの現行戦闘ロジックをヘッドレスで、1/60秒刻みで実行した。10個の固定シードを使い、同条件での再実行が全ラン完全一致することを確認した。</p>
+<ul>
+<li>0.2秒ごとに最も近い敵を選び、その周囲100px以内の集団の中心を狙う。狙ったボムの範囲に敵がいるときは、再使用可能なら使う。</li>
+<li>ラン後、空き枠を埋め、同じ枠のアイテムは単純な基礎威力・間隔・レア度・強化レベルのスコアが高いものに置き換える。装備は戦闘中に変更しない。</li>
+<li>進化ポイントは「飢えの目覚め」→「飢えた牙」1段階→呪術系解放の順に購入し、以降はHPと攻撃を交互に強化。資金は装備中の牙と甲殻を、次の費用が安いものから強化する。魔石の装着・合成や再抽選は行わない。</li>
+<li>ドロップ・魔石・資金・結果ポイントは実ゲームの処理に合わせる。第一層クリア後は、第二層を60秒まで観測し、進行中ならそこで打ち切る。途中観測ではラン終了時の進化ポイントはまだ確定しない。</li>
+<li>第一層は最大50ラン・各ランに安全上の計算ステップ上限を設定。今回の10試行はいずれも第一層クリアと第二層序盤へ到達し、上限に到達しなかった。各ラン開始時のドロップ確率などもJSONに記録している。</li>
+</ul>
+<h2 id="結果の要点">結果の要点</h2>
+<ul>
+<li>初回は全10回失敗し、勇者は全回未出現。初期装備だけで勇者を倒した試行は
+<strong>0/10</strong>。初回到達時間は平均60.2秒、範囲50.9〜67.2秒。勇者は240秒に出現する。</li>
+<li>この方策では、第一層の初クリアは
+<strong>平均5.4ラン目</strong>、中央値5、範囲3〜11ラン目。クリア前の成長機会は平均4.4ラン。</li>
+<li>初回終了時に「飢えの目覚め」3ptを買えるのは
+<strong>10/10</strong>、続けて8ptの強化まで買えるのは
+<strong>6/10</strong>。これは両方を同時に払うため合計11pt以上かで判定。</li>
+<li>3pt→8pt→系統解放15ptの購入順では、系統解放は2ラン目が9試行、3ラン目が1試行、平均2.1ラン目。</li>
+<li>初回の後に装備を追加・変更したのは
+<strong>9/10</strong>。そのうち初期の牙自体を取り替えたのは
+<strong>1/10</strong>。戦闘中の装備変更はゲーム上できない。</li>
+<li>第一層の失敗44ランの持ち帰りは、平均
+<strong>進化60.4pt・資金1514.1</strong>、中央値68.5pt・1700。初回に限れば平均10.3pt・279.5。</li>
+<li>第二層は10/10試行で60秒まで生存した。これは序盤の部分観測であり、第二層クリアやラン終了後の報酬を示すものではない。</li>
+</ul>
+<h3
+id="ドロップ分布第一層全54ラン">ドロップ分布（第一層・全54ラン）</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">1ランの装備獲得数</th>
+<th style="text-align: right;">ラン数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1〜4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5〜9</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10〜19</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">20〜49</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50〜99</td>
+<td style="text-align: right;">23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100以上</td>
+<td style="text-align: right;">11</td>
+</tr>
+</tbody>
+</table>
+<p>平均67.3個／ラン、中央値62.5個、範囲1〜237個。初回10ランの獲得数は
+<code>7, 11, 8, 3, 1, 3, 9, 10, 9, 9</code>、平均7.0個。開始時の通常敵ドロップ確率は54ラン中39ランが16〜20%未満、14ランが20〜40%未満、1ランが40〜60%未満。最大237個のランは481撃破、開始時の通常敵装備ドロップ確率48%。ボスの確定ドロップも装備数に含む。</p>
+<h2 id="試行ごとの到達点">試行ごとの到達点</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">試行</th>
+<th style="text-align: right;">初回：秒／撃破</th>
+<th style="text-align: right;">初回：資金／装備／魔石／pt</th>
+<th>3pt／3+8pt</th>
+<th style="text-align: right;">初回後の装備変更数</th>
+<th style="text-align: right;">系統解放</th>
+<th style="text-align: right;">第一層クリア</th>
+<th style="text-align: right;">第一層の累計獲得pt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">57.7秒／44</td>
+<td style="text-align: right;">270／7／7／9</td>
+<td>可／不可</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">5ラン目</td>
+<td style="text-align: right;">352</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">67.2秒／56</td>
+<td style="text-align: right;">360／11／9／13</td>
+<td>可／可</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">5ラン目</td>
+<td style="text-align: right;">368</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">61.5秒／48</td>
+<td style="text-align: right;">300／8／6／11</td>
+<td>可／可</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">4ラン目</td>
+<td style="text-align: right;">340</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">55.3秒／41</td>
+<td style="text-align: right;">245／3／5／9</td>
+<td>可／不可</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">6ラン目</td>
+<td style="text-align: right;">390</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">50.9秒／36</td>
+<td style="text-align: right;">220／1／3／8</td>
+<td>可／不可</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3ラン目</td>
+<td style="text-align: right;">11ラン目</td>
+<td style="text-align: right;">796</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">61.9秒／48</td>
+<td style="text-align: right;">320／3／3／11</td>
+<td>可／可</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">6ラン目</td>
+<td style="text-align: right;">447</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">58.1秒／43</td>
+<td style="text-align: right;">255／9／5／9</td>
+<td>可／不可</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">5ラン目</td>
+<td style="text-align: right;">357</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">64.2秒／49</td>
+<td style="text-align: right;">285／10／6／11</td>
+<td>可／可</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">6ラン目</td>
+<td style="text-align: right;">482</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">62.9秒／48</td>
+<td style="text-align: right;">280／9／8／11</td>
+<td>可／可</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">3ラン目</td>
+<td style="text-align: right;">179</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">62.4秒／46</td>
+<td style="text-align: right;">260／9／5／11</td>
+<td>可／可</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2ラン目</td>
+<td style="text-align: right;">3ラン目</td>
+<td style="text-align: right;">209</td>
+</tr>
+</tbody>
+</table>
+<h2 id="全ランの記録">全ランの記録</h2>
+<p>「第二層・途中」は60秒時点で進行中だったラン。資金・装備・魔石は観測時点の獲得量、進化ptは未確定として
+<code>—</code>
+と記す。通常ドロップ確率はラン開始時の値で、ボス確定ドロップを含まない。</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">試行</th>
+<th style="text-align: right;">ラン</th>
+<th style="text-align: right;">層</th>
+<th style="text-align: right;">到達秒</th>
+<th style="text-align: right;">撃破</th>
+<th>ボス</th>
+<th style="text-align: right;">獲得資金</th>
+<th style="text-align: right;">装備</th>
+<th style="text-align: right;">魔石</th>
+<th style="text-align: right;">獲得pt</th>
+<th style="text-align: right;">装備率</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">57.7</td>
+<td style="text-align: right;">44</td>
+<td>未出現</td>
+<td style="text-align: right;">270</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">144.9</td>
+<td style="text-align: right;">185</td>
+<td>未出現</td>
+<td style="text-align: right;">1045</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">201.1</td>
+<td style="text-align: right;">316</td>
+<td>未出現</td>
+<td style="text-align: right;">1750</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">255.0</td>
+<td style="text-align: right;">469</td>
+<td>未撃破</td>
+<td style="text-align: right;">2515</td>
+<td style="text-align: right;">130</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">267.8</td>
+<td style="text-align: right;">520</td>
+<td>撃破</td>
+<td style="text-align: right;">2730</td>
+<td style="text-align: right;">204</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">132</td>
+<td style="text-align: right;">36%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">31</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">47%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">67.2</td>
+<td style="text-align: right;">56</td>
+<td>未出現</td>
+<td style="text-align: right;">360</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">157.9</td>
+<td style="text-align: right;">210</td>
+<td>未出現</td>
+<td style="text-align: right;">1130</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">203.8</td>
+<td style="text-align: right;">324</td>
+<td>未出現</td>
+<td style="text-align: right;">1770</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">266.1</td>
+<td style="text-align: right;">505</td>
+<td>未撃破</td>
+<td style="text-align: right;">2765</td>
+<td style="text-align: right;">149</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">265.9</td>
+<td style="text-align: right;">507</td>
+<td>撃破</td>
+<td style="text-align: right;">2715</td>
+<td style="text-align: right;">153</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">129</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">29</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">35%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">48</td>
+<td>未出現</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">250.7</td>
+<td style="text-align: right;">457</td>
+<td>未撃破</td>
+<td style="text-align: right;">2485</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">256.0</td>
+<td style="text-align: right;">477</td>
+<td>未撃破</td>
+<td style="text-align: right;">2595</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">103</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">261.8</td>
+<td style="text-align: right;">495</td>
+<td>撃破</td>
+<td style="text-align: right;">2585</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">127</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">31</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">23%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">55.3</td>
+<td style="text-align: right;">41</td>
+<td>未出現</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">120.5</td>
+<td style="text-align: right;">135</td>
+<td>未出現</td>
+<td style="text-align: right;">785</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">178.3</td>
+<td style="text-align: right;">259</td>
+<td>未出現</td>
+<td style="text-align: right;">1395</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">225.2</td>
+<td style="text-align: right;">383</td>
+<td>未出現</td>
+<td style="text-align: right;">2055</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">236.1</td>
+<td style="text-align: right;">414</td>
+<td>未出現</td>
+<td style="text-align: right;">2230</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">254.1</td>
+<td style="text-align: right;">473</td>
+<td>撃破</td>
+<td style="text-align: right;">2525</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">33</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">296</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">23%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50.9</td>
+<td style="text-align: right;">36</td>
+<td>未出現</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">62.0</td>
+<td style="text-align: right;">47</td>
+<td>未出現</td>
+<td style="text-align: right;">275</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">103.8</td>
+<td style="text-align: right;">108</td>
+<td>未出現</td>
+<td style="text-align: right;">590</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">198.9</td>
+<td style="text-align: right;">312</td>
+<td>未出現</td>
+<td style="text-align: right;">1720</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">251.8</td>
+<td style="text-align: right;">465</td>
+<td>未撃破</td>
+<td style="text-align: right;">2535</td>
+<td style="text-align: right;">119</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">24%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">243.0</td>
+<td style="text-align: right;">434</td>
+<td>未撃破</td>
+<td style="text-align: right;">2310</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">211.4</td>
+<td style="text-align: right;">343</td>
+<td>未出現</td>
+<td style="text-align: right;">1855</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">247.7</td>
+<td style="text-align: right;">448</td>
+<td>未撃破</td>
+<td style="text-align: right;">2510</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">236.2</td>
+<td style="text-align: right;">415</td>
+<td>未出現</td>
+<td style="text-align: right;">2275</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">254.2</td>
+<td style="text-align: right;">469</td>
+<td>未撃破</td>
+<td style="text-align: right;">2525</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">262.9</td>
+<td style="text-align: right;">495</td>
+<td>撃破</td>
+<td style="text-align: right;">2665</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">127</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">33</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">23%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">61.9</td>
+<td style="text-align: right;">48</td>
+<td>未出現</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">135.6</td>
+<td style="text-align: right;">166</td>
+<td>未出現</td>
+<td style="text-align: right;">900</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">195.8</td>
+<td style="text-align: right;">307</td>
+<td>未出現</td>
+<td style="text-align: right;">1665</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">260.6</td>
+<td style="text-align: right;">491</td>
+<td>未撃破</td>
+<td style="text-align: right;">2655</td>
+<td style="text-align: right;">132</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">470</td>
+<td>未撃破</td>
+<td style="text-align: right;">2510</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">28%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">256.2</td>
+<td style="text-align: right;">481</td>
+<td>撃破</td>
+<td style="text-align: right;">2525</td>
+<td style="text-align: right;">237</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">48%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">32</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">55%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">58.1</td>
+<td style="text-align: right;">43</td>
+<td>未出現</td>
+<td style="text-align: right;">255</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">148.8</td>
+<td style="text-align: right;">195</td>
+<td>未出現</td>
+<td style="text-align: right;">1045</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">218.8</td>
+<td style="text-align: right;">365</td>
+<td>未出現</td>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">253.7</td>
+<td style="text-align: right;">468</td>
+<td>未撃破</td>
+<td style="text-align: right;">2540</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">255.5</td>
+<td style="text-align: right;">481</td>
+<td>撃破</td>
+<td style="text-align: right;">2575</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">24%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">32</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">304</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">31%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">49</td>
+<td>未出現</td>
+<td style="text-align: right;">285</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">195.6</td>
+<td style="text-align: right;">301</td>
+<td>未出現</td>
+<td style="text-align: right;">1635</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">223.3</td>
+<td style="text-align: right;">377</td>
+<td>未出現</td>
+<td style="text-align: right;">2065</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">246.4</td>
+<td style="text-align: right;">447</td>
+<td>未撃破</td>
+<td style="text-align: right;">2435</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">251.8</td>
+<td style="text-align: right;">463</td>
+<td>未撃破</td>
+<td style="text-align: right;">2505</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">261.8</td>
+<td style="text-align: right;">492</td>
+<td>撃破</td>
+<td style="text-align: right;">2590</td>
+<td style="text-align: right;">135</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">126</td>
+<td style="text-align: right;">32%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">32</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">272</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">39%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">62.9</td>
+<td style="text-align: right;">48</td>
+<td>未出現</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">152.1</td>
+<td style="text-align: right;">200</td>
+<td>未出現</td>
+<td style="text-align: right;">1070</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">257.9</td>
+<td style="text-align: right;">478</td>
+<td>撃破</td>
+<td style="text-align: right;">2530</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">123</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">33</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">23%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">62.4</td>
+<td style="text-align: right;">46</td>
+<td>未出現</td>
+<td style="text-align: right;">260</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">201.7</td>
+<td style="text-align: right;">316</td>
+<td>未出現</td>
+<td style="text-align: right;">1680</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">16%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">266.3</td>
+<td style="text-align: right;">508</td>
+<td>撃破</td>
+<td style="text-align: right;">2660</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">129</td>
+<td style="text-align: right;">20%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2・途中</td>
+<td style="text-align: right;">60.0</td>
+<td style="text-align: right;">32</td>
+<td>未確定（60秒で観測終了）</td>
+<td style="text-align: right;">256</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">23%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="検討点と未適用の調整案">検討点と未適用の調整案</h2>
+<ul>
+<li><strong>初回にボスへ到達する前に終了する</strong>：10試行の初回は50.9〜67.2秒で失敗し、240秒の勇者は出現しなかった。初回に勇者を見せる目標なら改善対象だが、周回前提なら意図どおりの可能性がある。仮案は基礎HP
+<strong>100→120</strong>。全ランのHPと生存時間に影響し、到達・勝率の改善量は未計測。初回のみ調整する仕様は現状ない。</li>
+<li><strong>後半の所持品増加</strong>：第一層54ランのうち11ランで装備が100個以上、最大237個。自動プレイは所持品の整理負荷を評価できない。整理が負担と判断された場合の仮案は、ドロップ率追加効果の1ティア
+<strong>+4%→+2%</strong>。新規ドロップまたは再抽選される追加効果に影響し、保存済みの既存効果値は自動では変わらない。基本ドロップ16%／23%とボス確定は変えない。調整後の個数・収集感は未計測。</li>
+</ul>
+<p>どちらも<strong>提案のみで、数値は変更していない</strong>。10試行・1方策のみでは目標勝率への適合や支配戦略の有無を確定できない。照準の手触り、敵の攻撃の読みやすさ、装備交換の楽しさ、報酬の多寡をどう感じるか、召喚4個セットが他系統と同格に感じられるかは、実際のプレイでの確認が必要。</p>
+<h2 id="再現生データ">再現・生データ</h2>
+<p><code>tests/early_progression_trials.gd</code> をGodot
+4でヘッドレス実行する。試行数・最大ラン数・出力先は
+<code>MIMIC_TRIAL_SAMPLES</code>、<code>MIMIC_TRIAL_MAX_RUNS</code>、<code>MIMIC_TRIAL_OUTPUT</code>
+で指定できる。詳細な購入・装備変更と実際のドロップ確率は <a
+href="https://raw.githubusercontent.com/kemonodot/test-game/main/mimic/reports/early-progression-data.json">early-progression-data.json</a>
+を参照。</p>
+</body>
+</html>

@@ -32,5 +32,13 @@ func run()->void:
  assert(not app.profile.data.equipped.has("organ1") and int(app.profile.data.equipped.organ2)==organ.uid)
  app.remove_equipment_from_slot();await process_frame
  assert(not app.profile.data.equipped.has("organ2") and not app.profile.get_item(organ.uid).is_empty())
- print("INVENTORY FLOW: slot-first filtering, lock, compare selection, save, move and unequip passed")
+ for pair in [["callfang","fang"],["minion","organ1"],["ghost","organ2"],["broodcore","core"]]:
+  var item:Dictionary=app.profile.create_item(pair[0]);app.profile.data.inventory.append(item);assert(app.profile.equip(item.uid,pair[1]))
+ app.select_equipment_slot("core");await process_frame
+ app.selected_uid=int(app.profile.data.equipped.core);app.show_inventory();await process_frame
+ var set_visible:=false
+ for child in app.ui.get_children():
+  if child is Label and "眷属の連鎖" in child.text:set_visible=true
+ assert(set_visible,"Summon set bonus should be visible in comparison")
+ print("INVENTORY FLOW: slot-first filtering, lock, compare selection, save, move, unequip and set description passed")
  app.queue_free();await process_frame;quit(0)

@@ -8,6 +8,10 @@ const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
 const DEVOUR_HALF_WIDTH := 68.0
 const TONGUE_DURATION := 0.30
+# Shields face the mimic. Sources within +/-45 degrees of that facing are blocked.
+const SHIELD_FRONT_DOT := 0.7071067811865476
+const SUMMON_BURST_RADIUS := 60.0
+const SUMMON_BURST_DAMAGE := 0.5
 const BOMB_COOLDOWN := 20.0
 const BOMB_DAMAGE := 85.0
 const BOMB_RADIUS := 135.0
@@ -60,7 +64,7 @@ func _init(seed_value: int = 1) -> void:
  enemy_data = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
  balance = JSON.parse_string(FileAccess.get_file_as_string("res://data/balance.json"))
  for i in MAX_ENEMIES:
-  enemies.append({"index":i, "generation":0, "popup_index":-1, "active": false, "pos": Vector2.ZERO, "hp": 0.0, "max_hp": 0.0, "cooldown": 0.0, "speed": 0.0, "damage": 0.0, "kind": "swordsman", "boss": false, "poison": 0.0, "mark": 0, "dot_tick": 0.0, "phase": 0, "timer": 0.0})
+  enemies.append({"index":i, "generation":0, "popup_index":-1, "active": false, "pos": Vector2.ZERO, "hp": 0.0, "max_hp": 0.0, "cooldown": 0.0, "speed": 0.0, "damage": 0.0, "kind": "swordsman", "boss": false, "poison": 0.0, "poison_source": Vector2.INF, "mark": 0, "dot_tick": 0.0, "phase": 0, "timer": 0.0})
  for i in MAX_PROJECTILES:
   projectiles.append({"active": false, "pos": Vector2.ZERO, "vel": Vector2.ZERO, "ttl": 0.0, "damage": 0.0, "enemy": false, "family": "", "pierce": 0})
  for i in MAX_EFFECTS:
@@ -129,7 +133,7 @@ func spawn_enemy(kind: String = "swordsman", position := Vector2.INF) -> bool:
    var health: float=float(def.hp)*float(balance.stage_scaling[stage].hp)*(1.0 if boss else scale)
    e.generation=int(e.generation)+1
    e.popup_index=-1
-   e.merge({"active":true,"pos":position,"max_hp":health,"hp":health,"speed":float(def.speed),"damage":float(def.damage)*float(balance.stage_scaling[stage].damage)*(1.0 if boss else scale),"cooldown":1.5,"kind":kind,"boss":boss,"poison":0.0,"mark":0,"dot_tick":0.0,"phase":0,"timer":0.0},true)
+   e.merge({"active":true,"pos":position,"max_hp":health,"hp":health,"speed":float(def.speed),"damage":float(def.damage)*float(balance.stage_scaling[stage].damage)*(1.0 if boss else scale),"cooldown":1.5,"kind":kind,"boss":boss,"poison":0.0,"poison_source":Vector2.INF,"mark":0,"dot_tick":0.0,"phase":0,"timer":0.0},true)
    if target_cache_active:
     target_active[int(e.index)]=1
     target_positions[int(e.index)]=e.pos
@@ -188,11 +192,21 @@ func projectile(origin: Vector2, direction: Vector2, amount: float, family: Stri
   if not p.active:
    p.merge({"active":true,"pos":origin,"vel":direction.normalized() * (210.0 if enemy else 420.0),"ttl":2.0,"damage":amount,"enemy":enemy,"family":family,"pierce":int(stats.pierce)},true)
    return
-func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: String = "devour", bomb_kill: bool = false) -> void:
+func shield_multiplier(enemy: Dictionary, source_position: Vector2) -> float:
+ if enemy.kind!="shield" or not source_position.is_finite():return 1.0
+ var facing:Vector2=CENTER-enemy.pos
+ var source:Vector2=source_position-enemy.pos
+ if facing.length_squared()<0.0001 or source.length_squared()<0.0001:return 1.0
+ return 0.55 if facing.normalized().dot(source.normalized())>=SHIELD_FRONT_DOT-0.000001 else 1.0
+func apply_poison(enemy: Dictionary, duration: float, source_position: Vector2) -> void:
+ if duration>float(enemy.poison):
+  enemy.poison=duration
+  enemy.poison_source=source_position
+func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: String = "devour", bomb_kill: bool = false, source_position: Vector2 = CENTER) -> void:
  if index < 0 or index >= enemies.size() or not enemies[index].active: return
  var e: Dictionary = enemies[index]
  var value: float = amount * float(stats.damage) * float(stats.get(family,1.0))
- if e.kind=="shield": value *= 0.55
+ value *= shield_multiplier(e,source_position)
  if e.pos.distance_to(CENTER)<40 or e.kind in ["archer","mage","priest"]: value *= float(stats.stationary)
  if rng.randf() < stats.crit: value *= stats.crit_damage
  e.hp -= value
@@ -235,7 +249,7 @@ func kill_enemy(e: Dictionary, bomb_kill: bool = false) -> void:
  if family_counts.get("hex",0)>0 and family_counts.get("poison",0)>0 and e.mark>0 and e.poison>0:
   effect(e.pos,e.pos,"poison",52)
   for other in enemies:
-   if other.active and other.pos.distance_to(e.pos)<52:other.hp-=8.0*float(stats.damage)
+   if other.active and other.pos.distance_to(e.pos)<52:other.hp-=8.0*float(stats.damage)*shield_multiplier(other,e.pos)
  scatter(e.pos,"blade",6)
  kills+=1
  for event in loot_events:
@@ -253,7 +267,7 @@ func use_bomb() -> bool:
   var enemy:Dictionary=enemies[i]
   if enemy.active and enemy.pos.distance_squared_to(center)<=BOMB_RADIUS*BOMB_RADIUS:
    var impulse:Vector2=(enemy.pos-center).normalized()*45.0
-   hit_enemy(i,BOMB_DAMAGE,impulse,"bomb",true)
+   hit_enemy(i,BOMB_DAMAGE,impulse,"bomb",true,center)
  return true
 func hurt_player(amount: float) -> void:
  if debug_invulnerable:return
@@ -292,14 +306,14 @@ func cast(a: Dictionary) -> bool:
      if target_cache_active:target_positions[int(other.index)]=other.pos
   if index>=0 and (ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2)):
    for i in enemies.size():
-    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65: hit_enemy(i,power*0.5,Vector2.ZERO,"devour")
+    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65: hit_enemy(i,power*0.5,Vector2.ZERO,"devour",false,e.pos)
  elif family == "blade":
   var blade_center:Vector2=CENTER+aim*45
   effect(CENTER,blade_center,"blade",90 if ability=="orbit" else 60)
   for i in enemies.size():
    var other: Dictionary = enemies[i]
    if other.active and ((ability=="orbit" and other.pos.distance_to(blade_center)<105) or (ability!="orbit" and aim.dot(other.pos-CENTER)>0 and aim.dot(other.pos-CENTER)<=reach and absf(aim.cross(other.pos-CENTER))<=AIM_HALF_WIDTH)):
-    hit_enemy(i,power,(other.pos-CENTER).normalized()*9,"blade")
+    hit_enemy(i,power,(other.pos-CENTER).normalized()*9,"blade",false,blade_center if ability=="orbit" else CENTER)
     if ability == "pierce": continue
     if ability != "orbit" and family_counts.get("blade",0)<4 and "cleave" not in unique_ids and "extra_blades" not in unique_ids: break
  elif family == "hex":
@@ -320,7 +334,7 @@ func cast(a: Dictionary) -> bool:
     for i in enemies.size():
      if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<100:
       effect(e.pos,enemies[i].pos,"hex")
-      hit_enemy(i,power*0.5,Vector2.ZERO,"hex")
+      hit_enemy(i,power*0.5,Vector2.ZERO,"hex",false,e.pos)
       chains+=1
       if chains>=int(stats.chain):break
  elif family == "poison":
@@ -331,8 +345,8 @@ func cast(a: Dictionary) -> bool:
     if fx.active and fx.family=="poison" and fx.to==center:fx.ttl=3.0;break
   for other in enemies:
    if other.active and other.pos.distance_to(center)<=90*float(stats.area):
-    other.poison = maxf(other.poison,4.0)
-    if family_counts.get("poison",0)>=4 or "poison_burst" in unique_ids: other.hp -= power*0.4
+    apply_poison(other,4.0,center)
+    if family_counts.get("poison",0)>=4 or "poison_burst" in unique_ids: other.hp -= power*0.4*shield_multiplier(other,center)
  elif family == "summon":
   var origin: Vector2 = CENTER + aim * 75
   effect(CENTER,origin,"summon",12)
@@ -359,7 +373,7 @@ func cast(a: Dictionary) -> bool:
    var center: Vector2 = CENTER + aim*100
    effect(CENTER,center,"arcane",65)
    for i in enemies.size():
-    if enemies[i].active and enemies[i].pos.distance_to(center)<80*float(stats.area): hit_enemy(i,power*(1.5 if "double_nova" in unique_ids else 1.0),Vector2.ZERO,"arcane")
+    if enemies[i].active and enemies[i].pos.distance_to(center)<80*float(stats.area): hit_enemy(i,power*(1.5 if "double_nova" in unique_ids else 1.0),Vector2.ZERO,"arcane",false,center)
   else:
    projectile(CENTER,aim,power,"arcane")
    for extra in mini(4,int(stats.projectiles)): projectile(CENTER,aim.rotated(0.1*(extra+1)),power*0.7,"arcane")
@@ -401,7 +415,7 @@ func update(delta: float) -> void:
    e.poison -= delta
    e.dot_tick -= delta
    if e.dot_tick<=0:
-    e.hp -= 3.0 * float(stats.dot) * float(stats.poison)
+    e.hp -= 3.0 * float(stats.dot) * float(stats.poison) * shield_multiplier(e,e.poison_source)
     e.dot_tick = 0.5
     if e.hp<=0: kill_enemy(e);continue
   e.timer += delta
@@ -467,6 +481,7 @@ func update(delta: float) -> void:
    minion.timer=1.0
  for p in projectiles:
   if not p.active: continue
+  var previous_pos:Vector2=p.pos
   p.pos += p.vel * delta
   p.ttl -= delta
   if p.ttl<=0: p.active=false; continue
@@ -482,7 +497,14 @@ func update(delta: float) -> void:
     for i in enemies.size():
      if enemies[i].active and enemies[i].pos.distance_squared_to(p.pos)<256.0:hit_index=i;break
    if hit_index>=0:
-    hit_enemy(hit_index,p.damage,p.vel.normalized()*8,p.family)
+    var impact:Vector2=enemies[hit_index].pos
+    hit_enemy(hit_index,p.damage,p.vel.normalized()*8,p.family,false,previous_pos)
+    if p.family=="summon" and int(family_counts.get("summon",0))>=4:
+     var radius:float=SUMMON_BURST_RADIUS*float(stats.area)
+     effect(impact,impact,"summon",radius)
+     for i in enemies.size():
+      if i!=hit_index and enemies[i].active and enemies[i].pos.distance_squared_to(impact)<=radius*radius:
+       hit_enemy(i,p.damage*SUMMON_BURST_DAMAGE,Vector2.ZERO,"summon",false,impact)
     if p.pierce>0: p.pierce-=1
     else: p.active=false
  for spark in sparks:
@@ -497,7 +519,7 @@ func update(delta: float) -> void:
   if fx.active:
    if fx.family=="poison" and fx.ttl>0.2:
     for enemy in enemies:
-     if enemy.active and enemy.pos.distance_to(fx.to)<fx.radius:enemy.poison=maxf(enemy.poison,1.5)
+     if enemy.active and enemy.pos.distance_to(fx.to)<fx.radius:apply_poison(enemy,1.5,fx.to)
    fx.ttl-=delta
    if fx.ttl<=0: fx.active=false
  target_cache_active=false
