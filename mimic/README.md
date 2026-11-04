@@ -51,8 +51,7 @@ PCと横向きタッチのChromiumでWeb版の起動・ステージ開始・照�
 ## 報酬演出に使用した素材
 
 - [pixelfx](https://github.com/patch-gg/pixelfx) — MIT。`pickups/collect-burst`、`holy/holy-pillar`、`explosions/implosion`、`impacts/hit-spark`、`impacts/crit-hit` の透過スプライトシートを使用。生成条件と著作権表示は [素材ディレクトリ](assets/fx/pixelfx/README.md) を参照。Patch Pixel フォントは使用していません。
-- [Kenney Interface Sounds](https://kenney.nl/assets/interface-sounds) — CC0 1.0。配布元および使用したファイルは [素材ディレクトリ](assets/audio/kenney-interface/README.md) を参照。
-- [Kenney Impact Sounds](https://kenney.nl/assets/impact-sounds) — CC0 1.0。攻撃・命中・撃破音に使用。配布元および使用したファイルは [素材ディレクトリ](assets/audio/kenney-impact/README.md) を参照。
-- [Driving Concern](https://github.com/OlegTestov/clipwright-music/releases/tag/v2)（Kevin MacLeod / FreePD）— CC0 1.0。戦闘BGMに使用。原配布元と変換条件は [素材ディレクトリ](assets/audio/freepd/README.md) を参照。
+- [Oculus Audio Pack 01](https://github.com/facebookincubator/Meta-open-sound/tree/main/corpora/oculus-audio-pack)（Oculus VR, LLC）— CC BY 4.0。攻撃・命中・撃破・報酬の効果音に使用。一部短縮・フェード。正式な表記と加工内容は [素材ディレクトリ](assets/audio/oculus/README.md) を参照。
+- [Dark Knight](https://github.com/tannerhelland/free-music)（Tanner Helland）— CC BY 4.0。戦闘BGMに使用。Vorbis変換とフェード加工を行っています。詳細は [素材ディレクトリ](assets/audio/tanner/README.md) を参照。
 
 ゲーム内の「設定 → 素材クレジット」にもライセンスを表示します。

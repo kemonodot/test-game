@@ -205,6 +205,7 @@ func tongue_effect(tip: Vector2) -> Dictionary:
  fx["splash"]=false
  fx["splash_center"]=tip
  fx["pending"]=false
+ fx["hit"]=false
  return fx
 func advance_tongue(fx: Dictionary, delta: float) -> void:
  if not fx.get("pending",false):return
@@ -217,6 +218,7 @@ func advance_tongue(fx: Dictionary, delta: float) -> void:
  fx.pending=false
  # The enemy can die or its pool slot can be reused before the tongue arrives.
  if not valid:return
+ fx.hit=true
  hit_enemy(index,float(fx.power),-((e.pos-CENTER).normalized())*10.0,"devour")
  if fx.pull:
   for other in enemies:

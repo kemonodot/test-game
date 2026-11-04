@@ -11,6 +11,9 @@ const ABILITY_TEXT := {"bite":"噛みつき", "tongue":"伸びる舌", "maw":"�
 const UNIQUE_TEXT := {"devour_chain":"連続捕食で威力・対象数が増加", "extra_blades":"刃物装備の数に応じて回転刃が強化", "curse_spread":"呪印のある敵の死亡時に周囲へ呪印を伝播", "poison_burst":"毒霧に即時腐食ダメージが加わる", "extra_minions":"召喚体の追撃が増加", "wide_counter":"反撃の範囲が拡大", "double_nova":"魔力攻撃が範囲攻撃に変化", "cleave":"刃が進行方向の敵をまとめて斬る", "curse_chain":"呪印を周囲の敵にも刻む", "last_stand":"致命傷を一度だけ耐える"}
 const RARITY_COLORS := [Color("d8cbbd"),Color("8db8cf"),Color("c3a1d4"),Color("e8bb7a"),Color("e78a87")]
 const RARITY := ["コモン","レア","エピック","レジェンダリー","ミシック"]
+# Regions from the existing chest artwork used to cover its painted tongue while attacking.
+const TONGUE_COVER := [[Rect2(52,75,24,23),Rect2(28,75,24,23)], [Rect2(56,98,4,6),Rect2(32,98,4,6)], [Rect2(68,98,4,6),Rect2(40,98,4,6)], [Rect2(56,104,16,9),Rect2(32,104,16,9)]]
+const TONGUE_BODY_PIECES := [Rect2(0,0,128,75),Rect2(0,75,52,23),Rect2(76,75,52,23),Rect2(0,98,56,6),Rect2(60,98,8,6),Rect2(72,98,56,6),Rect2(0,104,56,9),Rect2(72,104,56,9),Rect2(0,113,128,15)]
 var battle: MimicCombat
 var profile
 var state := "title"
@@ -43,6 +46,7 @@ var legendary_sounds: Array = []
 var legendary_sound_index := 0
 var boss_sound: AudioStreamPlayer
 var reward_fx: RewardPresentation
+var no_tongue: Dictionary = {}
 var previous_shots := 0
 var benchmark_mode := false
 var web_quick_callback
@@ -117,20 +121,20 @@ func _ready() -> void:
   reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
  var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
- shot_sound=AudioStreamPlayer.new();shot_sound.stream=load("res://assets/audio/kenney-impact/impact_punch_heavy_002.ogg");shot_sound.volume_db=-16;add_child(shot_sound)
- kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-12;add_child(kill_sound)
- kill_thump=AudioStreamPlayer.new();kill_thump.stream=load("res://assets/audio/kenney-impact/impact_wood_heavy_003.ogg");kill_thump.volume_db=-20;add_child(kill_thump)
- var bgm:AudioStreamOggVorbis=load("res://assets/audio/freepd/driving-concern.ogg")
+ shot_sound=AudioStreamPlayer.new();shot_sound.stream=load("res://assets/audio/oculus/swing.ogg");shot_sound.volume_db=-14;add_child(shot_sound)
+ kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/oculus/defeat.ogg");kill_sound.volume_db=-12;add_child(kill_sound)
+ kill_thump=AudioStreamPlayer.new();kill_thump.stream=load("res://assets/audio/oculus/impact.ogg");kill_thump.volume_db=-22;add_child(kill_thump)
+ var bgm:AudioStreamOggVorbis=load("res://assets/audio/tanner/dark-knight.ogg")
  bgm.loop=true
- music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=-18;add_child(music_player)
- var hit_stream:AudioStream=load("res://assets/audio/kenney-impact/impact_punch_medium_002.ogg")
+ music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=-22;add_child(music_player)
+ var hit_stream:AudioStream=load("res://assets/audio/oculus/impact.ogg")
  for i in 2:
-  var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-14;add_child(hit_voice);hit_sounds.append(hit_voice)
- rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-13;add_child(rarity_sound)
- var legendary_stream:AudioStream=load("res://assets/audio/kenney-interface/confirmation_002.wav")
+  var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-7;add_child(hit_voice);hit_sounds.append(hit_voice)
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/oculus/rare.ogg");rarity_sound.volume_db=-8;add_child(rarity_sound)
+ var legendary_stream:AudioStream=load("res://assets/audio/oculus/legendary.ogg")
  for i in 4:
   var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-12;add_child(voice);legendary_sounds.append(voice)
- boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/kenney-interface/bong_001.wav");boss_sound.volume_db=-11;add_child(boss_sound)
+ boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/oculus/boss.ogg");boss_sound.volume_db=-11;add_child(boss_sound)
  ui = Control.new()
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -628,12 +632,10 @@ func show_credits() -> void:
  credit.text="報酬エフェクト：pixelfx / Patch, Hugo Duprez\nhttps://github.com/patch-gg/pixelfx\nMIT License\n\n"
  credit.text+=FileAccess.get_file_as_string("res://assets/fx/pixelfx/LICENSE.txt")
  credit.text+="\n\n"+FileAccess.get_file_as_string("res://assets/fx/pixelfx/UPSTREAM-NOTICE.md")
- credit.text+="\n\n報酬効果音：Kenney Interface Sounds\nhttps://kenney.nl/assets/interface-sounds\nhttps://github.com/Calinou/kenney-interface-sounds\nCC0 1.0 Universal\n\n"
- credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-interface/LICENSE.txt")
- credit.text+="\n\n命中音：Kenney Impact Sounds\nhttps://kenney.nl/assets/impact-sounds\nhttps://github.com/Boyquotes/kenney-impact-sounds-for-godot\nCC0 1.0 Universal\n\n"
- credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-impact/LICENSE.txt")
- credit.text+="\n\n戦闘BGM：Driving Concern / Kevin MacLeod\nFreePD / CC0 1.0 Universal\nhttps://freepd.com/scoring.php\nhttps://github.com/OlegTestov/clipwright-music/releases/tag/v2\n\n"
- credit.text+=FileAccess.get_file_as_string("res://assets/audio/freepd/LICENSE.txt")
+ credit.text+="\n\n効果音：\n"+FileAccess.get_file_as_string("res://assets/audio/oculus/ATTRIBUTION.md")
+ credit.text+="\n一部を短縮・フェード加工しています。\n\n"+FileAccess.get_file_as_string("res://assets/audio/oculus/LICENSE.txt")
+ credit.text+="\n\n戦闘BGM：Dark Knight / Tanner Helland\nhttps://github.com/tannerhelland/free-music\nCC BY 4.0：Vorbis変換・フェード加工\nhttps://creativecommons.org/licenses/by/4.0/\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/tanner/LICENSE.txt")
  box.add_child(credit)
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
@@ -826,6 +828,41 @@ func draw_tongue(fx: Dictionary) -> void:
   splash_color.a*=clampf(float(fx.ttl)/0.12,0.0,1.0)
   draw_arc(fx.splash_center,65.0,0.0,TAU,32,splash_color,2.0)
 
+# Several independent attacks can overlap. Render one tongue, prioritising the
+# strike that just landed, then the next strike to land. All hits remain intact.
+func visible_tongue() -> Dictionary:
+ var chosen:Dictionary=no_tongue
+ var best_score:float=-INF
+ for fx in battle.effects:
+  if not fx.active or fx.family!="devour":continue
+  var score:float=tongue_visual_score(fx)
+  if score>best_score:best_score=score;chosen=fx
+ for fx in battle.tongue_overflow:
+  if not fx.active:continue
+  var score:float=tongue_visual_score(fx)
+  if score>best_score:best_score=score;chosen=fx
+ return chosen
+
+func tongue_visual_score(fx: Dictionary) -> float:
+ if not fx.active or fx.family!="devour":return -INF
+ var age:float=Battle.TONGUE_DURATION-float(fx.ttl)
+ var score:float=float(fx.ttl)
+ if fx.get("hit",false) and age<=Battle.TONGUE_REACH_TIME+0.06:score+=300.0
+ elif fx.get("pending",false):score+=200.0+age
+ elif fx.get("hit",false):score+=100.0
+ return score
+
+func draw_chest_without_resting_tongue(rect: Rect2, tint: Color) -> void:
+ var unit:Vector2=rect.size/128.0
+ # Draw around the cutout first: transparent source pixels must not reveal
+ # the old tongue underneath the patch.
+ for source in TONGUE_BODY_PIECES:
+  draw_texture_rect_region(mimic_texture,Rect2(rect.position+source.position*unit,source.size*unit),source,tint)
+ for patch in TONGUE_COVER:
+  var target:Rect2=patch[0]
+  var source:Rect2=patch[1]
+  draw_texture_rect_region(mimic_texture,Rect2(rect.position+target.position*unit,target.size*unit),source,tint)
+
 func _draw() -> void:
  draw_rect(Rect2(0,0,1280,720),Color("08070b"))
  if state=="battle":
@@ -970,19 +1007,21 @@ func _draw() -> void:
  var pulse:float=0.0 if reduced_fx else clampf(reward_fx.attack_pulse/0.14,0.0,1.0)
  var mimic_size:=Vector2(128.0+8.0*pulse,128.0-5.0*pulse)
  var mimic_rect:=Rect2(Battle.CENTER-mimic_size*0.5+mimic_bob,mimic_size)
+ var tongue:Dictionary=visible_tongue()
+ var has_devour_part:bool=battle.family_counts.has("devour") and part_textures.has("devour")
  draw_circle(Battle.CENTER+Vector2(0,35),47,Color(0,0,0,0.50))
- if mimic_texture:draw_texture_rect(mimic_texture,mimic_rect,false,tint)
+ if mimic_texture:
+  if tongue.is_empty() and not has_devour_part:draw_texture_rect(mimic_texture,mimic_rect,false,tint)
+  else:draw_chest_without_resting_tongue(mimic_rect,tint)
  if int(battle.family_counts.get(dominant,0))>=4:
   for x in [-28,0,28]:
    draw_rect(Rect2(Battle.CENTER+Vector2(x-4,-45),Vector2(8,5)),FAM_COLORS.get(dominant,Color.WHITE))
  for fam in battle.family_counts:
+  if fam=="devour" and not tongue.is_empty():continue # the animated tongue is already visible
   var tex:Texture2D=part_textures.get(fam)
   if tex:draw_texture_rect(tex,mimic_rect,false)
  # Draw tongues above the mimic so a close-range hit is never hidden by its body.
- for fx in battle.effects:
-  if fx.active and fx.family=="devour":draw_tongue(fx)
- for fx in battle.tongue_overflow:
-  if fx.active:draw_tongue(fx)
+ if not tongue.is_empty():draw_tongue(tongue)
  # Briefly show the acquired family icon at its actual drop location.
  for icon in reward_fx.drop_icons:
   if not icon.active:continue
