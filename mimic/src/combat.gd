@@ -4,12 +4,13 @@ const CENTER := Vector2(640, 360)
 const MAX_ENEMIES := 120
 const MAX_PROJECTILES := 256
 const MAX_EFFECTS := 64
-const MAX_TONGUE_OVERFLOW := 8
+const MAX_TONGUE_OVERFLOW := 64
 const MAX_IMPACT_VISUALS := 12
 const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
 const DEVOUR_HALF_WIDTH := 68.0
 const TONGUE_DURATION := 0.30
+const TONGUE_REACH_TIME := 0.09
 # Shields face the mimic. Sources within +/-45 degrees of that facing are blocked.
 const SHIELD_FRONT_DOT := 0.7071067811865476
 const SUMMON_BURST_RADIUS := 60.0
@@ -203,7 +204,30 @@ func tongue_effect(tip: Vector2) -> Dictionary:
   fx=chosen
  fx["splash"]=false
  fx["splash_center"]=tip
+ fx["pending"]=false
  return fx
+func advance_tongue(fx: Dictionary, delta: float) -> void:
+ if not fx.get("pending",false):return
+ var index:int=fx.target_index
+ var e:Dictionary=enemies[index]
+ var valid:bool=e.active and int(e.generation)==int(fx.target_generation)
+ if valid:fx.to=e.pos
+ fx.travel_remaining-=delta
+ if fx.travel_remaining>0.0:return
+ fx.pending=false
+ # The enemy can die or its pool slot can be reused before the tongue arrives.
+ if not valid:return
+ hit_enemy(index,float(fx.power),-((e.pos-CENTER).normalized())*10.0,"devour")
+ if fx.pull:
+  for other in enemies:
+   if other.active and other.pos.distance_to(e.pos)<100:
+    other.pos+=(CENTER-other.pos).normalized()*35
+    if target_cache_active:target_positions[int(other.index)]=other.pos
+ if fx.area:
+  for i in enemies.size():
+   if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65:
+    fx.splash=true;fx.splash_center=e.pos
+    hit_enemy(i,float(fx.power)*0.5,Vector2.ZERO,"devour",false,e.pos)
 func scatter(origin: Vector2, family: String, count: int = 6) -> void:
  var remaining:int=count
  for spark in sparks:
@@ -339,17 +363,11 @@ func cast(a: Dictionary) -> bool:
   # The tip bends toward a target inside the player's aimed strike corridor.
   var tongue_tip:Vector2=CENTER+aim*reach if index<0 else e.pos
   var tongue_fx:Dictionary=tongue_effect(tongue_tip)
-  if index>=0:hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
-  if index>=0 and ability=="pull":
-   for other in enemies:
-    if other.active and other.pos.distance_to(e.pos)<100:
-     other.pos+=(CENTER-other.pos).normalized()*35
-     if target_cache_active:target_positions[int(other.index)]=other.pos
-  if index>=0 and (ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2)):
-   for i in enemies.size():
-    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65:
-     tongue_fx.splash=true;tongue_fx.splash_center=e.pos
-     hit_enemy(i,power*0.5,Vector2.ZERO,"devour",false,e.pos)
+  if index>=0:
+   tongue_fx.pending=true;tongue_fx.target_index=index;tongue_fx.target_generation=e.generation
+   tongue_fx.power=power;tongue_fx.travel_remaining=TONGUE_REACH_TIME
+   tongue_fx.pull=(ability=="pull")
+   tongue_fx.area=(ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2))
  elif family == "blade":
   var blade_center:Vector2=CENTER+aim*45
   effect(CENTER,blade_center,"blade",90 if ability=="orbit" else 60)
@@ -564,10 +582,12 @@ func update(delta: float) -> void:
    if impact.ttl<=0:impact.active=false
  for tongue in tongue_overflow:
   if tongue.active:
+   advance_tongue(tongue,delta)
    tongue.ttl-=delta
    if tongue.ttl<=0:tongue.active=false
  for fx in effects:
   if fx.active:
+   if fx.family=="devour":advance_tongue(fx,delta)
    if fx.family=="poison" and fx.ttl>0.2:
     for enemy in enemies:
      if enemy.active and enemy.pos.distance_to(fx.to)<fx.radius:apply_poison(enemy,1.5,fx.to)

@@ -12,6 +12,9 @@ func _initialize()->void:
  var behind:float=battle.enemies[2].hp
  battle.aim=Vector2.RIGHT
  battle.cast(battle.abilities[0])
+ assert(battle.enemies[0].hp==first,"A cast must not damage before the tongue arrives")
+ var strike:Dictionary=battle.effects.filter(func(fx):return fx.active and fx.family=="devour")[0]
+ battle.advance_tongue(strike,Combat.TONGUE_REACH_TIME)
  assert(battle.enemies[0].hp<first,"Enemy 60px to the side should be struck")
  assert(battle.enemies[1].hp==outside,"Enemy outside the corridor should not be struck")
  assert(battle.enemies[2].hp==behind,"Manual aim must not hit behind the mimic")

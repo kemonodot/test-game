@@ -785,7 +785,7 @@ func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: 
 func draw_tongue(fx: Dictionary) -> void:
  var direction:Vector2=(fx.to-fx.from).normalized()
  var side:Vector2=direction.orthogonal()
- var extension:float=clampf(fx.ttl/0.09,0.0,1.0)
+ var extension:float=minf(clampf((Battle.TONGUE_DURATION-float(fx.ttl))/Battle.TONGUE_REACH_TIME,0.0,1.0),clampf(float(fx.ttl)/0.09,0.0,1.0))
  var tip:Vector2=fx.from.lerp(fx.to,extension)
  var length:float=fx.from.distance_to(tip)
  var bend:float=minf(15.0,length*0.04)

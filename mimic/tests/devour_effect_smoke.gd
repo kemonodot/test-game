@@ -11,8 +11,12 @@ func _initialize()->void:
  for fx in b.effects:
   if fx.active and fx.family=="devour":visual_count+=1
  assert(visual_count==1,"Four-piece bonus should not draw a second tongue for one attack")
+ var first:Dictionary=b.effects.filter(func(fx):return fx.active and fx.family=="devour")[0]
+ b.advance_tongue(first,Combat.TONGUE_REACH_TIME)
  var damage_after_first:float=b.enemies[0].hp
  b.cast(b.abilities[1])
+ var second:Dictionary=b.effects.filter(func(fx):return fx.active and fx.family=="devour" and fx.pending)[0]
+ b.advance_tongue(second,Combat.TONGUE_REACH_TIME)
  assert(b.enemies[0].hp<damage_after_first and damage_after_first<initial,"Different equipped abilities must still attack independently")
  print("DEVOUR EFFECT: one tongue per ability; separate equipped attacks still deal damage")
  quit(0)
