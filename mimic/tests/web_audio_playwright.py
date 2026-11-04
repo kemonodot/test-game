@@ -47,7 +47,7 @@ try:
         page.goto(url,wait_until='domcontentloaded')
         page.wait_for_function('typeof window.mimicQuickStart === "function" && typeof window.mimicSoundTest === "function" && typeof window.mimicMusicTest === "function"',timeout=60000)
         page.wait_for_function("window.mimicStorageState.status === 'ready'",timeout=30000)
-        assert 'BGM調整版' in page.locator('#phone-helper').inner_text()
+        assert '旋律BGM版' in page.locator('#phone-helper').inner_text()
         page.evaluate('Promise.all(window.__audioContexts.map(x => x.suspend()))')
         assert page.evaluate('window.__audioContexts[0].state')=='suspended'
         page.locator('#phone-sound').tap();page.wait_for_timeout(500)
@@ -57,7 +57,7 @@ try:
         page.evaluate('window.__audioPeak=0')
         page.locator('#phone-music').tap();page.wait_for_timeout(900)
         assert page.evaluate('window.mimicMusicTestStatus')=='requested'
-        assert '風と水滴' in page.locator('#phone-audio-status').inner_text()
+        assert 'メイン画面のBGM' in page.locator('#phone-audio-status').inner_text()
         assert page.evaluate('window.__audioPeak')>0.001, 'no signal from BGM preview'
         page.evaluate('Promise.all(window.__audioContexts.map(x => x.suspend()))')
         page.locator('#phone-start').tap();page.wait_for_timeout(400)
@@ -83,6 +83,12 @@ try:
         page.locator('#phone-sound').tap()
         assert page.evaluate('window.mimicSoundTestStatus')=='muted'
         assert '効果音をオン' in page.locator('#phone-audio-status').inner_text()
+        # Menu BGM must be audible independently of sound effects, before combat.
+        page.evaluate('window.__audioPeak=0;window.__midEnergy=0;window.__midCount=0')
+        page.wait_for_timeout(1200)
+        assert page.evaluate('window.__audioPeak')>0.001, 'no menu BGM signal with effects muted'
+        menu_rms=page.evaluate('Math.sqrt(window.__midEnergy / Math.max(1, window.__midCount))')
+        assert menu_rms>0.01, f'menu BGM output above 300 Hz is too quiet: RMS={menu_rms:.5f}'
         # Sound effects are off, so the observed battle signal must come from BGM.
         page.evaluate('window.__audioPeak=0;window.__midEnergy=0;window.__midCount=0')
         page.locator('#phone-start').tap();page.wait_for_timeout(1800)

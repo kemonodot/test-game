@@ -29,7 +29,7 @@ func run() -> void:
  app.profile=Profile.new(false);app.profile.data.settings={"sound":false,"music":true}
  assert(app.music_player.stream is AudioStreamOggVorbis and app.music_player.stream.loop)
  app.start_battle();assert(app.music_player.playing)
- app.show_result();assert(not app.music_player.playing)
+ app.show_result();assert(app.music_player.playing and app.music_player.stream==app.menu_music)
  app.show_settings();app.toggle_music()
  assert(not app.profile.data.settings.music and not app.profile.data.settings.sound)
  app.start_battle();assert(not app.music_player.playing)

@@ -117,11 +117,11 @@ body {
 		</canvas>
 
 		<div id="phone-helper" role="region" aria-label="スマートフォン向けの開始操作">
-			<p>BGM調整版<br>ドラッグで照準、攻撃は自動です。</p>
+			<p>旋律BGM版<br>ドラッグで照準、攻撃は自動です。</p>
 			<button id="phone-start" type="button" disabled>読み込み中…</button>
 			<div id="phone-audio-actions">
 				<button id="phone-sound" type="button" disabled>効果音を確認</button>
-				<button id="phone-music" type="button" disabled>BGMを確認（環境音）</button>
+				<button id="phone-music" type="button" disabled>メインBGMを確認</button>
 			</div>
 			<p id="phone-audio-status" aria-live="polite"></p>
 		</div>
@@ -139,7 +139,7 @@ body {
 		<script>
 const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":7165760,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 // Request the updated pack even if a previous version is cached.
-GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?bgm-audible-2=1`;
+GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?melody-loop-1=1`;
 const GODOT_THREADS_ENABLED = false;
 window.mimicStorageState = {seq: 0, status: "pending", failureSeq: 0, failureKind: ""};
 window.mimicStorageReport = (status) => {
@@ -184,7 +184,7 @@ for (const gesture of ['pointerdown', 'touchstart', 'touchend', 'click', 'keydow
 		if (window.mimicMusicTestStatus === 'muted') {
 			phoneAudioStatus.textContent = 'ゲームの設定でBGMをオンにしてください。';
 		} else if (window.mimicMusicTestStatus === 'requested') {
-			phoneAudioStatus.textContent = '風と水滴の環境音を約5秒再生します。';
+			phoneAudioStatus.textContent = 'メイン画面のBGMを再生します。戦闘では別の曲です。';
 		} else {
 			phoneAudioStatus.textContent = 'BGMを再生できません。読み込み状態をご確認ください。';
 		}
