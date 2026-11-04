@@ -94,6 +94,9 @@ body {
 #phone-helper p { margin: 0 0 12px; }
 #phone-start { display: block; width: 100%; min-height: 52px; border: 1px solid #e3aa8d; background: #873844; color: white; font: bold 18px system-ui, sans-serif; border-radius: 4px; touch-action: manipulation; }
 #phone-start:disabled { opacity: .6; }
+#phone-sound { display: block; width: 100%; min-height: 44px; margin-top: 8px; border: 1px solid #a77a70; background: #24161b; color: #fff4e5; font: 16px system-ui, sans-serif; border-radius: 4px; touch-action: manipulation; }
+#phone-audio-status { margin: 8px 0 0; min-height: 1.2em; font-size: 13px; }
+
 @media (orientation: portrait) and (pointer: coarse) { #phone-helper.visible { display: block; } }
 		</style>
 		
@@ -106,6 +109,8 @@ body {
 		<div id="phone-helper" role="region" aria-label="スマートフォン向けの開始操作">
 			<p>画面を横向きにすると操作しやすくなります。<br>下のボタンから戦闘を始められます。</p>
 			<button id="phone-start" type="button" disabled>読み込み中…</button>
+			<button id="phone-sound" type="button" disabled>音を確認</button>
+			<p id="phone-audio-status" aria-live="polite"></p>
 		</div>
 		<noscript>
 			Your browser does not support JavaScript.
@@ -117,11 +122,11 @@ body {
 			<div id="status-notice"></div>
 		</div>
 
-		<script src="index.js?storage=1"></script>
+		<script src="index.js?storage-audio=1"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6349136,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6350704,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 // Request the updated pack even if a previous version is cached.
-GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?pixelfx=1`;
+GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?tongue-audio=1`;
 const GODOT_THREADS_ENABLED = false;
 window.mimicStorageState = {seq: 0, status: "pending", failureSeq: 0, failureKind: ""};
 window.mimicStorageReport = (status) => {
@@ -130,6 +135,11 @@ window.mimicStorageReport = (status) => {
 };
 const engine = new Engine(GODOT_CONFIG);
 window.mimicRetryStorage = () => { if (engine.rtenv && engine.rtenv.mimicSyncFS) engine.rtenv.mimicSyncFS(); };
+// A real user gesture must resume the game's own AudioContext, including the HTML start button.
+window.mimicTryResumeAudio = () => { if (engine.rtenv && engine.rtenv.mimicResumeAudio) engine.rtenv.mimicResumeAudio(); };
+for (const gesture of ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']) {
+ window.addEventListener(gesture, window.mimicTryResumeAudio, {capture: true, passive: true});
+}
 
 (function () {
 	const statusOverlay = document.getElementById('status');
@@ -137,10 +147,22 @@ window.mimicRetryStorage = () => { if (engine.rtenv && engine.rtenv.mimicSyncFS)
 	const statusNotice = document.getElementById('status-notice');
 	const phoneHelper = document.getElementById('phone-helper');
 	const phoneStart = document.getElementById('phone-start');
-	window.addEventListener('mimic-ready', () => { phoneStart.disabled = false; phoneStart.textContent = '第一層を始める'; phoneHelper.classList.add('visible'); });
+	const phoneSound = document.getElementById('phone-sound');
+	const phoneAudioStatus = document.getElementById('phone-audio-status');
+	window.addEventListener('mimic-ready', () => { phoneStart.disabled = false; phoneSound.disabled = false; phoneStart.textContent = '第一層を始める'; phoneHelper.classList.add('visible'); });
 	window.addEventListener('mimic-title', () => { if (typeof window.mimicQuickStart === 'function') phoneHelper.classList.add('visible'); });
 	window.addEventListener('mimic-leave-title', () => phoneHelper.classList.remove('visible'));
-	phoneStart.addEventListener('click', () => { if (typeof window.mimicQuickStart === 'function') window.mimicQuickStart(); });
+	phoneStart.addEventListener('click', () => { window.mimicTryResumeAudio(); if (typeof window.mimicQuickStart === 'function') window.mimicQuickStart(); });
+	phoneSound.addEventListener('click', () => {
+		window.mimicTryResumeAudio();
+		window.mimicSoundTestStatus = '';
+		if (typeof window.mimicSoundTest === 'function') window.mimicSoundTest();
+		if (window.mimicSoundTestStatus === 'muted') {
+			phoneAudioStatus.textContent = 'ゲームの設定で効果音をオンにしてください。';
+		} else {
+			phoneAudioStatus.textContent = 'テスト音の再生を試しました。音量をご確認ください。';
+		}
+	});
 
 	let initializing = true;
 	let statusMode = '';

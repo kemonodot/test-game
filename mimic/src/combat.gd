@@ -4,6 +4,7 @@ const CENTER := Vector2(640, 360)
 const MAX_ENEMIES := 120
 const MAX_PROJECTILES := 256
 const MAX_EFFECTS := 64
+const MAX_TONGUE_OVERFLOW := 8
 const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
 const DEVOUR_HALF_WIDTH := 68.0
@@ -22,6 +23,8 @@ var rng := RandomNumberGenerator.new()
 var enemies: Array = []
 var projectiles: Array = []
 var effects: Array = []
+# Reserved visual-only fallback for tongues when the shared effect pool is full.
+var tongue_overflow: Array = []
 var sparks: Array = []
 var minions: Array = []
 var abilities: Array = []
@@ -69,6 +72,8 @@ func _init(seed_value: int = 1) -> void:
   projectiles.append({"active": false, "pos": Vector2.ZERO, "vel": Vector2.ZERO, "ttl": 0.0, "damage": 0.0, "enemy": false, "family": "", "pierce": 0})
  for i in MAX_EFFECTS:
   effects.append({"active": false, "from": Vector2.ZERO, "to": Vector2.ZERO, "ttl": 0.0, "family": "", "radius": 0.0})
+ for i in MAX_TONGUE_OVERFLOW:
+  tongue_overflow.append({"active":false,"from":Vector2.ZERO,"to":Vector2.ZERO,"ttl":0.0,"family":"devour","splash":false,"splash_center":Vector2.ZERO})
  for i in 12:minions.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"timer":0.0,"power":0.0,"side":0.0})
  for i in 192:sparks.append({"active":false,"pos":Vector2.ZERO,"vel":Vector2.ZERO,"ttl":0.0,"family":""})
  for i in MAX_ENEMIES:loot_events.append({"active":false,"kind":"","boss":false,"position":Vector2.ZERO,"bomb":false})
@@ -174,11 +179,24 @@ func target_index(origin:Vector2,direction:Vector2,max_range:float,half_width:fl
    best=i;best_forward=forward
  return best
 
-func effect(from: Vector2, to: Vector2, family: String, radius: float = 0.0, duration: float = 0.18) -> void:
+func effect(from: Vector2, to: Vector2, family: String, radius: float = 0.0, duration: float = 0.18) -> Dictionary:
  for fx in effects:
   if not fx.active:
    fx.merge({"active":true,"from":from,"to":to,"ttl":duration,"family":family,"radius":radius},true)
-   return
+   return fx
+ return {}
+func tongue_effect(tip: Vector2) -> Dictionary:
+ var fx:Dictionary=effect(CENTER,tip,"devour",0.0,TONGUE_DURATION)
+ if fx.is_empty():
+  var chosen:Dictionary=tongue_overflow[0]
+  for candidate in tongue_overflow:
+   if not candidate.active:chosen=candidate;break
+   if float(candidate.ttl)<float(chosen.ttl):chosen=candidate
+  chosen.merge({"active":true,"from":CENTER,"to":tip,"ttl":TONGUE_DURATION,"family":"devour"},true)
+  fx=chosen
+ fx["splash"]=false
+ fx["splash_center"]=tip
+ return fx
 func scatter(origin: Vector2, family: String, count: int = 6) -> void:
  var remaining:int=count
  for spark in sparks:
@@ -297,7 +315,7 @@ func cast(a: Dictionary) -> bool:
  if family == "devour":
   # The tip bends toward a target inside the player's aimed strike corridor.
   var tongue_tip:Vector2=CENTER+aim*reach if index<0 else e.pos
-  effect(CENTER,tongue_tip,"devour",0.0,TONGUE_DURATION)
+  var tongue_fx:Dictionary=tongue_effect(tongue_tip)
   if index>=0:hit_enemy(index,power, -((e.pos-CENTER).normalized())*10.0,"devour")
   if index>=0 and ability=="pull":
    for other in enemies:
@@ -306,7 +324,9 @@ func cast(a: Dictionary) -> bool:
      if target_cache_active:target_positions[int(other.index)]=other.pos
   if index>=0 and (ability=="maw" or family_counts.get("devour",0)>=4 or ("devour_chain" in unique_ids and devour_chain>=2)):
    for i in enemies.size():
-    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65: hit_enemy(i,power*0.5,Vector2.ZERO,"devour",false,e.pos)
+    if i!=index and enemies[i].active and enemies[i].pos.distance_to(e.pos)<65:
+     tongue_fx.splash=true;tongue_fx.splash_center=e.pos
+     hit_enemy(i,power*0.5,Vector2.ZERO,"devour",false,e.pos)
  elif family == "blade":
   var blade_center:Vector2=CENTER+aim*45
   effect(CENTER,blade_center,"blade",90 if ability=="orbit" else 60)
@@ -515,6 +535,10 @@ func update(delta: float) -> void:
   if pop.active:
    pop.ttl-=delta;pop.pos.y-=delta*30
    if pop.ttl<=0:pop.active=false
+ for tongue in tongue_overflow:
+  if tongue.active:
+   tongue.ttl-=delta
+   if tongue.ttl<=0:tongue.active=false
  for fx in effects:
   if fx.active:
    if fx.family=="poison" and fx.ttl>0.2:

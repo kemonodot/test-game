@@ -40,6 +40,7 @@ var reward_fx: RewardPresentation
 var previous_shots := 0
 var benchmark_mode := false
 var web_quick_callback
+var web_sound_callback
 var mimic_texture: Texture2D
 var concept_texture: Texture2D
 var dungeon_texture: Texture2D
@@ -110,9 +111,9 @@ func _ready() -> void:
   reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
  var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
- shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(155.0,0.055);shot_sound.volume_db=-18;add_child(shot_sound)
- kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-16;add_child(kill_sound)
- rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-19;add_child(rarity_sound)
+ shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(310.0,0.075);shot_sound.volume_db=-12;add_child(shot_sound)
+ kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-13;add_child(kill_sound)
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-15;add_child(rarity_sound)
  var legendary_stream:AudioStream=load("res://assets/audio/kenney-interface/confirmation_002.wav")
  for i in 4:
   var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-16;add_child(voice);legendary_sounds.append(voice)
@@ -134,6 +135,8 @@ func _ready() -> void:
  if OS.has_feature("web"):
   web_quick_callback=JavaScriptBridge.create_callback(_web_quick_start)
   JavaScriptBridge.get_interface("window").mimicQuickStart=web_quick_callback
+  web_sound_callback=JavaScriptBridge.create_callback(_web_sound_test)
+  JavaScriptBridge.get_interface("window").mimicSoundTest=web_sound_callback
   JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-ready'))")
   benchmark_mode=bool(JavaScriptBridge.eval("new URLSearchParams(location.search).has('stress')",true))
   var inspect_family:String=str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('inspect') || ''",true))
@@ -158,6 +161,14 @@ func _web_quick_start(_args: Array) -> void:
  if state=="title":
   selected_stage=0
   start_battle()
+func _web_sound_test(_args: Array) -> void:
+ if persistence_kind=="load":return
+ if not profile.data.get("settings",{}).get("sound",true):
+  JavaScriptBridge.eval("window.mimicSoundTestStatus='muted'")
+  return
+ kill_sound.pitch_scale=0.8
+ kill_sound.play()
+ JavaScriptBridge.eval("window.mimicSoundTestStatus='requested'")
 func make_sound(frequency: float, duration: float) -> AudioStreamWAV:
  var wav:=AudioStreamWAV.new()
  wav.format=AudioStreamWAV.FORMAT_16_BITS
@@ -592,6 +603,7 @@ func show_settings() -> void:
  button("照準ガイド："+("表示" if guide else "非表示"),Vector2(80,330),Vector2(420,55),func():settings.aim_guide=not guide;profile.data.settings=settings;save_profile();show_settings())
  button("エフェクト："+("控えめ" if reduced else "通常"),Vector2(80,400),Vector2(420,55),func():settings.reduce_fx=not reduced;profile.data.settings=settings;save_profile();show_settings())
  var sound_enabled:bool=settings.get("sound",true)
+ button("音を確認",Vector2(600,400),Vector2(420,55),func():kill_sound.pitch_scale=0.8;kill_sound.play(),not sound_enabled)
  button("素材クレジット",Vector2(600,470),Vector2(420,55),show_credits)
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;save_profile();show_settings())
 func show_credits() -> void:
@@ -629,6 +641,10 @@ func animate_victory_effects(delta: float) -> void:
   if fx.active:
    fx.ttl-=delta
    if fx.ttl<=0:fx.active=false
+ for tongue in battle.tongue_overflow:
+  if tongue.active:
+   tongue.ttl-=delta
+   if tongue.ttl<=0:tongue.active=false
  for pop in battle.popups:
   if pop.active:
    pop.ttl-=delta;pop.pos.y-=delta*30
@@ -738,6 +754,37 @@ func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: 
  var target:=Rect2((position-pivot*scale).round(),dims*scale)
  draw_texture_rect_region(atlas.texture,target,source,tint)
 
+func draw_tongue(fx: Dictionary) -> void:
+ var direction:Vector2=(fx.to-fx.from).normalized()
+ var side:Vector2=direction.orthogonal()
+ var extension:float=clampf(fx.ttl/0.09,0.0,1.0)
+ var tip:Vector2=fx.from.lerp(fx.to,extension)
+ var length:float=fx.from.distance_to(tip)
+ var bend:float=minf(15.0,length*0.04)
+ var positions:=[0.0,0.18,0.40,0.65,0.85,1.0]
+ var widths:=[9.0,14.0,18.0,17.0,14.0,9.0]
+ var left:=PackedVector2Array();var right:=PackedVector2Array()
+ var inner_left:=PackedVector2Array();var inner_right:=PackedVector2Array()
+ var ridge:=PackedVector2Array()
+ for i in positions.size():
+  var t:float=positions[i]
+  var center:Vector2=fx.from.lerp(tip,t)+side*(sin(t*PI*1.7)*bend)
+  var width:float=widths[i]
+  left.append(center+side*width);right.insert(0,center-side*width)
+  inner_left.append(center+side*(width-4));inner_right.insert(0,center-side*(width-4))
+  ridge.append(center-side*3.0)
+ left.append_array(right);inner_left.append_array(inner_right)
+ draw_colored_polygon(left,Color("531923"))
+ draw_colored_polygon(inner_left,Color("b53b50"))
+ draw_polyline(ridge,Color("e17980"),4.0)
+ draw_circle(tip,9,Color("b53b50"))
+ draw_circle(tip-direction*3-side*2,4,Color("ef9a97"))
+ draw_line(tip-direction*3,tip+direction*4,Color("6b2531"),2)
+ if fx.get("splash",false):
+  var splash_color:=Color(0.88,0.35,0.39,0.55)
+  splash_color.a*=clampf(float(fx.ttl)/0.12,0.0,1.0)
+  draw_arc(fx.splash_center,65.0,0.0,TAU,32,splash_color,2.0)
+
 func _draw() -> void:
  draw_rect(Rect2(0,0,1280,720),Color("08070b"))
  if state=="battle":
@@ -839,33 +886,8 @@ func _draw() -> void:
    var c:Color=FAM_COLORS.get(fx.family,Color.WHITE)
    var fade:float=clampf(fx.ttl/0.18,0.25,1.0)
    c.a=fade
-   if fx.family=="devour":
-    var direction:Vector2=(fx.to-fx.from).normalized()
-    var side:Vector2=direction.orthogonal()
-    var extension:float=clampf(fx.ttl/0.09,0.0,1.0)
-    var tip:Vector2=fx.from.lerp(fx.to,extension)
-    var length:float=fx.from.distance_to(tip)
-    var bend:float=minf(15.0,length*0.04)
-    var positions:=[0.0,0.18,0.40,0.65,0.85,1.0]
-    var widths:=[9.0,14.0,18.0,17.0,14.0,9.0]
-    var left:=PackedVector2Array();var right:=PackedVector2Array()
-    var inner_left:=PackedVector2Array();var inner_right:=PackedVector2Array()
-    var ridge:=PackedVector2Array()
-    for i in positions.size():
-     var t:float=positions[i]
-     var center:Vector2=fx.from.lerp(tip,t)+side*(sin(t*PI*1.7)*bend)
-     var width:float=widths[i]
-     left.append(center+side*width);right.insert(0,center-side*width)
-     inner_left.append(center+side*(width-4));inner_right.insert(0,center-side*(width-4))
-     ridge.append(center-side*3.0)
-    left.append_array(right);inner_left.append_array(inner_right)
-    draw_colored_polygon(left,Color("531923"))
-    draw_colored_polygon(inner_left,Color("b53b50"))
-    draw_polyline(ridge,Color("e17980"),4.0)
-    draw_circle(tip,9,Color("b53b50"))
-    draw_circle(tip-direction*3-side*2,4,Color("ef9a97"))
-    draw_line(tip-direction*3,tip+direction*4,Color("6b2531"),2)
-   elif fx.family=="blade":
+   if fx.family=="devour":continue
+   if fx.family=="blade":
     var direction:float=(fx.to-fx.from).angle()
     var r:float=maxf(50.0,fx.radius)
     draw_arc(fx.from,r,direction-0.9,direction+0.9,20,c.darkened(0.6),9)
@@ -900,6 +922,11 @@ func _draw() -> void:
  for fam in battle.family_counts:
   var tex:Texture2D=part_textures.get(fam)
   if tex:draw_texture_rect(tex,Rect2(Battle.CENTER-Vector2(64,64)+mimic_bob,Vector2(128,128)),false)
+ # Draw tongues above the mimic so a close-range hit is never hidden by its body.
+ for fx in battle.effects:
+  if fx.active and fx.family=="devour":draw_tongue(fx)
+ for fx in battle.tongue_overflow:
+  if fx.active:draw_tongue(fx)
  if battle.family_counts.get("blade",0)>0:
   var orbit_center:Vector2=Battle.CENTER+battle.aim*45
   var blade_count:int=mini(9,1+int(battle.family_counts.blade)+(int(battle.family_counts.blade) if "extra_blades" in battle.unique_ids else 0))
