@@ -5,9 +5,11 @@ const REVEAL_DELAY := 0.30
 const BIG_COOLDOWN := 1.7
 const BIG_SLOW_DURATION := 0.36
 const NOTIFICATION_LIFETIME := 2.5
+const DROP_ICON_LIFETIME := 0.95
 var notifications: Array = []
 var money_popups: Array = []
 var pickup_sparks: Array = []
+var drop_icons: Array = []
 var death_bursts: Array = []
 var kill_count := 0
 var attack_pulse := 0.0
@@ -27,6 +29,7 @@ var boss_reveal_remaining := 0.0
 var boss_reveal_total := 1.05
 var boss_item_rarity := -1
 var boss_item_name := ""
+var boss_item_family := ""
 var boss_position := Vector2.ZERO
 var boss_kind := ""
 var boss_result_wait := 0.0
@@ -40,6 +43,7 @@ func _init() -> void:
  for i in 3:banners.append({"active":false,"name":"","rarity":0,"ttl":0.0,"delay":0.0,"extra":0})
  for i in 8:death_bursts.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"bomb":false})
  for i in 4:pickup_sparks.append({"active":false,"pos":Vector2.ZERO,"rarity":0,"ttl":0.0})
+ for i in 16:drop_icons.append({"active":false,"pos":Vector2.ZERO,"rarity":0,"family":"","ttl":0.0,"reveal":0.0})
  for i in 12:
   money_popups.append({"active":false,"bomb":false,"value":0,"pos":Vector2.ZERO,"ttl":0.0,"age":0.0})
 
@@ -62,7 +66,7 @@ func update(delta: float) -> void:
  boss_result_wait=maxf(0.0,boss_result_wait-delta)
  if revealing and boss_reveal_remaining<=0.0 and boss_pending:
   boss_pending=false
-  if publish_item(boss_item_rarity,boss_item_name,boss_position,false):pending_sound_rarity=boss_item_rarity
+  if publish_item(boss_item_rarity,boss_item_name,boss_position,false,boss_item_family):pending_sound_rarity=boss_item_rarity
  for i in rarity_sound_cooldown.size():rarity_sound_cooldown[i]=maxf(0.0,float(rarity_sound_cooldown[i])-delta)
  for notice in notifications:
   if notice.active:
@@ -76,6 +80,10 @@ func update(delta: float) -> void:
   if spark.active:
    spark.ttl-=delta
    if spark.ttl<=0:spark.active=false
+ for icon in drop_icons:
+  if icon.active:
+   icon.ttl-=delta;icon.reveal=maxf(0.0,float(icon.reveal)-delta)
+   if icon.ttl<=0:icon.active=false
  for pop in money_popups:
   if pop.active:
    pop.ttl-=delta;pop.age+=delta
@@ -118,7 +126,7 @@ func boss(pos: Vector2, kind: String, reduced: bool) -> bool:
  var full:=begin_big(reduced)
  boss_full_reveal=full
  boss_position=pos;boss_kind=kind
- boss_item_rarity=-1;boss_item_name=""
+ boss_item_rarity=-1;boss_item_name="";boss_item_family=""
  if full:
   boss_reveal_remaining=boss_reveal_total;boss_result_wait=2.0
  elif not reduced:
@@ -127,16 +135,23 @@ func boss(pos: Vector2, kind: String, reduced: bool) -> bool:
  return full
 
 # Returns whether a rarity sound should play. Boss rolls always carry their actual result.
-func item(rarity: int, item_name: String, pos: Vector2, reduced: bool, from_boss: bool) -> bool:
+func item(rarity: int, item_name: String, pos: Vector2, reduced: bool, from_boss: bool, family: String = "") -> bool:
  rarity=clampi(rarity,0,4)
  if from_boss:
-  boss_item_rarity=rarity;boss_item_name=item_name
+  boss_item_rarity=rarity;boss_item_name=item_name;boss_item_family=family
   if boss_reveal_remaining>0.0:
    boss_pending=true
    return false
- return publish_item(rarity,item_name,pos,reduced)
+ return publish_item(rarity,item_name,pos,reduced,family)
 
-func publish_item(rarity: int, item_name: String, pos: Vector2, reduced: bool) -> bool:
+func publish_item(rarity: int, item_name: String, pos: Vector2, reduced: bool, family: String = "") -> bool:
+ # A bounded visual-only pool never changes drops or consumes gameplay RNG.
+ var icon:Dictionary=drop_icons[0]
+ for candidate in drop_icons:
+  if not candidate.active:icon=candidate;break
+  if float(candidate.ttl)<float(icon.ttl):icon=candidate
+ icon.active=true;icon.pos=pos;icon.rarity=rarity;icon.family=family;icon.ttl=DROP_ICON_LIFETIME
+ icon.reveal=REVEAL_DELAY if rarity>=3 else 0.0
  var notice:Dictionary=notifications[rarity]
  if not notice.active:notice.count=0
  notice.active=true;notice.count+=1;notice.ttl=NOTIFICATION_LIFETIME

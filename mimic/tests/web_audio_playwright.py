@@ -53,6 +53,7 @@ try:
         assert not errors,errors
         context.close()
         muted=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
+        muted.add_init_script(probe)
         page=muted.new_page();page.goto(url,wait_until='domcontentloaded')
         page.wait_for_function('typeof window.mimicSoundTest === "function"',timeout=60000)
         box=page.locator('canvas').bounding_box()
@@ -67,7 +68,28 @@ try:
         page.locator('#phone-sound').tap()
         assert page.evaluate('window.mimicSoundTestStatus')=='muted'
         assert '効果音をオン' in page.locator('#phone-audio-status').inner_text()
-        muted.close();browser.close()
-    print('WEB AUDIO: portrait test, start, interruption recovery, output signal and mute setting passed')
+        # Sound effects are off, so the observed battle signal must come from BGM.
+        page.evaluate('window.__audioPeak=0')
+        page.locator('#phone-start').tap();page.wait_for_timeout(1800)
+        assert page.evaluate('window.__audioPeak')>0.001, 'no BGM signal with effects muted'
+        muted.close()
+        effects=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
+        effects.add_init_script(probe)
+        page=effects.new_page();page.goto(url,wait_until='domcontentloaded')
+        page.wait_for_function('typeof window.mimicQuickStart === "function"',timeout=60000)
+        box=page.locator('canvas').bounding_box()
+        scale=min(box['width']/1280,box['height']/720)
+        left=box['x']+(box['width']-1280*scale)/2
+        top=box['y']+(box['height']-720*scale)/2
+        def effects_tap(x,y):
+            page.touchscreen.tap(left+x*scale,top+y*scale);page.wait_for_timeout(350)
+        effects_tap(1100,630) # settings
+        effects_tap(290,570)  # BGM off, effects remain on
+        effects_tap(1150,50)  # hub
+        page.evaluate('window.__audioPeak=0')
+        page.locator('#phone-start').tap();page.wait_for_timeout(1200)
+        assert page.evaluate('window.__audioPeak')>0.001, 'no effects signal with BGM muted'
+        effects.close();browser.close()
+    print('WEB AUDIO: portrait start, interruption recovery and independently audible BGM/effects passed')
 finally:
     server.shutdown()

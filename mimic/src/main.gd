@@ -32,6 +32,8 @@ var run_gold := 0
 var reward_given := false
 var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
+var kill_thump: AudioStreamPlayer
+var music_player: AudioStreamPlayer
 var hit_sounds: Array = []
 var hit_sound_index := 0
 var hit_sound_cooldown := 0.0
@@ -115,16 +117,20 @@ func _ready() -> void:
   reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
  var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
- shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(310.0,0.075);shot_sound.volume_db=-12;add_child(shot_sound)
- kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-13;add_child(kill_sound)
+ shot_sound=AudioStreamPlayer.new();shot_sound.stream=load("res://assets/audio/kenney-impact/impact_punch_heavy_002.ogg");shot_sound.volume_db=-16;add_child(shot_sound)
+ kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-12;add_child(kill_sound)
+ kill_thump=AudioStreamPlayer.new();kill_thump.stream=load("res://assets/audio/kenney-impact/impact_wood_heavy_003.ogg");kill_thump.volume_db=-20;add_child(kill_thump)
+ var bgm:AudioStreamOggVorbis=load("res://assets/audio/freepd/driving-concern.ogg")
+ bgm.loop=true
+ music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=-18;add_child(music_player)
  var hit_stream:AudioStream=load("res://assets/audio/kenney-impact/impact_punch_medium_002.ogg")
  for i in 2:
-  var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-17;add_child(hit_voice);hit_sounds.append(hit_voice)
- rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-15;add_child(rarity_sound)
+  var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-14;add_child(hit_voice);hit_sounds.append(hit_voice)
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-13;add_child(rarity_sound)
  var legendary_stream:AudioStream=load("res://assets/audio/kenney-interface/confirmation_002.wav")
  for i in 4:
-  var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-16;add_child(voice);legendary_sounds.append(voice)
- boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/kenney-interface/bong_001.wav");boss_sound.volume_db=-13;add_child(boss_sound)
+  var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-12;add_child(voice);legendary_sounds.append(voice)
+ boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/kenney-interface/bong_001.wav");boss_sound.volume_db=-11;add_child(boss_sound)
  ui = Control.new()
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -176,19 +182,6 @@ func _web_sound_test(_args: Array) -> void:
  kill_sound.pitch_scale=0.8
  kill_sound.play()
  JavaScriptBridge.eval("window.mimicSoundTestStatus='requested'")
-func make_sound(frequency: float, duration: float) -> AudioStreamWAV:
- var wav:=AudioStreamWAV.new()
- wav.format=AudioStreamWAV.FORMAT_16_BITS
- wav.mix_rate=22050
- var frames:int=int(wav.mix_rate*duration)
- var bytes:=PackedByteArray()
- bytes.resize(frames*2)
- for i in frames:
-  var envelope:float=pow(1.0-float(i)/frames,2.0)
-  var sample:float=(sin(TAU*frequency*i/wav.mix_rate)+0.35*sin(TAU*frequency*2.7*i/wav.mix_rate))*envelope
-  bytes.encode_s16(i*2,int(clampf(sample*9000,-32768,32767)))
- wav.data=bytes
- return wav
 func save_profile() -> bool:
  var ok:bool=profile.save_game()
  if not ok:
@@ -324,6 +317,7 @@ func hub_button(title: String, subtitle: String, family: String, pos: Vector2, s
  b.position=pos;b.size=size;b.pressed.connect(action);ui.add_child(b)
  return b
 func show_title() -> void:
+ if is_instance_valid(music_player):music_player.stop()
  state="title"; clear_ui()
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-title'))")
  var mark:=label("MIMIC",Vector2(58,42),Vector2(450,80),64)
@@ -357,6 +351,8 @@ func start_battle() -> void:
  battle.stage=selected_stage
  battle.configure(profile.equipped_templates(),profile.data.upgrades)
  state="battle";run_gold=0;reward_given=false;previous_shots=0;previous_impacts=0;hit_sound_cooldown=0.0
+ if profile.data.get("settings",{}).get("music",true):music_player.play()
+ else:music_player.stop()
  reward_fx=RewardFX.new()
  bomb_button=button("破滅の供物   READY\nSPACE / 撃破資金 ×3",Vector2(990,610),Vector2(270,90),try_bomb)
  bomb_button.add_theme_font_size_override("font_size",20)
@@ -613,6 +609,14 @@ func show_settings() -> void:
  button("音を確認",Vector2(600,400),Vector2(420,55),func():kill_sound.pitch_scale=0.8;kill_sound.play(),not sound_enabled)
  button("素材クレジット",Vector2(600,470),Vector2(420,55),show_credits)
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;save_profile();show_settings())
+ var music_enabled:bool=settings.get("music",true)
+ button("BGM："+("オン" if music_enabled else "オフ"),Vector2(80,540),Vector2(420,55),toggle_music)
+func toggle_music() -> void:
+ var settings:Dictionary=profile.data.get("settings",{})
+ settings.music=not bool(settings.get("music",true))
+ profile.data.settings=settings
+ if not settings.music:music_player.stop()
+ save_profile();show_settings()
 func show_credits() -> void:
  state="credits";clear_ui();heading("素材クレジット")
  var box:=list_panel(Vector2(60,105),Vector2(1120,550))
@@ -628,6 +632,8 @@ func show_credits() -> void:
  credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-interface/LICENSE.txt")
  credit.text+="\n\n命中音：Kenney Impact Sounds\nhttps://kenney.nl/assets/impact-sounds\nhttps://github.com/Boyquotes/kenney-impact-sounds-for-godot\nCC0 1.0 Universal\n\n"
  credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-impact/LICENSE.txt")
+ credit.text+="\n\n戦闘BGM：Driving Concern / Kevin MacLeod\nFreePD / CC0 1.0 Universal\nhttps://freepd.com/scoring.php\nhttps://github.com/OlegTestov/clipwright-music/releases/tag/v2\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/freepd/LICENSE.txt")
  box.add_child(credit)
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
@@ -666,6 +672,7 @@ func animate_victory_effects(delta: float) -> void:
 func _process(delta: float) -> void:
  if OS.has_feature("web"):poll_web_storage()
  if persistence_kind=="load":return
+ if state!="battle" and music_player.playing:music_player.stop()
  toast_t=maxf(0,toast_t-delta)
  if state=="title" and not profile.data.get("settings",{}).get("reduce_fx",false):
   hub_time+=delta;hub_redraw_clock+=delta
@@ -704,7 +711,9 @@ func _process(delta: float) -> void:
    event.active=false
    var death_position:Vector2=Vector2.INF if event.boss else event.position
    var pitch:float=reward_fx.on_kill(death_position,reduced,event.get("bomb",false))
-   if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):kill_sound.pitch_scale=pitch*0.8;kill_sound.play()
+   if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):
+    kill_sound.pitch_scale=pitch*0.8;kill_sound.play()
+    kill_thump.pitch_scale=pitch*0.85;kill_thump.play()
    if event.boss:
     reward_fx.boss(event.position,event.kind,reduced)
     if profile.data.get("settings",{}).get("sound",true):boss_sound.play()
@@ -714,7 +723,10 @@ func _process(delta: float) -> void:
    if event.boss or battle.rng.randf()<float(profile.balance.drop_chance[selected_stage])+float(profile.data.upgrades.get("drop",0))*0.02+float(battle.stats.drop):
     var item:Dictionary=profile.drop(selected_stage,event.boss)
     if not item.is_empty():
-     if reward_fx.item(int(item.rarity),profile.get_template(item.template).name,event.position,reduced,event.boss):play_rarity_sound(int(item.rarity))
+     var template:Dictionary=profile.get_template(item.template)
+     if reward_fx.item(int(item.rarity),template.name,event.position,reduced,event.boss,template.family):play_rarity_sound(int(item.rarity))
+     # Preserve the final drop icon briefly before replacing the battle with results.
+     if battle.ended:reward_fx.boss_result_wait=maxf(reward_fx.boss_result_wait,0.85)
      battle.scatter(event.position,"arcane",5)
    if battle.rng.randf()<0.12: profile.add_gem(Profile.FAMILIES[battle.rng.randi_range(0,6)])
   if needs_save:save_profile()
@@ -731,6 +743,7 @@ func finalize_battle_rewards() -> void:
  if battle.won:profile.data.unlocked_stage=maxi(int(profile.data.unlocked_stage),mini(1,selected_stage+1))
  save_profile();reward_given=true
 func show_result() -> void:
+ music_player.stop()
  finalize_battle_rewards()
  state="result"
  clear_ui()
@@ -970,6 +983,23 @@ func _draw() -> void:
   if fx.active and fx.family=="devour":draw_tongue(fx)
  for fx in battle.tongue_overflow:
   if fx.active:draw_tongue(fx)
+ # Briefly show the acquired family icon at its actual drop location.
+ for icon in reward_fx.drop_icons:
+  if not icon.active:continue
+  var rarity:int=int(icon.rarity)
+  var displayed:int=maxi(0,rarity-1) if float(icon.reveal)>0.0 else rarity
+  var alpha:float=clampf(float(icon.ttl)/0.18,0.0,1.0)
+  var lift:float=0.0 if reduced_fx else (1.0-clampf(float(icon.ttl)/RewardFX.DROP_ICON_LIFETIME,0.0,1.0))*16.0
+  var rect:=Rect2(icon.pos-Vector2(28,50+lift),Vector2(56,56))
+  draw_rect(rect,Color(0.035,0.02,0.025,0.94*alpha))
+  var tex:Texture2D=icon_textures.get(str(icon.family))
+  if tex:draw_texture_rect(tex,rect.grow(-4),false,Color(1,1,1,alpha))
+  var rarity_tint:Color=RARITY_COLORS[displayed];rarity_tint.a=alpha
+  if not reduced_fx:
+   var glow:Color=rarity_tint;glow.a*=0.23
+   draw_rect(rect.grow(4),glow,false,3.0)
+  draw_rect(rect,rarity_tint,false,4.0)
+  draw_rect(Rect2(rect.position+Vector2(4,4),Vector2(6,6)),rarity_tint)
  if battle.family_counts.get("blade",0)>0:
   var orbit_center:Vector2=Battle.CENTER+battle.aim*45
   var blade_count:int=mini(9,1+int(battle.family_counts.blade)+(int(battle.family_counts.blade) if "extra_blades" in battle.unique_ids else 0))
