@@ -11,6 +11,9 @@ const ABILITY_TEXT := {"bite":"噛みつき", "tongue":"伸びる舌", "maw":"�
 const UNIQUE_TEXT := {"devour_chain":"連続捕食で威力・対象数が増加", "extra_blades":"刃物装備の数に応じて回転刃が強化", "curse_spread":"呪印のある敵の死亡時に周囲へ呪印を伝播", "poison_burst":"毒霧に即時腐食ダメージが加わる", "extra_minions":"召喚体の追撃が増加", "wide_counter":"反撃の範囲が拡大", "double_nova":"魔力攻撃が範囲攻撃に変化", "cleave":"刃が進行方向の敵をまとめて斬る", "curse_chain":"呪印を周囲の敵にも刻む", "last_stand":"致命傷を一度だけ耐える"}
 const RARITY_COLORS := [Color("d8cbbd"),Color("8db8cf"),Color("c3a1d4"),Color("e8bb7a"),Color("e78a87")]
 const RARITY := ["コモン","レア","エピック","レジェンダリー","ミシック"]
+const MUSIC_VOLUME_DB := [-8.0,-2.0,3.0]
+const MUSIC_VOLUME_LABELS := ["控えめ","標準","大きめ"]
+const MUSIC_PREVIEW_SECONDS := 5.0
 # Regions from the existing chest artwork used to cover its painted tongue while attacking.
 const TONGUE_COVER := [[Rect2(52,75,24,23),Rect2(28,75,24,23)], [Rect2(56,98,4,6),Rect2(32,98,4,6)], [Rect2(68,98,4,6),Rect2(40,98,4,6)], [Rect2(56,104,16,9),Rect2(32,104,16,9)]]
 const TONGUE_BODY_PIECES := [Rect2(0,0,128,75),Rect2(0,75,52,23),Rect2(76,75,52,23),Rect2(0,98,56,6),Rect2(60,98,8,6),Rect2(72,98,56,6),Rect2(0,104,56,9),Rect2(72,104,56,9),Rect2(0,113,128,15)]
@@ -37,6 +40,7 @@ var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
 var kill_thump: AudioStreamPlayer
 var music_player: AudioStreamPlayer
+var music_preview_remaining := 0.0
 var ui_sound: AudioStreamPlayer
 var casino_sound: AudioStreamPlayer
 var hit_sounds: Array = []
@@ -53,6 +57,7 @@ var previous_shots := 0
 var benchmark_mode := false
 var web_quick_callback
 var web_sound_callback
+var web_music_callback
 var mimic_texture: Texture2D
 var concept_texture: Texture2D
 var dungeon_texture: Texture2D
@@ -131,7 +136,7 @@ func _ready() -> void:
  casino_sound=AudioStreamPlayer.new();casino_sound.stream=load("res://assets/audio/index-cc0/chips-handle-3.ogg");casino_sound.volume_db=-4;add_child(casino_sound)
  var bgm:AudioStreamOggVorbis=load("res://assets/audio/jaggedstone/dungeon-hall.ogg")
  bgm.loop=true
- music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=3;add_child(music_player)
+ music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=-2;add_child(music_player)
  var hit_stream:AudioStream=load("res://assets/audio/index-cc0/impactPunch_heavy_004.ogg")
  for i in 2:
   var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-7;add_child(hit_voice);hit_sounds.append(hit_voice)
@@ -159,6 +164,8 @@ func _ready() -> void:
   JavaScriptBridge.get_interface("window").mimicQuickStart=web_quick_callback
   web_sound_callback=JavaScriptBridge.create_callback(_web_sound_test)
   JavaScriptBridge.get_interface("window").mimicSoundTest=web_sound_callback
+  web_music_callback=JavaScriptBridge.create_callback(_web_music_test)
+  JavaScriptBridge.get_interface("window").mimicMusicTest=web_music_callback
   JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-ready'))")
   benchmark_mode=bool(JavaScriptBridge.eval("new URLSearchParams(location.search).has('stress')",true))
   var inspect_family:String=str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('inspect') || ''",true))
@@ -191,6 +198,20 @@ func _web_sound_test(_args: Array) -> void:
  kill_sound.pitch_scale=0.8
  kill_sound.play()
  JavaScriptBridge.eval("window.mimicSoundTestStatus='requested'")
+func _web_music_test(_args: Array) -> void:
+ if persistence_kind=="load":
+  JavaScriptBridge.eval("window.mimicMusicTestStatus='unavailable'")
+  return
+ var started:bool=play_music_preview()
+ JavaScriptBridge.eval("window.mimicMusicTestStatus='"+("requested" if started else "muted")+"'")
+func apply_music_volume() -> void:
+ var level:int=clampi(int(profile.data.get("settings",{}).get("music_level",1)),0,MUSIC_VOLUME_DB.size()-1)
+ music_player.volume_db=MUSIC_VOLUME_DB[level]
+func play_music_preview() -> bool:
+ if not profile.data.get("settings",{}).get("music",true):return false
+ apply_music_volume();music_preview_remaining=MUSIC_PREVIEW_SECONDS
+ music_player.play()
+ return true
 func ensure_audio_limiter() -> void:
  var bus:int=AudioServer.get_bus_index("Master")
  for i in AudioServer.get_bus_effect_count(bus):
@@ -335,6 +356,7 @@ func hub_button(title: String, subtitle: String, family: String, pos: Vector2, s
  b.position=pos;b.size=size;b.pressed.connect(play_ui_sound);b.pressed.connect(action);ui.add_child(b)
  return b
 func show_title() -> void:
+ music_preview_remaining=0.0
  if is_instance_valid(music_player):music_player.stop()
  state="title"; clear_ui()
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-title'))")
@@ -369,6 +391,7 @@ func start_battle() -> void:
  battle.stage=selected_stage
  battle.configure(profile.equipped_templates(),profile.data.upgrades)
  state="battle";run_gold=0;reward_given=false;previous_shots=0;previous_impacts=0;hit_sound_cooldown=0.0
+ music_preview_remaining=0.0;apply_music_volume()
  if profile.data.get("settings",{}).get("music",true):music_player.play()
  else:music_player.stop()
  reward_fx=RewardFX.new()
@@ -630,12 +653,21 @@ func show_settings() -> void:
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;save_profile();show_settings())
  var music_enabled:bool=settings.get("music",true)
  button("BGM："+("オン" if music_enabled else "オフ"),Vector2(80,540),Vector2(420,55),toggle_music)
+ button("BGMを確認（環境音）",Vector2(600,540),Vector2(420,55),func():play_music_preview(),not music_enabled)
+ var level:int=clampi(int(settings.get("music_level",1)),0,MUSIC_VOLUME_LABELS.size()-1)
+ button("BGM音量："+MUSIC_VOLUME_LABELS[level],Vector2(80,610),Vector2(420,55),toggle_music_volume)
+ label("風と水滴の環境音を再生します。",Vector2(610,618),Vector2(430,40),18)
 func toggle_music() -> void:
  var settings:Dictionary=profile.data.get("settings",{})
  settings.music=not bool(settings.get("music",true))
  profile.data.settings=settings
- if not settings.music:music_player.stop()
+ if not settings.music:music_preview_remaining=0.0;music_player.stop()
  save_profile();show_settings()
+func toggle_music_volume() -> void:
+ var settings:Dictionary=profile.data.get("settings",{})
+ var level:int=clampi(int(settings.get("music_level",1)),0,MUSIC_VOLUME_LABELS.size()-1)
+ settings.music_level=(level+1)%MUSIC_VOLUME_LABELS.size()
+ profile.data.settings=settings;apply_music_volume();save_profile();show_settings()
 func show_credits() -> void:
  state="credits";clear_ui();heading("素材クレジット")
  var box:=list_panel(Vector2(60,105),Vector2(1120,550))
@@ -690,7 +722,9 @@ func animate_victory_effects(delta: float) -> void:
 func _process(delta: float) -> void:
  if OS.has_feature("web"):poll_web_storage()
  if persistence_kind=="load":return
- if state!="battle" and music_player.playing:music_player.stop()
+ if state!="battle":
+  music_preview_remaining=maxf(0.0,music_preview_remaining-delta)
+  if music_preview_remaining<=0.0 and music_player.playing:music_player.stop()
  toast_t=maxf(0,toast_t-delta)
  if state=="title" and not profile.data.get("settings",{}).get("reduce_fx",false):
   hub_time+=delta;hub_redraw_clock+=delta

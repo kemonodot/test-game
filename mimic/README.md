@@ -52,6 +52,6 @@ PCと横向きタッチのChromiumでWeb版の起動・ステージ開始・照�
 
 - [pixelfx](https://github.com/patch-gg/pixelfx) — MIT。`pickups/collect-burst`、`holy/holy-pillar`、`explosions/implosion`、`impacts/hit-spark`、`impacts/crit-hit` の透過スプライトシートを使用。生成条件と著作権表示は [素材ディレクトリ](assets/fx/pixelfx/README.md) を参照。Patch Pixel フォントは使用していません。
 - [Open Game SFX Index](https://github.com/Mcamento8/open-game-sfx-index) 収録の Kenney の音源 — CC0 1.0。攻撃・命中・撃破・UI・報酬の効果音に使用。選択したファイル、出典、ハッシュは [素材ディレクトリ](assets/audio/index-cc0/README.md) を参照。
-- [Loopable Dungeon Ambience](https://opengameart.org/content/loopable-dungeon-ambience)（JaggedStone）— CC0 1.0。44.5秒の編集済みループを戦闘BGMに使用。取得元と出典の確認方法は [素材ディレクトリ](assets/audio/jaggedstone/README.md) を参照。
+- [Loopable Dungeon Ambience](https://opengameart.org/content/loopable-dungeon-ambience)（JaggedStone）— CC0 1.0。44.5秒の編集済みループをスマホ向けにEQ・音量調整して戦闘BGMに使用。取得元と加工条件は [素材ディレクトリ](assets/audio/jaggedstone/README.md) を参照。
 
 ゲーム内の「設定 → 素材クレジット」にもライセンスを表示します。
