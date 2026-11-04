@@ -38,6 +38,7 @@ try:
         page.goto(url,wait_until='domcontentloaded')
         page.wait_for_function('typeof window.mimicQuickStart === "function" && typeof window.mimicSoundTest === "function"',timeout=60000)
         page.wait_for_function("window.mimicStorageState.status === 'ready'",timeout=30000)
+        assert '音源更新版' in page.locator('#phone-helper').inner_text()
         page.evaluate('Promise.all(window.__audioContexts.map(x => x.suspend()))')
         assert page.evaluate('window.__audioContexts[0].state')=='suspended'
         page.locator('#phone-sound').tap();page.wait_for_timeout(500)

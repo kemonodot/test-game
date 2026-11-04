@@ -37,6 +37,8 @@ var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
 var kill_thump: AudioStreamPlayer
 var music_player: AudioStreamPlayer
+var ui_sound: AudioStreamPlayer
+var casino_sound: AudioStreamPlayer
 var hit_sounds: Array = []
 var hit_sound_index := 0
 var hit_sound_cooldown := 0.0
@@ -121,20 +123,23 @@ func _ready() -> void:
   reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
  var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
- shot_sound=AudioStreamPlayer.new();shot_sound.stream=load("res://assets/audio/oculus/swing.ogg");shot_sound.volume_db=-14;add_child(shot_sound)
- kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/oculus/defeat.ogg");kill_sound.volume_db=-12;add_child(kill_sound)
- kill_thump=AudioStreamPlayer.new();kill_thump.stream=load("res://assets/audio/oculus/impact.ogg");kill_thump.volume_db=-22;add_child(kill_thump)
- var bgm:AudioStreamOggVorbis=load("res://assets/audio/tanner/dark-knight.ogg")
+ ensure_audio_limiter()
+ shot_sound=AudioStreamPlayer.new();shot_sound.stream=load("res://assets/audio/index-cc0/knifeSlice2.ogg");shot_sound.volume_db=-8;add_child(shot_sound)
+ kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/index-cc0/impactWood_heavy_002.ogg");kill_sound.volume_db=-8;add_child(kill_sound)
+ kill_thump=AudioStreamPlayer.new();kill_thump.stream=load("res://assets/audio/index-cc0/chop.ogg");kill_thump.volume_db=-14;add_child(kill_thump)
+ ui_sound=AudioStreamPlayer.new();ui_sound.stream=load("res://assets/audio/index-cc0/click1.ogg");ui_sound.volume_db=-10;add_child(ui_sound)
+ casino_sound=AudioStreamPlayer.new();casino_sound.stream=load("res://assets/audio/index-cc0/chips-handle-3.ogg");casino_sound.volume_db=-4;add_child(casino_sound)
+ var bgm:AudioStreamOggVorbis=load("res://assets/audio/jaggedstone/dungeon-hall.ogg")
  bgm.loop=true
- music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=-22;add_child(music_player)
- var hit_stream:AudioStream=load("res://assets/audio/oculus/impact.ogg")
+ music_player=AudioStreamPlayer.new();music_player.stream=bgm;music_player.volume_db=3;add_child(music_player)
+ var hit_stream:AudioStream=load("res://assets/audio/index-cc0/impactPunch_heavy_004.ogg")
  for i in 2:
   var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-7;add_child(hit_voice);hit_sounds.append(hit_voice)
- rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/oculus/rare.ogg");rarity_sound.volume_db=-8;add_child(rarity_sound)
- var legendary_stream:AudioStream=load("res://assets/audio/oculus/legendary.ogg")
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/index-cc0/confirmation_004.ogg");rarity_sound.volume_db=-12;add_child(rarity_sound)
+ var legendary_stream:AudioStream=load("res://assets/audio/index-cc0/jingles_HIT03.ogg")
  for i in 4:
-  var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-12;add_child(voice);legendary_sounds.append(voice)
- boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/oculus/boss.ogg");boss_sound.volume_db=-11;add_child(boss_sound)
+  var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-8;add_child(voice);legendary_sounds.append(voice)
+ boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/index-cc0/jingles_HIT15.ogg");boss_sound.volume_db=-7;add_child(boss_sound)
  ui = Control.new()
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -186,6 +191,15 @@ func _web_sound_test(_args: Array) -> void:
  kill_sound.pitch_scale=0.8
  kill_sound.play()
  JavaScriptBridge.eval("window.mimicSoundTestStatus='requested'")
+func ensure_audio_limiter() -> void:
+ var bus:int=AudioServer.get_bus_index("Master")
+ for i in AudioServer.get_bus_effect_count(bus):
+  if AudioServer.get_bus_effect(bus,i) is AudioEffectLimiter:return
+ var limiter:=AudioEffectLimiter.new()
+ limiter.threshold_db=-3.0;limiter.ceiling_db=-1.0;limiter.soft_clip_db=1.0
+ AudioServer.add_bus_effect(bus,limiter)
+func play_ui_sound() -> void:
+ if profile.data.get("settings",{}).get("sound",true):ui_sound.play()
 func save_profile() -> bool:
  var ok:bool=profile.save_game()
  if not ok:
@@ -223,7 +237,7 @@ func show_persistence_warning(kind: String) -> void:
  retry.name="PersistenceRetry";retry.text="再試行"
  retry.position=Vector2(510,360) if kind=="load" else Vector2(462,10)
  retry.size=Vector2(260,56) if kind=="load" else Vector2(145,52)
- retry.pressed.connect(retry_persistence)
+ retry.pressed.connect(play_ui_sound);retry.pressed.connect(retry_persistence)
  block.add_child(retry)
 func retry_persistence() -> void:
  if persistence_kind=="load":
@@ -269,7 +283,7 @@ func button(text: String, pos: Vector2, size: Vector2, action: Callable, disable
  b.position = pos
  b.size = size
  b.disabled = disabled
- b.pressed.connect(action)
+ b.pressed.connect(play_ui_sound);b.pressed.connect(action)
  ui.add_child(b)
  return b
 func label(text: String, pos: Vector2, size: Vector2, font_size: int = 22) -> Label:
@@ -303,7 +317,7 @@ func list_button(box: VBoxContainer, text: String, action: Callable, disabled: b
  b.disabled=disabled
  b.alignment=HORIZONTAL_ALIGNMENT_LEFT
  b.add_theme_font_size_override("font_size",17)
- b.pressed.connect(action)
+ b.pressed.connect(play_ui_sound);b.pressed.connect(action)
  box.add_child(b)
  return b
 func style_item_button(b:Button,item:Dictionary) -> void:
@@ -318,7 +332,7 @@ func style_item_button(b:Button,item:Dictionary) -> void:
 func hub_button(title: String, subtitle: String, family: String, pos: Vector2, size: Vector2, action: Callable, primary: bool=false) -> Button:
  var b=HubButton.new()
  b.title=title;b.subtitle=subtitle;b.emblem=icon_textures.get(family);b.primary=primary
- b.position=pos;b.size=size;b.pressed.connect(action);ui.add_child(b)
+ b.position=pos;b.size=size;b.pressed.connect(play_ui_sound);b.pressed.connect(action);ui.add_child(b)
  return b
 func show_title() -> void:
  if is_instance_valid(music_player):music_player.stop()
@@ -409,8 +423,9 @@ func confirm_salvage(max_rarity: int = -1) -> void:
  caption.text="%s\n\n対象 %d 個　 /　 獲得資金 %d\n装備中は対象外。魔石は所持品に戻ります。" % [title,summary.count,summary.gold]
  caption.position=Vector2(25,32);caption.size=Vector2(600,170);caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;caption.add_theme_font_size_override("font_size",21);card.add_child(caption)
- var cancel:=Button.new();cancel.text="戻る";cancel.position=Vector2(60,230);cancel.size=Vector2(230,55);cancel.pressed.connect(veil.queue_free);card.add_child(cancel)
+ var cancel:=Button.new();cancel.text="戻る";cancel.position=Vector2(60,230);cancel.size=Vector2(230,55);cancel.pressed.connect(play_ui_sound);cancel.pressed.connect(veil.queue_free);card.add_child(cancel)
  var apply:=Button.new();apply.name="ConfirmSalvage";apply.text="解体する";apply.position=Vector2(360,230);apply.size=Vector2(230,55)
+ apply.pressed.connect(play_ui_sound)
  var uid:int=selected_uid
  apply.pressed.connect(func():
   var result:Dictionary=profile.salvage_item(uid) if single else profile.salvage_bulk(max_rarity)
@@ -569,7 +584,7 @@ func show_upgrades() -> void:
   card.border_width_left=3 if unsealed else 1
   entry.add_theme_stylebox_override("normal",card)
   entry.add_theme_stylebox_override("disabled",card)
-  entry.pressed.connect(func():purchase_upgrade(key))
+  entry.pressed.connect(play_ui_sound);entry.pressed.connect(func():purchase_upgrade(key))
   grid.add_child(entry)
 func purchase_upgrade(key: String) -> void:
  var definition:Dictionary=profile.upgrade_definition(key)
@@ -586,7 +601,7 @@ func show_unlock_celebration(definition: Dictionary) -> void:
  card.add_theme_stylebox_override("panel",style);veil.add_child(card)
  var icon:=TextureRect.new();icon.texture=companion_textures.get(definition.recipient,icon_textures.get(definition.family));icon.position=Vector2(232,42);icon.size=Vector2(96,96);icon.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;icon.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;card.add_child(icon)
  var caption:=Label.new();caption.text="✦   OFFERING ACCEPTED   ✦\n"+str(COMPANIONS[definition.recipient])+"への供物\n"+str(definition.name)+"\n"+str(definition.desc);caption.position=Vector2(30,151);caption.size=Vector2(500,150);caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;caption.add_theme_font_size_override("font_size",22);card.add_child(caption)
- var close:=Button.new();close.text="進化を刻む";close.position=Vector2(150,320);close.size=Vector2(260,55);close.pressed.connect(veil.queue_free);card.add_child(close)
+ var close:=Button.new();close.text="進化を刻む";close.position=Vector2(150,320);close.size=Vector2(260,55);close.pressed.connect(play_ui_sound);close.pressed.connect(veil.queue_free);card.add_child(close)
  if not profile.data.get("settings",{}).get("reduce_fx",false):
   card.pivot_offset=card.size/2;card.scale=Vector2(0.88,0.88);card.modulate.a=0.0
   var tween:=create_tween().set_parallel();tween.tween_property(card,"modulate:a",1.0,0.3);tween.tween_property(card,"scale",Vector2.ONE,0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -632,10 +647,10 @@ func show_credits() -> void:
  credit.text="報酬エフェクト：pixelfx / Patch, Hugo Duprez\nhttps://github.com/patch-gg/pixelfx\nMIT License\n\n"
  credit.text+=FileAccess.get_file_as_string("res://assets/fx/pixelfx/LICENSE.txt")
  credit.text+="\n\n"+FileAccess.get_file_as_string("res://assets/fx/pixelfx/UPSTREAM-NOTICE.md")
- credit.text+="\n\n効果音：\n"+FileAccess.get_file_as_string("res://assets/audio/oculus/ATTRIBUTION.md")
- credit.text+="\n一部を短縮・フェード加工しています。\n\n"+FileAccess.get_file_as_string("res://assets/audio/oculus/LICENSE.txt")
- credit.text+="\n\n戦闘BGM：Dark Knight / Tanner Helland\nhttps://github.com/tannerhelland/free-music\nCC BY 4.0：Vorbis変換・フェード加工\nhttps://creativecommons.org/licenses/by/4.0/\n\n"
- credit.text+=FileAccess.get_file_as_string("res://assets/audio/tanner/LICENSE.txt")
+ credit.text+="\n\n効果音・ジングル：Kenney / CC0 1.0\nhttps://github.com/Mcamento8/open-game-sfx-index\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/index-cc0/LICENSE.txt")
+ credit.text+="\n\n戦闘BGM：Loopable Dungeon Ambience / JaggedStone\nhttps://opengameart.org/content/loopable-dungeon-ambience\nCC0 1.0 / 44.5秒の編集済みループ\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/jaggedstone/LICENSE.txt")
  box.add_child(credit)
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
@@ -644,6 +659,7 @@ func play_rarity_sound(rarity: int) -> void:
   legendary_sound_index=(legendary_sound_index+1)%legendary_sounds.size()
   voice.pitch_scale=1.2 if rarity==4 else 1.0
   voice.play()
+  casino_sound.play() # only actual legendary or mythic drops
  elif rarity>=1:
   rarity_sound.pitch_scale=1.25 if rarity==2 else 1.0
   rarity_sound.play()

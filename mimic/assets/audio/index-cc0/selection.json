@@ -1,0 +1,101 @@
+[
+  {
+    "id": "rpg-audio_knifeSlice2",
+    "title": "knifeSlice2",
+    "pack": "rpg-audio",
+    "duration_sec": 0.569,
+    "file_ogg": "audio/rpg-audio/knifeSlice2.ogg",
+    "sha256_ogg": "6c2064d0ef988d1ec3d56868e823ea8823a5cac00f2742560052633529407def",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/rpg-audio",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/rpg-audio/knifeSlice2.ogg"
+  },
+  {
+    "id": "rpg-audio_chop",
+    "title": "chop",
+    "pack": "rpg-audio",
+    "duration_sec": 0.24,
+    "file_ogg": "audio/rpg-audio/chop.ogg",
+    "sha256_ogg": "d00c2b3c9fff07e376145c8c8c45c90e5084ec192f6ce0387db233f7b86f1486",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/rpg-audio",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/rpg-audio/chop.ogg"
+  },
+  {
+    "id": "impact-sounds_impactPunch_heavy_004",
+    "title": "impactPunch heavy 004",
+    "pack": "impact-sounds",
+    "duration_sec": 0.536,
+    "file_ogg": "audio/impact-sounds/impactPunch_heavy_004.ogg",
+    "sha256_ogg": "f4c0c3eb8ab6517583b8218ed03f28923d1b687379aab4c1d5a6d4c10cf8e500",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/impact-sounds/impactPunch_heavy_004.ogg"
+  },
+  {
+    "id": "impact-sounds_impactWood_heavy_002",
+    "title": "impactWood heavy 002",
+    "pack": "impact-sounds",
+    "duration_sec": 0.313,
+    "file_ogg": "audio/impact-sounds/impactWood_heavy_002.ogg",
+    "sha256_ogg": "ce1e06f2a05f2634c645cb72f6a1623e64bc2d92be34917430a61031fb6597d4",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/impact-sounds",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/impact-sounds/impactWood_heavy_002.ogg"
+  },
+  {
+    "id": "interface-sounds_confirmation_004",
+    "title": "confirmation 004",
+    "pack": "interface-sounds",
+    "duration_sec": 0.49,
+    "file_ogg": "audio/interface-sounds/confirmation_004.ogg",
+    "sha256_ogg": "568967a3d9f8a8f6af54ea01729c4882284308f2a27d78c07ffd7ee0d6951661",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/interface-sounds",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/interface-sounds/confirmation_004.ogg"
+  },
+  {
+    "id": "ui-audio_click1",
+    "title": "click1",
+    "pack": "ui-audio",
+    "duration_sec": 0.094,
+    "file_ogg": "audio/ui-audio/click1.ogg",
+    "sha256_ogg": "59175ac17cd49a68dd736285738441287636112a84a6f7ce0d89921bda5a5360",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/ui-audio",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/ui-audio/click1.ogg"
+  },
+  {
+    "id": "music-jingles_jingles_HIT03",
+    "title": "jingles HIT03",
+    "pack": "music-jingles",
+    "duration_sec": 0.746,
+    "file_ogg": "audio/music-jingles/jingles_HIT03.ogg",
+    "sha256_ogg": "889d4c2b76c7edd63138b3a976c3f7337aaba3de90019d19bca70ec958c93014",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/music-jingles",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/music-jingles/jingles_HIT03.ogg"
+  },
+  {
+    "id": "music-jingles_jingles_HIT15",
+    "title": "jingles HIT15",
+    "pack": "music-jingles",
+    "duration_sec": 1.163,
+    "file_ogg": "audio/music-jingles/jingles_HIT15.ogg",
+    "sha256_ogg": "e2929ad1acb0ff929f2367eb06d4a57d3c543be9f5a8b6a7fad7e44e440474e1",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/music-jingles",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/music-jingles/jingles_HIT15.ogg"
+  },
+  {
+    "id": "casino-audio_chips-handle-3",
+    "title": "chips handle 3",
+    "pack": "casino-audio",
+    "duration_sec": 0.23,
+    "file_ogg": "audio/casino-audio/chips-handle-3.ogg",
+    "sha256_ogg": "7c5a86e27b2bef839ae096dd655506cf46a82494bd01cc28f51bed6ab26cc342",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/casino-audio",
+    "download_url_ogg": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/main/audio/casino-audio/chips-handle-3.ogg"
+  }
+]
