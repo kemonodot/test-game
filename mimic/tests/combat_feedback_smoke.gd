@@ -1,0 +1,33 @@
+extends SceneTree
+const Combat=preload("res://src/combat.gd")
+const Profile=preload("res://src/profile.gd")
+const Reward=preload("res://src/reward_presentation.gd")
+func _initialize()->void:
+ var p=Profile.new(false)
+ var b=Combat.new(42);b.configure(p.equipped_templates());b.stats.crit=0.0
+ assert(b.spawn_enemy("swordsman",Combat.CENTER+Vector2(160,0)))
+ b.enemies[0].hp=10000
+ var before:float=b.enemies[0].hp
+ b.hit_enemy(0,10)
+ assert(is_equal_approx(b.enemies[0].hp,before-10.0))
+ assert(b.impact_serial==1 and not b.impact_critical_pending)
+ var impacts:Array=b.impacts.filter(func(v):return v.active)
+ assert(impacts.size()==1 and not impacts[0].critical)
+ var pops:Array=b.popups.filter(func(v):return v.active)
+ assert(pops.size()==1 and not pops[0].critical and pops[0].value==10)
+ b.stats.crit=1.0;b.stats.crit_damage=1.5;b.hit_enemy(0,10)
+ assert(is_equal_approx(b.enemies[0].hp,before-25.0))
+ assert(b.impact_critical_pending and pops[0].critical and pops[0].value==25)
+ for i in 30:b.hit_enemy(0,1)
+ assert(b.impacts.size()==Combat.MAX_IMPACT_VISUALS)
+ assert(b.impacts.filter(func(v):return v.active).size()==Combat.MAX_IMPACT_VISUALS)
+ var r=Reward.new()
+ r.on_kill(Vector2(800,360),false,false)
+ r.on_kill(Vector2(810,360),false,true)
+ r.on_kill(Vector2(820,360),false,false)
+ assert(r.kill_count==3 and r.death_bursts.filter(func(v):return v.active).size()==3)
+ r.update(0.66);assert(r.kill_count==0 and r.death_bursts.filter(func(v):return v.active).is_empty())
+ var muted_fx=Reward.new();muted_fx.on_kill(Vector2(800,360),true,false)
+ assert(muted_fx.death_bursts.filter(func(v):return v.active).is_empty())
+ print("COMBAT FEEDBACK: actual hit, true crit, bounded pool, kill streak and reduced effects passed")
+ quit(0)

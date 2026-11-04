@@ -8,6 +8,9 @@ const NOTIFICATION_LIFETIME := 2.5
 var notifications: Array = []
 var money_popups: Array = []
 var pickup_sparks: Array = []
+var death_bursts: Array = []
+var kill_count := 0
+var attack_pulse := 0.0
 var kill_window := 0.0
 var kill_level := 0
 var kill_sound_cooldown := 0.0
@@ -33,14 +36,17 @@ var pending_sound_rarity := -1
 
 func _init() -> void:
  for rarity in 5:
-  notifications.append({"active":false,"rarity":rarity,"count":0,"ttl":0.0,"reveal":0.0})
+  notifications.append({"active":false,"rarity":rarity,"count":0,"ttl":0.0,"reveal":0.0,"name":"","pulse":0.0})
  for i in 3:banners.append({"active":false,"name":"","rarity":0,"ttl":0.0,"delay":0.0,"extra":0})
+ for i in 8:death_bursts.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"bomb":false})
  for i in 4:pickup_sparks.append({"active":false,"pos":Vector2.ZERO,"rarity":0,"ttl":0.0})
  for i in 12:
   money_popups.append({"active":false,"bomb":false,"value":0,"pos":Vector2.ZERO,"ttl":0.0,"age":0.0})
 
 func update(delta: float) -> void:
  kill_window=maxf(0.0,kill_window-delta)
+ if kill_window<=0.0:kill_count=0
+ attack_pulse=maxf(0.0,attack_pulse-delta)
  kill_sound_cooldown=maxf(0.0,kill_sound_cooldown-delta)
  big_cooldown=maxf(0.0,big_cooldown-delta)
  slow_remaining=maxf(0.0,slow_remaining-delta)
@@ -60,8 +66,12 @@ func update(delta: float) -> void:
  for i in rarity_sound_cooldown.size():rarity_sound_cooldown[i]=maxf(0.0,float(rarity_sound_cooldown[i])-delta)
  for notice in notifications:
   if notice.active:
-   notice.ttl-=delta;notice.reveal=maxf(0.0,float(notice.reveal)-delta)
+   notice.ttl-=delta;notice.reveal=maxf(0.0,float(notice.reveal)-delta);notice.pulse=maxf(0.0,float(notice.pulse)-delta)
    if notice.ttl<=0:notice.active=false;notice.count=0
+ for burst in death_bursts:
+  if burst.active:
+   burst.ttl-=delta
+   if burst.ttl<=0:burst.active=false
  for spark in pickup_sparks:
   if spark.active:
    spark.ttl-=delta
@@ -72,9 +82,15 @@ func update(delta: float) -> void:
    if pop.ttl<=0:pop.active=false
 
 # The ladder grows per kill, even when a very dense burst is audio-rate-limited.
-func on_kill() -> float:
+func on_kill(position: Vector2 = Vector2.INF, reduced: bool = false, bomb: bool = false) -> float:
+ kill_count=mini(99,kill_count+1) if kill_window>0.0 else 1
  kill_level=mini(7,kill_level+1) if kill_window>0.0 else 0
  kill_window=0.65
+ if position.is_finite() and not reduced:
+  for burst in death_bursts:
+   if not burst.active:
+    burst.active=true;burst.pos=position;burst.ttl=0.38;burst.bomb=bomb
+    break
  if kill_sound_cooldown>0.0:return 0.0
  kill_sound_cooldown=0.045
  return 1.0+float(kill_level)*0.09
@@ -124,6 +140,7 @@ func publish_item(rarity: int, item_name: String, pos: Vector2, reduced: bool) -
  var notice:Dictionary=notifications[rarity]
  if not notice.active:notice.count=0
  notice.active=true;notice.count+=1;notice.ttl=NOTIFICATION_LIFETIME
+ notice.name=item_name;notice.pulse=0.3
  if rarity>=3:notice.reveal=REVEAL_DELAY
  if rarity>=1 and rarity<=2 and not reduced:
   edge_remaining=0.32;edge_rarity=rarity

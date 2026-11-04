@@ -32,6 +32,10 @@ var run_gold := 0
 var reward_given := false
 var shot_sound: AudioStreamPlayer
 var kill_sound: AudioStreamPlayer
+var hit_sounds: Array = []
+var hit_sound_index := 0
+var hit_sound_cooldown := 0.0
+var previous_impacts := 0
 var rarity_sound: AudioStreamPlayer
 var legendary_sounds: Array = []
 var legendary_sound_index := 0
@@ -105,7 +109,7 @@ func _ready() -> void:
   if ResourceLoader.exists(portrait_path):companion_textures[role]=load(portrait_path)
  for kind in ["swordsman","shield","archer","mage","priest","thief","fanatic","lancer","hero","captain"]:
   enemy_textures[kind]=load("res://assets/art/enemies/%s.png" % kind)
- for atlas_name in ["collect-burst","holy-pillar","implosion"]:
+ for atlas_name in ["collect-burst","holy-pillar","implosion","hit-spark","crit-hit"]:
   var base_path:String="res://assets/fx/pixelfx/"+atlas_name
   var atlas_data:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(base_path+".json"))
   reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
@@ -113,6 +117,9 @@ func _ready() -> void:
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
  shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(310.0,0.075);shot_sound.volume_db=-12;add_child(shot_sound)
  kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-13;add_child(kill_sound)
+ var hit_stream:AudioStream=load("res://assets/audio/kenney-impact/impact_punch_medium_002.ogg")
+ for i in 2:
+  var hit_voice:=AudioStreamPlayer.new();hit_voice.stream=hit_stream;hit_voice.volume_db=-17;add_child(hit_voice);hit_sounds.append(hit_voice)
  rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-15;add_child(rarity_sound)
  var legendary_stream:AudioStream=load("res://assets/audio/kenney-interface/confirmation_002.wav")
  for i in 4:
@@ -349,7 +356,7 @@ func start_battle() -> void:
  battle=Battle.new(Time.get_ticks_usec())
  battle.stage=selected_stage
  battle.configure(profile.equipped_templates(),profile.data.upgrades)
- state="battle";run_gold=0;reward_given=false;previous_shots=0
+ state="battle";run_gold=0;reward_given=false;previous_shots=0;previous_impacts=0;hit_sound_cooldown=0.0
  reward_fx=RewardFX.new()
  bomb_button=button("破滅の供物   READY\nSPACE / 撃破資金 ×3",Vector2(990,610),Vector2(270,90),try_bomb)
  bomb_button.add_theme_font_size_override("font_size",20)
@@ -619,6 +626,8 @@ func show_credits() -> void:
  credit.text+="\n\n"+FileAccess.get_file_as_string("res://assets/fx/pixelfx/UPSTREAM-NOTICE.md")
  credit.text+="\n\n報酬効果音：Kenney Interface Sounds\nhttps://kenney.nl/assets/interface-sounds\nhttps://github.com/Calinou/kenney-interface-sounds\nCC0 1.0 Universal\n\n"
  credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-interface/LICENSE.txt")
+ credit.text+="\n\n命中音：Kenney Impact Sounds\nhttps://kenney.nl/assets/impact-sounds\nhttps://github.com/Boyquotes/kenney-impact-sounds-for-godot\nCC0 1.0 Universal\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-impact/LICENSE.txt")
  box.add_child(credit)
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
@@ -641,6 +650,10 @@ func animate_victory_effects(delta: float) -> void:
   if fx.active:
    fx.ttl-=delta
    if fx.ttl<=0:fx.active=false
+ for impact in battle.impacts:
+  if impact.active:
+   impact.ttl-=delta
+   if impact.ttl<=0:impact.active=false
  for tongue in battle.tongue_overflow:
   if tongue.active:
    tongue.ttl-=delta
@@ -658,6 +671,7 @@ func _process(delta: float) -> void:
   hub_time+=delta;hub_redraw_clock+=delta
   if hub_redraw_clock>=0.05:hub_redraw_clock=0.0;queue_redraw()
  if state=="battle":
+  hit_sound_cooldown=maxf(0.0,hit_sound_cooldown-delta)
   var reduced:bool=profile.data.get("settings",{}).get("reduce_fx",false)
   reward_fx.update(delta)
   if reward_fx.pending_sound_rarity>=0:
@@ -673,14 +687,23 @@ func _process(delta: float) -> void:
    bomb_button.disabled=battle.bomb_remaining>0 or battle.ended
    bomb_button.text=("破滅の供物   %.1f秒\n撃破資金 ×3" % battle.bomb_remaining) if battle.bomb_remaining>0 else "破滅の供物   READY\nSPACE / 撃破資金 ×3"
   if battle.shots>previous_shots:
+   reward_fx.attack_pulse=0.14
    if profile.data.get("settings",{}).get("sound",true):shot_sound.play()
    previous_shots=battle.shots
+  if battle.impact_serial>previous_impacts:
+   if hit_sound_cooldown<=0.0 and profile.data.get("settings",{}).get("sound",true):
+    var hit_voice:AudioStreamPlayer=hit_sounds[hit_sound_index]
+    hit_sound_index=(hit_sound_index+1)%hit_sounds.size()
+    hit_voice.pitch_scale=1.16 if battle.impact_critical_pending else 1.0
+    hit_voice.play();hit_sound_cooldown=0.09
+   previous_impacts=battle.impact_serial;battle.impact_critical_pending=false
   var needs_save:=false
   for event in battle.loot_events:
    if not event.active:continue
    needs_save=true
    event.active=false
-   var pitch:float=reward_fx.on_kill()
+   var death_position:Vector2=Vector2.INF if event.boss else event.position
+   var pitch:float=reward_fx.on_kill(death_position,reduced,event.get("bomb",false))
    if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):kill_sound.pitch_scale=pitch*0.8;kill_sound.play()
    if event.boss:
     reward_fx.boss(event.position,event.kind,reduced)
@@ -742,7 +765,7 @@ func panel(rect:Rect2, accent:bool=false) -> void:
  draw_rect(Rect2(rect.position+Vector2(5,5),Vector2(3,3)),Color("d2aa81"))
  draw_rect(Rect2(rect.position+rect.size-Vector2(8,8),Vector2(3,3)),Color("d2aa81"))
 # Draw the pre-rendered effect only; the pixelfx library is never run in game.
-func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: float, tint: Color) -> void:
+func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: float, tint: Color, angle: float = 0.0) -> void:
  var atlas:Dictionary=reward_atlases.get(name,{})
  if atlas.is_empty():return
  var meta:Dictionary=atlas.meta
@@ -751,8 +774,13 @@ func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: 
  var frame:int=mini(int(meta.frames)-1,int(clampf(progress,0.0,1.0)*float(meta.frames)))
  var columns:int=int(meta.columns)
  var source:=Rect2(Vector2((frame%columns)*dims.x,int(frame/columns)*dims.y),dims)
- var target:=Rect2((position-pivot*scale).round(),dims*scale)
- draw_texture_rect_region(atlas.texture,target,source,tint)
+ if absf(angle)>0.001:
+  draw_set_transform(position.round(),angle,Vector2.ONE)
+  draw_texture_rect_region(atlas.texture,Rect2(-pivot*scale,dims*scale),source,tint)
+  draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE)
+ else:
+  var target:=Rect2((position-pivot*scale).round(),dims*scale)
+  draw_texture_rect_region(atlas.texture,target,source,tint)
 
 func draw_tongue(fx: Dictionary) -> void:
  var direction:Vector2=(fx.to-fx.from).normalized()
@@ -829,16 +857,20 @@ func _draw() -> void:
   return
  # Reward sprites are behind the enemies, aim guide, and HUD so targets stay readable.
  if not profile.data.get("settings",{}).get("reduce_fx",false):
+  for burst in reward_fx.death_bursts:
+   if burst.active:
+    var death_tint:=Color(1.0,0.72,0.58,0.85) if burst.bomb else Color(1.0,0.78,0.68,0.72)
+    draw_reward_atlas("hit-spark",burst.pos+Vector2(0,10),1.0-float(burst.ttl)/0.38,0.9 if burst.bomb else 0.7,death_tint)
   for spark in reward_fx.pickup_sparks:
    if spark.active:
     var sparkle_tint:Color=Color.WHITE.lerp(RARITY_COLORS[int(spark.rarity)],0.55)
-    sparkle_tint.a=0.7
-    draw_reward_atlas("collect-burst",spark.pos+Vector2(0,15),1.0-float(spark.ttl)/0.55,0.5,sparkle_tint)
+    sparkle_tint.a=0.9
+    draw_reward_atlas("collect-burst",spark.pos+Vector2(0,24),1.0-float(spark.ttl)/0.55,0.8,sparkle_tint)
   if reward_fx.beam_remaining>0.0 and reward_fx.beam_remaining<0.35:
    var beam_tint:Color=Color.WHITE.lerp(RARITY_COLORS[reward_fx.beam_rarity],0.3)
-   beam_tint.a=0.65
+   beam_tint.a=0.8
    var beam_pos:Vector2=reward_fx.beam_position.clamp(Vector2(48,105),Vector2(1232,690))
-   draw_reward_atlas("holy-pillar",beam_pos,1.0-reward_fx.beam_remaining/0.35,0.5,beam_tint)
+   draw_reward_atlas("holy-pillar",beam_pos,1.0-reward_fx.beam_remaining/0.35,0.8,beam_tint)
  if reward_fx.boss_reveal_remaining>0.0:
   var boss_tex:Texture2D=enemy_textures.get(reward_fx.boss_kind)
   if boss_tex:
@@ -867,6 +899,14 @@ func _draw() -> void:
    if e.boss:
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90,6)),Color("301622"))
     draw_rect(Rect2(e.pos+Vector2(-45,-60),Vector2(90*maxf(0,e.hp/e.max_hp),6)),Color("e45b6e"))
+ # Local hit sparks show the true contact point; they never shift aim or enemy positions.
+ if not profile.data.get("settings",{}).get("reduce_fx",false):
+  for impact in battle.impacts:
+   if impact.active:
+    var crit:bool=impact.critical
+    var impact_tint:=Color(1.0,0.86,0.7,0.9) if crit else Color(1.0,0.75,0.68,0.75)
+    var spark_pos:Vector2=impact.pos+Vector2(0,16 if crit else 12)
+    draw_reward_atlas("crit-hit" if crit else "hit-spark",spark_pos,1.0-float(impact.ttl)/float(impact.duration),1.0 if crit else 0.8,impact_tint,float(impact.angle))
  for p in battle.projectiles:
   if p.active:
    if p.pos.x < -20 or p.pos.x > 1300 or p.pos.y < -20 or p.pos.y > 740:continue
@@ -914,14 +954,17 @@ func _draw() -> void:
  var tint:Color=Color.WHITE
  if int(battle.family_counts.get(dominant,0))>=4: tint=FAM_COLORS.get(dominant,Color.WHITE).lerp(Color.WHITE,0.55)
  var mimic_bob:Vector2=Vector2(0,roundf(sin(battle.elapsed*2.2)))
+ var pulse:float=0.0 if reduced_fx else clampf(reward_fx.attack_pulse/0.14,0.0,1.0)
+ var mimic_size:=Vector2(128.0+8.0*pulse,128.0-5.0*pulse)
+ var mimic_rect:=Rect2(Battle.CENTER-mimic_size*0.5+mimic_bob,mimic_size)
  draw_circle(Battle.CENTER+Vector2(0,35),47,Color(0,0,0,0.50))
- if mimic_texture:draw_texture_rect(mimic_texture,Rect2(Battle.CENTER-Vector2(64,64)+mimic_bob,Vector2(128,128)),false,tint)
+ if mimic_texture:draw_texture_rect(mimic_texture,mimic_rect,false,tint)
  if int(battle.family_counts.get(dominant,0))>=4:
   for x in [-28,0,28]:
    draw_rect(Rect2(Battle.CENTER+Vector2(x-4,-45),Vector2(8,5)),FAM_COLORS.get(dominant,Color.WHITE))
  for fam in battle.family_counts:
   var tex:Texture2D=part_textures.get(fam)
-  if tex:draw_texture_rect(tex,Rect2(Battle.CENTER-Vector2(64,64)+mimic_bob,Vector2(128,128)),false)
+  if tex:draw_texture_rect(tex,mimic_rect,false)
  # Draw tongues above the mimic so a close-range hit is never hidden by its body.
  for fx in battle.effects:
   if fx.active and fx.family=="devour":draw_tongue(fx)
@@ -937,12 +980,21 @@ func _draw() -> void:
   if minion.active:draw_texture_rect(mimic_texture,Rect2(minion.pos-Vector2(16,16),Vector2(32,32)),false)
  for pop in battle.popups:
   if not pop.active:continue
-  draw_string(title_font,pop.pos,str(pop.value),HORIZONTAL_ALIGNMENT_CENTER,60,16,Color("fff2d3"))
+  var crit:bool=pop.critical
+  var pop_color:=Color("ffd071") if crit else Color("fff2d3")
+  var pop_size:int=32 if crit else 25
+  var pop_text:String=str(pop.value)+( "!" if crit else "")
+  draw_string_outline(title_font,pop.pos,pop_text,HORIZONTAL_ALIGNMENT_CENTER,100,pop_size,3,Color(0.08,0.02,0.025,0.9))
+  draw_string(title_font,pop.pos,pop_text,HORIZONTAL_ALIGNMENT_CENTER,100,pop_size,pop_color)
  panel(Rect2(18,16,310,72),true)
  draw_string(title_font,Vector2(32,37),"MIMIC   /   VITALITY",HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("d1aa94"))
  draw_string(title_font,Vector2(32,63),"HP  %d / %d" % [battle.hp,battle.max_hp],HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff0dc"))
  draw_rect(Rect2(160,48,146,12),Color("3b202a"))
  draw_rect(Rect2(160,48,146*maxf(0,battle.hp/battle.max_hp),12),Color("d34d5f"))
+ if reward_fx.kill_count>=3:
+  var chain_text:String="連続撃破  %d" % reward_fx.kill_count
+  draw_string_outline(title_font,Vector2(475,56),chain_text,HORIZONTAL_ALIGNMENT_CENTER,330,32,3,Color(0.08,0.02,0.025,0.9))
+  draw_string(title_font,Vector2(475,56),chain_text,HORIZONTAL_ALIGNMENT_CENTER,330,32,Color("ffc787"))
  panel(Rect2(952,16,310,72),true)
  draw_string(title_font,Vector2(970,37),"THE HUNT   /   %s" % ("I" if selected_stage==0 else "II"),HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("d1aa94"))
  draw_string(title_font,Vector2(970,64),"%03d / 300秒     撃破 %d" % [battle.elapsed,battle.kills],HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff0dc"))
@@ -971,29 +1023,44 @@ func draw_reward_overlay() -> void:
   color.a=alpha
   var rise_offset:float=0.0 if reduced else age*32.0
   var point:Vector2=pop.pos+Vector2(-30,-18-rise_offset-bounce)
-  draw_string(title_font,point,"+%d" % int(pop.value),HORIZONTAL_ALIGNMENT_CENTER,80,25 if pop.bomb else 16,color)
+  var gold_text:String="+%d" % int(pop.value)
+  var gold_size:int=28 if pop.bomb else 19
+  draw_string_outline(title_font,point,gold_text,HORIZONTAL_ALIGNMENT_CENTER,90,gold_size,3,Color(0.08,0.025,0.015,alpha*0.9))
+  draw_string(title_font,point,gold_text,HORIZONTAL_ALIGNMENT_CENTER,90,gold_size,color)
  var row:=0
- for notice in reward_fx.notifications:
+ for rarity in range(reward_fx.notifications.size()-1,-1,-1):
+  var notice:Dictionary=reward_fx.notifications[rarity]
   if not notice.active:continue
   var r:int=notice.rarity
-  var displayed:int=maxi(0,r-1) if notice.reveal>0.0 else r
+  var hidden:bool=notice.reveal>0.0
+  var displayed:int=maxi(0,r-1) if hidden else r
   var col:Color=RARITY_COLORS[displayed]
-  var rect:=Rect2(22,106+row*38,295,34)
-  draw_rect(rect,Color(0.04,0.025,0.035,0.88))
-  if r>=1:draw_rect(rect,col,false,2 if r>=1 and r<=2 else 1)
-  var rank:String="？？？" if notice.reveal>0.0 else RARITY[r]
-  draw_string(title_font,rect.position+Vector2(10,24),"%s　装備 ×%d" % [rank,notice.count],HORIZONTAL_ALIGNMENT_LEFT,275,19,col)
+  var rect:=Rect2(22,106+row*53,350,48)
+  draw_rect(rect,Color(0.04,0.025,0.035,0.93))
+  draw_rect(rect,col,false,2 if r>=1 else 1)
+  draw_rect(Rect2(rect.position+Vector2(0,0),Vector2(4,rect.size.y)),col)
+  if not reduced and notice.pulse>0.0:
+   var pulse_color:Color=col;pulse_color.a=0.20*float(notice.pulse)/0.3
+   draw_rect(rect,pulse_color)
+  var rank:String="？？？" if hidden else RARITY[r]
+  var count_label:String="  ×%d" % int(notice.count) if int(notice.count)>1 else ""
+  draw_string(title_font,rect.position+Vector2(13,19),rank+count_label,HORIZONTAL_ALIGNMENT_LEFT,320,18,col)
+  var item_name:String="？？？？" if hidden else str(notice.name)
+  if int(notice.count)>1 and not hidden:item_name="最後："+item_name
+  draw_string(title_font,rect.position+Vector2(13,42),item_name,HORIZONTAL_ALIGNMENT_LEFT,320,23,Color("fff0db"))
   row+=1
  if reduced:return
  var banner_row:=0
  for banner in reward_fx.banners:
   if not banner.active or banner.delay>0.0:continue
   var banner_y:float=200.0 if reward_fx.boss_full_reveal and reward_fx.boss_result_wait>0.0 else 112.0
-  var rect:=Rect2(430,banner_y+banner_row*42,420,36)
+  var rect:=Rect2(410,banner_y+banner_row*50,460,44)
   var col:Color=RARITY_COLORS[int(banner.rarity)]
   draw_rect(rect,Color(0.055,0.025,0.035,0.92));draw_rect(rect,col,false,2)
   var extra:String="  他 +%d" % int(banner.extra) if int(banner.extra)>0 else ""
-  draw_string(title_font,rect.position+Vector2(12,25),"◆ %s%s" % [banner.name,extra],HORIZONTAL_ALIGNMENT_CENTER,396,18,col)
+  draw_line(rect.position+Vector2(12,5),rect.position+Vector2(110,5),col,2.0)
+  draw_line(rect.position+Vector2(350,5),rect.position+Vector2(448,5),col,2.0)
+  draw_string(title_font,rect.position+Vector2(12,30),"◆ %s%s" % [banner.name,extra],HORIZONTAL_ALIGNMENT_CENTER,436,21,col)
   banner_row+=1
  if reward_fx.boss_full_reveal and reward_fx.boss_result_wait>0.0:
   var rect:=Rect2(450,105,380,82)

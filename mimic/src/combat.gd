@@ -5,6 +5,7 @@ const MAX_ENEMIES := 120
 const MAX_PROJECTILES := 256
 const MAX_EFFECTS := 64
 const MAX_TONGUE_OVERFLOW := 8
+const MAX_IMPACT_VISUALS := 12
 const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
 const DEVOUR_HALF_WIDTH := 68.0
@@ -25,6 +26,10 @@ var projectiles: Array = []
 var effects: Array = []
 # Reserved visual-only fallback for tongues when the shared effect pool is full.
 var tongue_overflow: Array = []
+# Bounded cosmetic-only impact pool, independent of the effects used by gameplay.
+var impacts: Array = []
+var impact_serial := 0
+var impact_critical_pending := false
 var sparks: Array = []
 var minions: Array = []
 var abilities: Array = []
@@ -74,10 +79,12 @@ func _init(seed_value: int = 1) -> void:
   effects.append({"active": false, "from": Vector2.ZERO, "to": Vector2.ZERO, "ttl": 0.0, "family": "", "radius": 0.0})
  for i in MAX_TONGUE_OVERFLOW:
   tongue_overflow.append({"active":false,"from":Vector2.ZERO,"to":Vector2.ZERO,"ttl":0.0,"family":"devour","splash":false,"splash_center":Vector2.ZERO})
+ for i in MAX_IMPACT_VISUALS:
+  impacts.append({"active":false,"pos":Vector2.ZERO,"angle":0.0,"ttl":0.0,"duration":0.0,"critical":false})
  for i in 12:minions.append({"active":false,"pos":Vector2.ZERO,"ttl":0.0,"timer":0.0,"power":0.0,"side":0.0})
  for i in 192:sparks.append({"active":false,"pos":Vector2.ZERO,"vel":Vector2.ZERO,"ttl":0.0,"family":""})
  for i in MAX_ENEMIES:loot_events.append({"active":false,"kind":"","boss":false,"position":Vector2.ZERO,"bomb":false})
- for i in 16:popups.append({"active":false,"pos":Vector2.ZERO,"value":0,"ttl":0.0,"enemy_index":-1,"generation":-1})
+ for i in 16:popups.append({"active":false,"pos":Vector2.ZERO,"value":0,"ttl":0.0,"enemy_index":-1,"generation":-1,"critical":false})
  configure([])
 
 func configure(equipment: Array, upgrades: Dictionary = {}) -> void:
@@ -220,13 +227,27 @@ func apply_poison(enemy: Dictionary, duration: float, source_position: Vector2) 
  if duration>float(enemy.poison):
   enemy.poison=duration
   enemy.poison_source=source_position
+func impact_visual(position: Vector2, source_position: Vector2, critical: bool) -> void:
+ impact_serial+=1
+ impact_critical_pending=impact_critical_pending or critical
+ var slot:Dictionary=impacts[0]
+ for candidate in impacts:
+  if not candidate.active:slot=candidate;break
+  if float(candidate.ttl)<float(slot.ttl):slot=candidate
+ var direction:Vector2=position-source_position if source_position.is_finite() else Vector2.RIGHT
+ var angle:float=direction.angle() if direction.length_squared()>0.01 else 0.0
+ var duration:float=0.40 if critical else 0.24
+ slot.active=true;slot.pos=position;slot.angle=angle
+ slot.ttl=duration;slot.duration=duration;slot.critical=critical
 func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: String = "devour", bomb_kill: bool = false, source_position: Vector2 = CENTER) -> void:
  if index < 0 or index >= enemies.size() or not enemies[index].active: return
  var e: Dictionary = enemies[index]
  var value: float = amount * float(stats.damage) * float(stats.get(family,1.0))
  value *= shield_multiplier(e,source_position)
  if e.pos.distance_to(CENTER)<40 or e.kind in ["archer","mage","priest"]: value *= float(stats.stationary)
- if rng.randf() < stats.crit: value *= stats.crit_damage
+ var critical:bool=rng.randf() < stats.crit
+ if critical:value *= stats.crit_damage
+ impact_visual(e.pos,source_position,critical)
  e.hp -= value
  e.pos += push
  if target_cache_active:target_positions[index]=e.pos
@@ -247,11 +268,13 @@ func hit_enemy(index: int, amount: float, push: Vector2 = Vector2.ZERO, family: 
     popups[i].value=0
     popups[i].enemy_index=index
     popups[i].generation=e.generation
+    popups[i].critical=false
     break
  if popup_index>=0:
   var pop:Dictionary=popups[popup_index]
   if not existing_hit:pop.active=true;pop.pos=e.pos;pop.ttl=0.45
   pop.value+=int(value)
+  pop.critical=bool(pop.critical) or critical
  hp = minf(max_hp, hp + value * stats.lifesteal)
  if e.hp <= 0:
   kill_enemy(e,bomb_kill)
@@ -535,6 +558,10 @@ func update(delta: float) -> void:
   if pop.active:
    pop.ttl-=delta;pop.pos.y-=delta*30
    if pop.ttl<=0:pop.active=false
+ for impact in impacts:
+  if impact.active:
+   impact.ttl-=delta
+   if impact.ttl<=0:impact.active=false
  for tongue in tongue_overflow:
   if tongue.active:
    tongue.ttl-=delta
