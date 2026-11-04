@@ -51,6 +51,7 @@ var part_textures := {}
 var enemy_textures := {}
 var icon_textures := {}
 var companion_textures := {}
+var reward_atlases := {}
 var backgrounds := []
 const FAM_COLORS := {"devour":Color("e75c72"),"blade":Color("dbccb0"),"hex":Color("d483da"),"poison":Color("8dc26e"),"summon":Color("e6ad68"),"defense":Color("d5cb98"),"arcane":Color("8eb5ef"),"enemy":Color("e85656"),"bomb":Color("f3a44e")}
 
@@ -103,15 +104,19 @@ func _ready() -> void:
   if ResourceLoader.exists(portrait_path):companion_textures[role]=load(portrait_path)
  for kind in ["swordsman","shield","archer","mage","priest","thief","fanatic","lancer","hero","captain"]:
   enemy_textures[kind]=load("res://assets/art/enemies/%s.png" % kind)
+ for atlas_name in ["collect-burst","holy-pillar","implosion"]:
+  var base_path:String="res://assets/fx/pixelfx/"+atlas_name
+  var atlas_data:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(base_path+".json"))
+  reward_atlases[atlas_name]={"texture":load(base_path+".png"),"meta":atlas_data.meta.pixelfx}
  var bench_requested:bool=OS.has_feature("mimic_bench") or "--mimic-bench" in OS.get_cmdline_user_args()
  profile = BenchmarkProfile.new() if bench_requested else Profile.new()
  shot_sound=AudioStreamPlayer.new();shot_sound.stream=make_sound(155.0,0.055);shot_sound.volume_db=-18;add_child(shot_sound)
- kill_sound=AudioStreamPlayer.new();kill_sound.stream=make_sound(78.0,0.13);kill_sound.volume_db=-16;add_child(kill_sound)
- rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=make_sound(620.0,0.16);rarity_sound.volume_db=-19;add_child(rarity_sound)
- var legendary_stream:=make_sound(440.0,0.38)
+ kill_sound=AudioStreamPlayer.new();kill_sound.stream=load("res://assets/audio/kenney-interface/drop_002.wav");kill_sound.volume_db=-16;add_child(kill_sound)
+ rarity_sound=AudioStreamPlayer.new();rarity_sound.stream=load("res://assets/audio/kenney-interface/glass_003.wav");rarity_sound.volume_db=-19;add_child(rarity_sound)
+ var legendary_stream:AudioStream=load("res://assets/audio/kenney-interface/confirmation_002.wav")
  for i in 4:
   var voice:=AudioStreamPlayer.new();voice.stream=legendary_stream;voice.volume_db=-16;add_child(voice);legendary_sounds.append(voice)
- boss_sound=AudioStreamPlayer.new();boss_sound.stream=make_sound(105.0,0.42);boss_sound.volume_db=-13;add_child(boss_sound)
+ boss_sound=AudioStreamPlayer.new();boss_sound.stream=load("res://assets/audio/kenney-interface/bong_001.wav");boss_sound.volume_db=-13;add_child(boss_sound)
  ui = Control.new()
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -587,7 +592,22 @@ func show_settings() -> void:
  button("照準ガイド："+("表示" if guide else "非表示"),Vector2(80,330),Vector2(420,55),func():settings.aim_guide=not guide;profile.data.settings=settings;save_profile();show_settings())
  button("エフェクト："+("控えめ" if reduced else "通常"),Vector2(80,400),Vector2(420,55),func():settings.reduce_fx=not reduced;profile.data.settings=settings;save_profile();show_settings())
  var sound_enabled:bool=settings.get("sound",true)
+ button("素材クレジット",Vector2(600,470),Vector2(420,55),show_credits)
  button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;save_profile();show_settings())
+func show_credits() -> void:
+ state="credits";clear_ui();heading("素材クレジット")
+ var box:=list_panel(Vector2(60,105),Vector2(1120,550))
+ var credit:=Label.new()
+ credit.name="ThirdPartyLicenses"
+ credit.custom_minimum_size=Vector2(1060,0)
+ credit.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+ credit.add_theme_font_size_override("font_size",17)
+ credit.text="報酬エフェクト：pixelfx / Patch, Hugo Duprez\nhttps://github.com/patch-gg/pixelfx\nMIT License\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/fx/pixelfx/LICENSE.txt")
+ credit.text+="\n\n"+FileAccess.get_file_as_string("res://assets/fx/pixelfx/UPSTREAM-NOTICE.md")
+ credit.text+="\n\n報酬効果音：Kenney Interface Sounds\nhttps://kenney.nl/assets/interface-sounds\nhttps://github.com/Calinou/kenney-interface-sounds\nCC0 1.0 Universal\n\n"
+ credit.text+=FileAccess.get_file_as_string("res://assets/audio/kenney-interface/LICENSE.txt")
+ box.add_child(credit)
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
  if rarity>=3:
@@ -645,7 +665,7 @@ func _process(delta: float) -> void:
    needs_save=true
    event.active=false
    var pitch:float=reward_fx.on_kill()
-   if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):kill_sound.pitch_scale=pitch;kill_sound.play()
+   if pitch>0.0 and profile.data.get("settings",{}).get("sound",true):kill_sound.pitch_scale=pitch*0.8;kill_sound.play()
    if event.boss:
     reward_fx.boss(event.position,event.kind,reduced)
     if profile.data.get("settings",{}).get("sound",true):boss_sound.play()
@@ -705,6 +725,19 @@ func panel(rect:Rect2, accent:bool=false) -> void:
  draw_line(rect.position+Vector2(12,3),rect.position+Vector2(minf(110,rect.size.x-12),3),Color("b88869"),2)
  draw_rect(Rect2(rect.position+Vector2(5,5),Vector2(3,3)),Color("d2aa81"))
  draw_rect(Rect2(rect.position+rect.size-Vector2(8,8),Vector2(3,3)),Color("d2aa81"))
+# Draw the pre-rendered effect only; the pixelfx library is never run in game.
+func draw_reward_atlas(name: String, position: Vector2, progress: float, scale: float, tint: Color) -> void:
+ var atlas:Dictionary=reward_atlases.get(name,{})
+ if atlas.is_empty():return
+ var meta:Dictionary=atlas.meta
+ var dims:=Vector2(float(meta.frameSize[0]),float(meta.frameSize[1]))
+ var pivot:=Vector2(float(meta.pivot[0]),float(meta.pivot[1]))
+ var frame:int=mini(int(meta.frames)-1,int(clampf(progress,0.0,1.0)*float(meta.frames)))
+ var columns:int=int(meta.columns)
+ var source:=Rect2(Vector2((frame%columns)*dims.x,int(frame/columns)*dims.y),dims)
+ var target:=Rect2((position-pivot*scale).round(),dims*scale)
+ draw_texture_rect_region(atlas.texture,target,source,tint)
+
 func _draw() -> void:
  draw_rect(Rect2(0,0,1280,720),Color("08070b"))
  if state=="battle":
@@ -743,26 +776,36 @@ func _draw() -> void:
     var frame_color:Color=RARITY_COLORS[clampi(int(selected.rarity),0,4)]
     draw_rect(Rect2(1091,119,100,100),frame_color,false,1)
     if item_icon:draw_texture_rect(item_icon,Rect2(1093,121,96,96),false)
-  elif state in ["upgrades","collection","settings","stages"]:
+  elif state in ["upgrades","collection","settings","stages","credits"]:
    panel(Rect2(30,88,1210,592))
   elif state=="result":panel(Rect2(300,125,680,435),true)
   return
- # Direction guide remains visible beneath the battle effects.
- if profile.data.get("settings",{}).get("aim_guide",true):
-  var sight:Vector2=Battle.CENTER+battle.aim*125
-  var side:Vector2=battle.aim.orthogonal()
-  draw_line(sight-battle.aim*7-side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
-  draw_line(sight-battle.aim*7+side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
- if reward_fx.beam_remaining>0.0 and reward_fx.beam_remaining<0.35 and not profile.data.get("settings",{}).get("reduce_fx",false):
-  var beam_color:Color=RARITY_COLORS[reward_fx.beam_rarity]
-  beam_color.a=0.15*clampf(reward_fx.beam_remaining/0.35,0.0,1.0)
-  var beam_pos:Vector2=reward_fx.beam_position.clamp(Vector2(20,140),Vector2(1260,650))
-  draw_rect(Rect2(beam_pos+Vector2(-10,-120),Vector2(20,120)),beam_color)
+ # Reward sprites are behind the enemies, aim guide, and HUD so targets stay readable.
+ if not profile.data.get("settings",{}).get("reduce_fx",false):
+  for spark in reward_fx.pickup_sparks:
+   if spark.active:
+    var sparkle_tint:Color=Color.WHITE.lerp(RARITY_COLORS[int(spark.rarity)],0.55)
+    sparkle_tint.a=0.7
+    draw_reward_atlas("collect-burst",spark.pos+Vector2(0,15),1.0-float(spark.ttl)/0.55,0.5,sparkle_tint)
+  if reward_fx.beam_remaining>0.0 and reward_fx.beam_remaining<0.35:
+   var beam_tint:Color=Color.WHITE.lerp(RARITY_COLORS[reward_fx.beam_rarity],0.3)
+   beam_tint.a=0.65
+   var beam_pos:Vector2=reward_fx.beam_position.clamp(Vector2(48,105),Vector2(1232,690))
+   draw_reward_atlas("holy-pillar",beam_pos,1.0-reward_fx.beam_remaining/0.35,0.5,beam_tint)
  if reward_fx.boss_reveal_remaining>0.0:
   var boss_tex:Texture2D=enemy_textures.get(reward_fx.boss_kind)
   if boss_tex:
    var ghost_alpha:float=clampf(reward_fx.boss_reveal_remaining/reward_fx.boss_reveal_total,0.0,1.0)
    draw_texture_rect(boss_tex,Rect2(reward_fx.boss_position-Vector2(48,48),Vector2(96,96)),false,Color(1,0.8,0.7,ghost_alpha))
+  if reward_fx.boss_full_reveal and not profile.data.get("settings",{}).get("reduce_fx",false):
+   var boss_tint:=Color(0.94,0.66,0.51,0.75)
+   draw_reward_atlas("implosion",reward_fx.boss_position,1.0-reward_fx.boss_reveal_remaining/reward_fx.boss_reveal_total,0.5,boss_tint)
+ # Direction guide stays above reward effects.
+ if profile.data.get("settings",{}).get("aim_guide",true):
+  var sight:Vector2=Battle.CENTER+battle.aim*125
+  var side:Vector2=battle.aim.orthogonal()
+  draw_line(sight-battle.aim*7-side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
+  draw_line(sight-battle.aim*7+side*7,sight+battle.aim*5,Color(0.94,0.70,0.48,0.7),2)
  for e in battle.enemies:
   if e.active:
    var size:float=96.0 if e.boss else 64.0

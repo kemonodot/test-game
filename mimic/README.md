@@ -46,3 +46,10 @@ PCと横向きタッチのChromiumでWeb版の起動・ステージ開始・照�
 `tests/performance_bench.gd` のCPU計測では、敵120体・追尾弾80発の人工負荷が変更前4.439msから変更後2.778ms／更新でした（各1回、ウォームアップ後780更新の平均）。GPUを使わないChromiumの別の人工負荷テストでは、同条件の描画を含む計測が約19.3fpsから約19.7fpsでした。**どちらも実機の通常プレイや60fps達成を示す値ではありません。** 負荷と実機での描画性能は引き続き要検証です。
 
 外部制作する画像のサイズ・位置・ファイル名は [ASSET_SPEC.md](ASSET_SPEC.md) を参照してください。
+
+## 報酬演出に使用した素材
+
+- [pixelfx](https://github.com/patch-gg/pixelfx) — MIT。`pickups/collect-burst`、`holy/holy-pillar`、`explosions/implosion` の透過スプライトシートを使用。生成条件と著作権表示は [素材ディレクトリ](assets/fx/pixelfx/README.md) を参照。Patch Pixel フォントは使用していません。
+- [Kenney Interface Sounds](https://kenney.nl/assets/interface-sounds) — CC0 1.0。配布元および使用したファイルは [素材ディレクトリ](assets/audio/kenney-interface/README.md) を参照。
+
+ゲーム内の「設定 → 素材クレジット」にもライセンスを表示します。

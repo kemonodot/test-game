@@ -1,0 +1,413 @@
+{
+ "frames": [
+  {
+   "filename": "collect-burst 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 1",
+   "frame": {
+    "x": 112,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 2",
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 3",
+   "frame": {
+    "x": 336,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 4",
+   "frame": {
+    "x": 448,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 5",
+   "frame": {
+    "x": 0,
+    "y": 108,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 6",
+   "frame": {
+    "x": 112,
+    "y": 108,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 7",
+   "frame": {
+    "x": 224,
+    "y": 108,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 8",
+   "frame": {
+    "x": 336,
+    "y": 108,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 9",
+   "frame": {
+    "x": 448,
+    "y": 108,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 10",
+   "frame": {
+    "x": 0,
+    "y": 216,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 11",
+   "frame": {
+    "x": 112,
+    "y": 216,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 12",
+   "frame": {
+    "x": 224,
+    "y": 216,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 13",
+   "frame": {
+    "x": 336,
+    "y": 216,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 14",
+   "frame": {
+    "x": 448,
+    "y": 216,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 15",
+   "frame": {
+    "x": 0,
+    "y": 324,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  },
+  {
+   "filename": "collect-burst 16",
+   "frame": {
+    "x": 112,
+    "y": 324,
+    "w": 112,
+    "h": 108
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 112,
+    "h": 108
+   },
+   "sourceSize": {
+    "w": 112,
+    "h": 108
+   },
+   "duration": 83
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "collect-burst.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 560,
+   "h": 432
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "collect-burst",
+    "from": 0,
+    "to": 16,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "pickups/collect-burst",
+   "name": "Collect burst",
+   "fps": 12,
+   "loop": false,
+   "frames": 17,
+   "frameSize": [
+    112,
+    108
+   ],
+   "pivot": [
+    56,
+    94
+   ],
+   "columns": 5
+  }
+ }
+}

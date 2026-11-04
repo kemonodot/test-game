@@ -7,6 +7,7 @@ const BIG_SLOW_DURATION := 0.36
 const NOTIFICATION_LIFETIME := 2.5
 var notifications: Array = []
 var money_popups: Array = []
+var pickup_sparks: Array = []
 var kill_window := 0.0
 var kill_level := 0
 var kill_sound_cooldown := 0.0
@@ -34,6 +35,7 @@ func _init() -> void:
  for rarity in 5:
   notifications.append({"active":false,"rarity":rarity,"count":0,"ttl":0.0,"reveal":0.0})
  for i in 3:banners.append({"active":false,"name":"","rarity":0,"ttl":0.0,"delay":0.0,"extra":0})
+ for i in 4:pickup_sparks.append({"active":false,"pos":Vector2.ZERO,"rarity":0,"ttl":0.0})
  for i in 12:
   money_popups.append({"active":false,"bomb":false,"value":0,"pos":Vector2.ZERO,"ttl":0.0,"age":0.0})
 
@@ -60,6 +62,10 @@ func update(delta: float) -> void:
   if notice.active:
    notice.ttl-=delta;notice.reveal=maxf(0.0,float(notice.reveal)-delta)
    if notice.ttl<=0:notice.active=false;notice.count=0
+ for spark in pickup_sparks:
+  if spark.active:
+   spark.ttl-=delta
+   if spark.ttl<=0:spark.active=false
  for pop in money_popups:
   if pop.active:
    pop.ttl-=delta;pop.age+=delta
@@ -121,6 +127,10 @@ func publish_item(rarity: int, item_name: String, pos: Vector2, reduced: bool) -
  if rarity>=3:notice.reveal=REVEAL_DELAY
  if rarity>=1 and rarity<=2 and not reduced:
   edge_remaining=0.32;edge_rarity=rarity
+  for spark in pickup_sparks:
+   if not spark.active:
+    spark.active=true;spark.pos=pos;spark.rarity=rarity;spark.ttl=0.55
+    break
  if rarity>=3:
   var full:=begin_big(reduced)
   # A boss and its own drop are one sequence; the second big event is shortened.
