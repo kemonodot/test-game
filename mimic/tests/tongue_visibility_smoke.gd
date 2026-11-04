@@ -24,7 +24,7 @@ func _initialize()->void:
  crowded.abilities.clear();crowded.hitstop=0.0;crowded.spawn_budget=-10000;crowded.update(0.05)
  assert(crowded.tongue_overflow[0].ttl<Combat.TONGUE_DURATION)
  assert(crowded.enemies[0].hp==before)
- crowded.update(0.05)
+ for i in 4:crowded.update(0.05)
  assert(crowded.enemies[0].hp<before)
  # Area damage gets an explicit outline at the actual damage center.
  var splash=Combat.new(23)

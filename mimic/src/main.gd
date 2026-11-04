@@ -790,7 +790,7 @@ func draw_tongue(fx: Dictionary) -> void:
  var length:float=fx.from.distance_to(tip)
  var bend:float=minf(15.0,length*0.04)
  var positions:=[0.0,0.18,0.40,0.65,0.85,1.0]
- var widths:=[9.0,14.0,18.0,17.0,14.0,9.0]
+ var widths:=[11.0,17.0,22.0,21.0,17.0,11.0]
  var left:=PackedVector2Array();var right:=PackedVector2Array()
  var inner_left:=PackedVector2Array();var inner_right:=PackedVector2Array()
  var ridge:=PackedVector2Array()
@@ -804,9 +804,9 @@ func draw_tongue(fx: Dictionary) -> void:
  left.append_array(right);inner_left.append_array(inner_right)
  draw_colored_polygon(left,Color("531923"))
  draw_colored_polygon(inner_left,Color("b53b50"))
- draw_polyline(ridge,Color("e17980"),4.0)
- draw_circle(tip,9,Color("b53b50"))
- draw_circle(tip-direction*3-side*2,4,Color("ef9a97"))
+ draw_polyline(ridge,Color("f0a1a1"),5.0)
+ draw_circle(tip,11,Color("b53b50"))
+ draw_circle(tip-direction*3-side*2,5,Color("ffd1bb"))
  draw_line(tip-direction*3,tip+direction*4,Color("6b2531"),2)
  if fx.get("splash",false):
   var splash_color:=Color(0.88,0.35,0.39,0.55)

@@ -15,7 +15,7 @@ func _initialize() -> void:
   assert(b.shots > 0, "%s did not attack" % key)
   if t.family=="devour":
    b.abilities.clear()
-   b.update(0.05);b.update(0.05)
+   for i in 5:b.update(0.05)
   if t.family in ["devour","blade","hex"]: assert(b.enemies[0].hp < b.enemies[1].hp, "%s did not favor aim" % key)
   if t.family == "poison": assert(b.enemies[0].poison > b.enemies[1].poison)
   if t.family in ["summon","arcane"]: assert(b.projectiles.any(func(x):return x.active and x.vel.x > 0))

@@ -9,8 +9,8 @@ const MAX_IMPACT_VISUALS := 12
 const RUN_SECONDS := 300.0
 const AIM_HALF_WIDTH := 32.0
 const DEVOUR_HALF_WIDTH := 68.0
-const TONGUE_DURATION := 0.30
-const TONGUE_REACH_TIME := 0.09
+const TONGUE_DURATION := 0.42
+const TONGUE_REACH_TIME := 0.20
 # Shields face the mimic. Sources within +/-45 degrees of that facing are blocked.
 const SHIELD_FRONT_DOT := 0.7071067811865476
 const SUMMON_BURST_RADIUS := 60.0

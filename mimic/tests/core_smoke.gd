@@ -8,6 +8,8 @@ func _initialize() -> void:
  var id: int = b.target_index(Battle.CENTER, Vector2.RIGHT, 300)
  var before: float = b.enemies[id].hp
  b.update(0.1)
+ assert(b.shots == 1 and b.enemies[id].hp == before)
+ b.update(0.11)
  assert(b.shots == 1 and b.enemies[id].hp < before)
  b.hit_enemy(id, 10000)
  assert(b.kills == 1)

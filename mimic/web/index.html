@@ -107,7 +107,7 @@ body {
 		</canvas>
 
 		<div id="phone-helper" role="region" aria-label="スマートフォン向けの開始操作">
-			<p>画面を横向きにすると操作しやすくなります。<br>下のボタンから戦闘を始められます。</p>
+			<p>画面を横向きにすると操作しやすくなります。<br>ドラッグで照準、攻撃は自動です。</p>
 			<button id="phone-start" type="button" disabled>読み込み中…</button>
 			<button id="phone-sound" type="button" disabled>音を確認</button>
 			<p id="phone-audio-status" aria-live="polite"></p>
@@ -124,9 +124,9 @@ body {
 
 		<script src="index.js?storage-audio=1"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6514180,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6514244,"index.wasm":37700666},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 // Request the updated pack even if a previous version is cached.
-GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?tongue-impact=1`;
+GODOT_CONFIG.mainPack = `${GODOT_CONFIG.executable}.pck?tongue-visible=2`;
 const GODOT_THREADS_ENABLED = false;
 window.mimicStorageState = {seq: 0, status: "pending", failureSeq: 0, failureKind: ""};
 window.mimicStorageReport = (status) => {

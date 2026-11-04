@@ -18,7 +18,10 @@ func _initialize() -> void:
  # A moving target is tracked during the extension, up to the actual impact.
  victim.pos+=Vector2(0,12)
  var contact:Vector2=victim.pos
- battle.update(0.05)
+ for i in 3:
+  battle.update(0.05)
+  assert(victim.active and battle.kills==0 and battle.impact_serial==0)
+ battle.update(0.02)
  assert(not victim.active and battle.kills==1 and battle.impact_serial==1)
  assert((Combat.TONGUE_DURATION-tongue.ttl)/Combat.TONGUE_REACH_TIME>=0.999)
  assert(tongue.to==contact and not tongue.pending)
@@ -33,7 +36,7 @@ func _initialize() -> void:
  reused.enemies[0].active=false
  assert(reused.spawn_enemy("swordsman",Combat.CENTER+Vector2(170,0)))
  var replacement_hp:float=reused.enemies[0].hp
- reused.update(0.05);reused.update(0.05)
+ for i in 5:reused.update(0.05)
  assert(reused.enemies[0].hp==replacement_hp and reused.impact_serial==0)
  print("TONGUE TIMING: no early hit or loot, tracked contact, single impact and recycled slot passed")
  quit(0)
