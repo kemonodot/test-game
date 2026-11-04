@@ -26,7 +26,10 @@ GodotのWeb書き出しは、公式4.6.3テンプレートを用意した上で�
 ```sh
 godot --headless --editor --import --path .
 godot --headless --path . --export-release Web web/index.html
+python3 tools/patch_web_storage.py
 ```
+
+Webの実行ファイルを再書き出しした場合、最後のスクリプトでGodotのブラウザ保存同期の成功・失敗通知を復元します。既存のWebランタイムが対応しない形式ならスクリプトは停止します。
 
 ## 検証と残課題
 

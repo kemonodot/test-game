@@ -2,6 +2,7 @@ class_name MimicProfile
 extends RefCounted
 const PATH := "user://mimic_save.json"
 const SLOTS := ["fang", "organ1", "organ2", "organ3", "organ4", "shell", "core"]
+const SALVAGE_VALUES := [3,10,30,100,250]
 const FAMILIES := ["devour","blade","hex","poison","summon","defense","arcane"]
 const UPGRADE_DEFS := [
  {"recipient":"hunter","key":"awakening","name":"飢えの目覚め","desc":"狩人への供物で進化の祭壇を開く","family":"devour","requires":"","max":1,"cost":3},
@@ -22,29 +23,138 @@ var affix_defs: Array = []
 var balance: Dictionary = {}
 var data := {}
 var rng := RandomNumberGenerator.new()
-func _init(load_existing: bool = true) -> void:
+var save_path := PATH
+var load_failed := false
+var io_error := ""
+func _init(load_existing: bool = true, path: String = PATH) -> void:
+ save_path=path
  rng.randomize()
  templates = JSON.parse_string(FileAccess.get_file_as_string("res://data/items.json"))
  affix_defs = JSON.parse_string(FileAccess.get_file_as_string("res://data/affixes.json"))
  balance = JSON.parse_string(FileAccess.get_file_as_string("res://data/balance.json"))
  data = {"version":1,"gold":0,"points":0,"inventory":[],"equipped":{},"gems":{},"upgrades":{"awakening":0},"unlocked_stage":0,"unlocked_families":["devour","blade","arcane"],"collection":[],"next_id":1}
- if load_existing and FileAccess.file_exists(PATH):
-  var f := FileAccess.open(PATH, FileAccess.READ)
-  if f:
-   var parsed: Variant = JSON.parse_string(f.get_as_text())
-   if parsed is Dictionary and parsed.get("version") == 1:
-    data = parsed
-    # Existing saves keep all their upgrades and have already opened the altar.
-    if not data.upgrades.has("awakening"): data.upgrades.awakening=1
+ if load_existing:
+  var directory:=DirAccess.open(save_path.get_base_dir())
+  if directory==null:
+   load_failed=true;io_error="保存先を開けません"
+  elif FileAccess.file_exists(save_path):
+   load_game()
+ if not load_failed:ensure_starter()
+func ensure_starter() -> void:
  if data.inventory.is_empty():
   var starter := create_item("bite",0)
   data.inventory.append(starter)
   data.equipped["fang"] = starter.uid
-func save_game() -> bool:
- var f := FileAccess.open(PATH, FileAccess.WRITE)
- if f == null: return false
- f.store_string(JSON.stringify(data))
+func valid_save(candidate: Variant) -> bool:
+ if not candidate is Dictionary or candidate.get("version")!=1:return false
+ for key in ["gold","points","next_id","unlocked_stage"]:
+  if not candidate.has(key) or typeof(candidate[key]) not in [TYPE_INT,TYPE_FLOAT]:return false
+ for key in ["inventory","unlocked_families","collection"]:
+  if not candidate.get(key) is Array:return false
+ for key in ["equipped","gems","upgrades"]:
+  if not candidate.get(key) is Dictionary:return false
+ if candidate.has("settings") and not candidate.settings is Dictionary:return false
+ var seen:={}
+ for item in candidate.inventory:
+  if not item is Dictionary:return false
+  for key in ["uid","template","rarity","level","affixes","sockets","socket_count"]:
+   if not item.has(key):return false
+  if typeof(item.uid) not in [TYPE_INT,TYPE_FLOAT] or typeof(item.rarity) not in [TYPE_INT,TYPE_FLOAT] or typeof(item.level) not in [TYPE_INT,TYPE_FLOAT] or typeof(item.socket_count) not in [TYPE_INT,TYPE_FLOAT]:return false
+  if not item.affixes is Array or not item.sockets is Array or get_template(str(item.template)).is_empty():return false
+  if int(item.rarity)<0 or int(item.rarity)>=SALVAGE_VALUES.size() or int(item.uid)<1 or seen.has(int(item.uid)):return false
+  seen[int(item.uid)]=true
+  for affix in item.affixes:
+   if not affix is Dictionary or not affix.has_all(["id","name","tier","value"]):return false
+   if typeof(affix.tier) not in [TYPE_INT,TYPE_FLOAT] or typeof(affix.value) not in [TYPE_INT,TYPE_FLOAT]:return false
+  for gem in item.sockets:
+   if not gem is Dictionary or not gem.has("family") or not gem.has("tier"):return false
+   if str(gem.family) not in FAMILIES or typeof(gem.tier) not in [TYPE_INT,TYPE_FLOAT]:return false
+ for slot in candidate.equipped:
+  if slot not in SLOTS or typeof(candidate.equipped[slot]) not in [TYPE_INT,TYPE_FLOAT]:return false
+  if not seen.has(int(candidate.equipped[slot])):return false
  return true
+func load_game() -> bool:
+ var f:=FileAccess.open(save_path,FileAccess.READ)
+ if f==null:
+  load_failed=true;io_error="セーブを開けません"
+  return false
+ var length:int=f.get_length()
+ var bytes:PackedByteArray=f.get_buffer(length)
+ var read_error:Error=f.get_error()
+ f.close()
+ if bytes.size()!=length or (read_error!=OK and read_error!=ERR_FILE_EOF):
+  load_failed=true;io_error="セーブを読み取れません"
+  return false
+ var json:=JSON.new()
+ if json.parse(bytes.get_string_from_utf8())!=OK or not valid_save(json.data):
+  load_failed=true;io_error="セーブの内容を読み込めません"
+  return false
+ data=json.data
+ if not data.upgrades.has("awakening"):data.upgrades.awakening=1
+ load_failed=false;io_error=""
+ ensure_starter()
+ return true
+func save_game() -> bool:
+ if load_failed:
+  io_error="読み込み失敗のため保存を停止中"
+  return false
+ var temp_path:String=save_path+".tmp"
+ var f:=FileAccess.open(temp_path,FileAccess.WRITE)
+ if f==null:
+  io_error="保存先を開けません"
+  return false
+ f.store_string(JSON.stringify(data))
+ f.flush()
+ var write_error:Error=f.get_error()
+ f.close()
+ if write_error!=OK:
+  DirAccess.remove_absolute(ProjectSettings.globalize_path(temp_path))
+  io_error="セーブを書き込めません"
+  return false
+ var rename_error:Error=DirAccess.rename_absolute(ProjectSettings.globalize_path(temp_path),ProjectSettings.globalize_path(save_path))
+ if rename_error!=OK:
+  DirAccess.remove_absolute(ProjectSettings.globalize_path(temp_path))
+  io_error="セーブを確定できません"
+  return false
+ io_error=""
+ return true
+func salvage_preview(max_rarity: int) -> Dictionary:
+ var result:Dictionary={"count":0,"gold":0}
+ var equipped_ids:={}
+ for uid in data.equipped.values():equipped_ids[int(uid)]=true
+ for item in data.inventory:
+  var rarity:int=int(item.rarity)
+  if rarity<=mini(max_rarity,2) and rarity>=0 and not equipped_ids.has(int(item.uid)):
+   result.count+=1;result.gold+=SALVAGE_VALUES[rarity]
+ return result
+func return_sockets(item: Dictionary) -> void:
+ for gem in item.get("sockets",[]):add_gem(str(gem.family),int(gem.tier))
+func salvage_item(uid: int) -> Dictionary:
+ for equipped_uid in data.equipped.values():
+  if int(equipped_uid)==uid:return {"count":0,"gold":0}
+ for i in data.inventory.size():
+  var item:Dictionary=data.inventory[i]
+  if int(item.uid)!=uid:continue
+  var rarity:int=int(item.rarity)
+  if rarity<0 or rarity>=SALVAGE_VALUES.size():return {"count":0,"gold":0}
+  var amount:int=SALVAGE_VALUES[rarity]
+  return_sockets(item)
+  data.inventory.remove_at(i);data.gold=int(data.gold)+amount
+  return {"count":1,"gold":amount}
+ return {"count":0,"gold":0}
+func salvage_bulk(max_rarity: int) -> Dictionary:
+ var result:Dictionary={"count":0,"gold":0}
+ var equipped_ids:={}
+ for uid in data.equipped.values():equipped_ids[int(uid)]=true
+ var keep:Array=[]
+ for item in data.inventory:
+  var rarity:int=int(item.rarity)
+  if rarity>=0 and rarity<=mini(max_rarity,2) and not equipped_ids.has(int(item.uid)):
+   result.count+=1;result.gold+=SALVAGE_VALUES[rarity]
+   return_sockets(item)
+  else:keep.append(item)
+ data.inventory=keep;data.gold=int(data.gold)+int(result.gold)
+ return result
 func get_template(id: String) -> Dictionary:
  for t in templates:
   if t.id == id: return t

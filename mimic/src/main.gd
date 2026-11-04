@@ -18,6 +18,12 @@ var selected_stage := 0
 var selected_uid := -1
 var preview_slot := ""
 var ui: Control
+var persistence_ui: Control
+var persistence_kind := ""
+var web_storage_seq := -1
+var web_failure_seq := 0
+var web_sync_failed := false
+var web_load_failed := false
 var title_font: Font
 var toast := ""
 var toast_t := 0.0
@@ -110,7 +116,13 @@ func _ready() -> void:
  ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(ui)
+ persistence_ui=Control.new()
+ persistence_ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ persistence_ui.mouse_filter=Control.MOUSE_FILTER_IGNORE
+ add_child(persistence_ui)
  show_title()
+ if profile.load_failed:show_persistence_warning("load")
+ if OS.has_feature("web"):poll_web_storage()
  if bench_requested:
   call_deferred("start_benchmark_mode")
   return
@@ -137,6 +149,7 @@ func start_benchmark_mode() -> void:
  var controller=load("res://benchmark/benchmark.gd").new()
  add_child(controller)
 func _web_quick_start(_args: Array) -> void:
+ if persistence_kind=="load":return
  if state=="title":
   selected_stage=0
   start_battle()
@@ -153,6 +166,80 @@ func make_sound(frequency: float, duration: float) -> AudioStreamWAV:
   bytes.encode_s16(i*2,int(clampf(sample*9000,-32768,32767)))
  wav.data=bytes
  return wav
+func save_profile() -> bool:
+ var ok:bool=profile.save_game()
+ if not ok:
+  show_persistence_warning("load" if profile.load_failed else "save")
+ elif persistence_kind=="save" and not web_sync_failed:
+  clear_persistence_warning()
+ return ok
+func clear_persistence_warning() -> void:
+ persistence_kind=""
+ if is_instance_valid(persistence_ui):
+  for child in persistence_ui.get_children():child.queue_free()
+func show_persistence_warning(kind: String) -> void:
+ if not is_instance_valid(persistence_ui):return
+ if persistence_kind=="load" and kind!="load":return
+ if persistence_kind==kind:return
+ clear_persistence_warning()
+ persistence_kind=kind
+ var block:=ColorRect.new()
+ block.name="PersistenceWarning"
+ block.color=Color(0,0,0,0.84) if kind=="load" else Color(0.08,0.025,0.035,0.98)
+ block.position=Vector2.ZERO if kind=="load" else Vector2(330,8)
+ block.size=Vector2(1280,720) if kind=="load" else Vector2(620,72)
+ block.mouse_filter=Control.MOUSE_FILTER_STOP
+ persistence_ui.add_child(block)
+ var message:=Label.new()
+ message.name="PersistenceMessage"
+ message.text="セーブを読み込めません。\n保存領域を確認し、再試行してください。" if kind=="load" else "保存できません。再試行してください。"
+ message.position=Vector2(330,240) if kind=="load" else Vector2(14,10)
+ message.size=Vector2(620,90) if kind=="load" else Vector2(420,52)
+ message.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER if kind=="load" else HORIZONTAL_ALIGNMENT_LEFT
+ message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+ message.add_theme_font_size_override("font_size",24 if kind=="load" else 18)
+ block.add_child(message)
+ var retry:=Button.new()
+ retry.name="PersistenceRetry";retry.text="再試行"
+ retry.position=Vector2(510,360) if kind=="load" else Vector2(462,10)
+ retry.size=Vector2(260,56) if kind=="load" else Vector2(145,52)
+ retry.pressed.connect(retry_persistence)
+ block.add_child(retry)
+func retry_persistence() -> void:
+ if persistence_kind=="load":
+  if web_load_failed:
+   if OS.has_feature("web"):JavaScriptBridge.eval("window.location.reload()")
+   return
+  if profile.load_game():clear_persistence_warning();show_title()
+  return
+ if save_profile() and web_sync_failed and OS.has_feature("web"):
+  JavaScriptBridge.eval("window.mimicRetryStorage && window.mimicRetryStorage()")
+func poll_web_storage() -> void:
+ var seq:int=int(JavaScriptBridge.eval("window.mimicStorageState ? window.mimicStorageState.seq : -1",true))
+ if seq==web_storage_seq:return
+ web_storage_seq=seq
+ var failure_seq:int=int(JavaScriptBridge.eval("window.mimicStorageState ? window.mimicStorageState.failureSeq : 0",true))
+ if failure_seq>web_failure_seq:
+  web_failure_seq=failure_seq
+  var failure:String=str(JavaScriptBridge.eval("window.mimicStorageState.failureKind",true))
+  if failure=="load_error":
+   web_load_failed=true;profile.load_failed=true
+   show_persistence_warning("load")
+  elif failure=="save_error":
+   web_sync_failed=true
+   show_persistence_warning("save")
+  return
+ var status:String=str(JavaScriptBridge.eval("window.mimicStorageState ? window.mimicStorageState.status : ''",true))
+ if status=="load_error":
+  web_load_failed=true;profile.load_failed=true
+  show_persistence_warning("load")
+ elif status=="save_error":
+  web_sync_failed=true
+  show_persistence_warning("save")
+ elif status=="ready":
+  web_sync_failed=false
+  if persistence_kind=="save" and profile.io_error.is_empty():clear_persistence_warning()
+
 func clear_ui() -> void:
  for child in ui.get_children():child.queue_free()
  queue_redraw()
@@ -240,6 +327,7 @@ func show_stages() -> void:
  button("第二層　血の礼拝堂" + ("　　（未解放）" if int(profile.data.unlocked_stage)<1 else "       →"),Vector2(100,364),Vector2(1000,74),func():selected_stage=1;start_battle(),int(profile.data.unlocked_stage)<1)
  label("第二層は第一層のボスを倒すと解放されます。",Vector2(100,475),Vector2(900,36),16).modulate=Color("bcaaa1")
 func start_battle() -> void:
+ if persistence_kind=="load":return
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  clear_ui()
  battle=Battle.new(Time.get_ticks_usec())
@@ -252,7 +340,7 @@ func start_battle() -> void:
  var starting:int=int(profile.data.upgrades.get("starting_gold",0))*10
  profile.data.gold+=starting
  run_gold+=starting
- profile.save_game()
+ save_profile()
 func item_description(item: Dictionary) -> String:
  if item.is_empty(): return "装備を選ぶと詳細を表示"
  var t: Dictionary=profile.get_template(item.template)
@@ -267,17 +355,57 @@ func inventory_item_name(item: Dictionary) -> String:
 func select_equipment_slot(slot: String) -> void:
  preview_slot=slot;selected_uid=-1;show_inventory()
 func remove_equipment_from_slot() -> void:
- if profile.unequip(preview_slot):profile.save_game()
+ if profile.unequip(preview_slot):save_profile()
  selected_uid=-1;show_inventory()
 func equip_selected_item() -> void:
- if profile.equip(selected_uid,preview_slot):profile.save_game()
+ if profile.equip(selected_uid,preview_slot):save_profile()
  selected_uid=-1;show_inventory()
+func confirm_salvage(max_rarity: int = -1) -> void:
+ var single:bool=max_rarity<0
+ var selected:Dictionary=profile.get_item(selected_uid)
+ var summary:Dictionary={"count":0,"gold":0}
+ var title:String=""
+ if single:
+  if selected.is_empty():return
+  for equipped_uid in profile.data.equipped.values():
+   if int(equipped_uid)==selected_uid:return
+  summary={"count":1,"gold":Profile.SALVAGE_VALUES[int(selected.rarity)]}
+  title=profile.get_template(selected.template).name+" を解体"
+ else:
+  summary=profile.salvage_preview(max_rarity)
+  title=("レア以下" if max_rarity==1 else "エピック以下")+"を一括解体"
+ if int(summary.count)<=0:return
+ var veil:=ColorRect.new()
+ veil.name="SalvageConfirmation"
+ veil.color=Color(0.01,0.005,0.01,0.88);veil.size=Vector2(1280,720)
+ veil.mouse_filter=Control.MOUSE_FILTER_STOP;ui.add_child(veil)
+ var card:=Panel.new();card.position=Vector2(315,205);card.size=Vector2(650,310)
+ var style:=StyleBoxFlat.new();style.bg_color=Color("201419");style.border_color=Color("d4a16c");style.set_border_width_all(2)
+ card.add_theme_stylebox_override("panel",style);veil.add_child(card)
+ var caption:=Label.new();caption.name="SalvageSummary"
+ caption.text="%s\n\n対象 %d 個　 /　 獲得資金 %d\n装備中は対象外。魔石は所持品に戻ります。" % [title,summary.count,summary.gold]
+ caption.position=Vector2(25,32);caption.size=Vector2(600,170);caption.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;caption.add_theme_font_size_override("font_size",21);card.add_child(caption)
+ var cancel:=Button.new();cancel.text="戻る";cancel.position=Vector2(60,230);cancel.size=Vector2(230,55);cancel.pressed.connect(veil.queue_free);card.add_child(cancel)
+ var apply:=Button.new();apply.name="ConfirmSalvage";apply.text="解体する";apply.position=Vector2(360,230);apply.size=Vector2(230,55)
+ var uid:int=selected_uid
+ apply.pressed.connect(func():
+  var result:Dictionary=profile.salvage_item(uid) if single else profile.salvage_bulk(max_rarity)
+  if int(result.count)>0:save_profile()
+  selected_uid=-1
+  show_inventory()
+ )
+ card.add_child(apply)
 func show_inventory() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  if state!="inventory":preview_slot="fang";selected_uid=-1
  state="inventory";clear_ui();heading("装備を整える")
  label("①  枠を選ぶ",Vector2(50,103),Vector2(380,32),20).modulate=Color("e6c29c")
- label("②  装備を選んで比較",Vector2(560,103),Vector2(620,32),20).modulate=Color("e6c29c")
+ label("②  装備を選んで比較",Vector2(560,103),Vector2(250,32),20).modulate=Color("e6c29c")
+ var rare_bulk:=button("レア以下を全て解体",Vector2(800,100),Vector2(205,40),func():confirm_salvage(1),int(profile.salvage_preview(1).count)==0)
+ rare_bulk.add_theme_font_size_override("font_size",15)
+ var epic_bulk:=button("エピック以下を全て解体",Vector2(1015,100),Vector2(220,40),func():confirm_salvage(2),int(profile.salvage_preview(2).count)==0)
+ epic_bulk.add_theme_font_size_override("font_size",15)
  var slots_order:=["fang","shell","organ1","organ2","organ3","organ4","core"]
  for i in slots_order.size():
   var slot:String=slots_order[i]
@@ -352,6 +480,11 @@ func show_inventory() -> void:
  if changes.is_empty():changes="系統の数に変化なし"
  var set_detail:String="\n召喚4：眷属の連鎖 / 命中時、周囲に威力50%" if int(after_counts.get("summon",0))>=4 else ""
  label("牙の威力 %+.1f　間隔 %+.2f秒　HP %+.0f　軽減 %+.1f%%\n%s\n★ は新しいセット効果（2個 / 4個）%s" % [proposed_battle.damage-current_battle.damage,proposed_battle.attack_interval-current_battle.attack_interval,proposed_battle.max_hp-current_battle.max_hp,(proposed_battle.stats.reduction-current_battle.stats.reduction)*100,changes,set_detail],Vector2(560,525),Vector2(650,95),17)
+ var equipped_anywhere:=false
+ for equipped_uid in profile.data.equipped.values():
+  if int(equipped_uid)==selected_uid:equipped_anywhere=true;break
+ var salvage:=button("解体  +%d資金" % Profile.SALVAGE_VALUES[int(selected.rarity)],Vector2(560,630),Vector2(250,54),func():confirm_salvage(),equipped_anywhere)
+ salvage.add_theme_font_size_override("font_size",18)
  var already_equipped:bool=int(profile.data.equipped.get(preview_slot,-1))==selected_uid
  button("装備中" if already_equipped else "%sに装備する" % SLOTS[preview_slot],Vector2(835,630),Vector2(390,54),equip_selected_item,already_equipped)
 func show_forge() -> void:
@@ -368,18 +501,18 @@ func show_forge() -> void:
  var detail:=label(item_description(item),Vector2(525,105),Vector2(525,205),18)
  if not item.is_empty():detail.modulate=RARITY_COLORS[clampi(int(item.rarity),0,4)]
  if not item.is_empty():
-  button("強化 %d 資金" % (25*(int(item.level)+1)),Vector2(525,320),Vector2(250,50),func():profile.upgrade_item(selected_uid);profile.save_game();show_forge())
-  button("再抽選 40 資金",Vector2(795,320),Vector2(250,50),func():profile.reroll_item(selected_uid);profile.save_game();show_forge(),not profile.data.upgrades.get("reroll",false))
+  button("強化 %d 資金" % (25*(int(item.level)+1)),Vector2(525,320),Vector2(250,50),func():profile.upgrade_item(selected_uid);save_profile();show_forge())
+  button("再抽選 40 資金",Vector2(795,320),Vector2(250,50),func():profile.reroll_item(selected_uid);save_profile();show_forge(),not profile.data.upgrades.get("reroll",false))
  if not item.is_empty() and not item.sockets.is_empty():
-  button("最後の魔石を外す",Vector2(1060,320),Vector2(175,50),func():profile.remove_gem(selected_uid,item.sockets.size()-1);profile.save_game();show_forge())
+  button("最後の魔石を外す",Vector2(1060,320),Vector2(175,50),func():profile.remove_gem(selected_uid,item.sockets.size()-1);save_profile();show_forge())
  label("魔石：3個を合成 / 選択装備の空きソケットへ装着",Vector2(525,390),Vector2(700,40),17)
  var gems:=list_panel(Vector2(525,440),Vector2(710,210))
  for key in profile.data.gems.keys():
   if int(profile.data.gems[key])<=0: continue
   var pieces:PackedStringArray=key.split(":")
   var fam:String=pieces[0];var tier:int=int(pieces[1]);var qty:int=int(profile.data.gems[key])
-  list_button(gems,"%s T%d ×%d　装着" % [FAMILY_NAMES.get(fam,fam),tier,qty],func():profile.socket_gem(selected_uid,fam,tier);profile.save_game();show_forge(),item.is_empty() or item.sockets.size()>=int(item.socket_count))
-  list_button(gems,"%s T%d ×3 → T%d　合成" % [FAMILY_NAMES.get(fam,fam),tier,tier+1],func():profile.fuse_gem(fam,tier);profile.save_game();show_forge(),qty<3 or tier>=5 or not profile.data.upgrades.get("fusion",false))
+  list_button(gems,"%s T%d ×%d　装着" % [FAMILY_NAMES.get(fam,fam),tier,qty],func():profile.socket_gem(selected_uid,fam,tier);save_profile();show_forge(),item.is_empty() or item.sockets.size()>=int(item.socket_count))
+  list_button(gems,"%s T%d ×3 → T%d　合成" % [FAMILY_NAMES.get(fam,fam),tier,tier+1],func():profile.fuse_gem(fam,tier);save_profile();show_forge(),qty<3 or tier>=5 or not profile.data.upgrades.get("fusion",false))
 func show_upgrades() -> void:
  if OS.has_feature("web"):JavaScriptBridge.eval("window.dispatchEvent(new Event('mimic-leave-title'))")
  state="upgrades";clear_ui();heading("貢ぎ物の祭壇")
@@ -418,7 +551,7 @@ func show_upgrades() -> void:
 func purchase_upgrade(key: String) -> void:
  var definition:Dictionary=profile.upgrade_definition(key)
  if not profile.upgrade(key):return
- profile.save_game()
+ save_profile()
  show_upgrades()
  show_unlock_celebration(definition)
 func show_unlock_celebration(definition: Dictionary) -> void:
@@ -451,10 +584,10 @@ func show_settings() -> void:
  var settings:Dictionary=profile.data.get("settings",{})
  var guide:bool=settings.get("aim_guide",true)
  var reduced:bool=settings.get("reduce_fx",false)
- button("照準ガイド："+("表示" if guide else "非表示"),Vector2(80,330),Vector2(420,55),func():settings.aim_guide=not guide;profile.data.settings=settings;profile.save_game();show_settings())
- button("エフェクト："+("控えめ" if reduced else "通常"),Vector2(80,400),Vector2(420,55),func():settings.reduce_fx=not reduced;profile.data.settings=settings;profile.save_game();show_settings())
+ button("照準ガイド："+("表示" if guide else "非表示"),Vector2(80,330),Vector2(420,55),func():settings.aim_guide=not guide;profile.data.settings=settings;save_profile();show_settings())
+ button("エフェクト："+("控えめ" if reduced else "通常"),Vector2(80,400),Vector2(420,55),func():settings.reduce_fx=not reduced;profile.data.settings=settings;save_profile();show_settings())
  var sound_enabled:bool=settings.get("sound",true)
- button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;profile.save_game();show_settings())
+ button("効果音："+("オン" if sound_enabled else "オフ"),Vector2(80,470),Vector2(420,55),func():settings.sound=not sound_enabled;profile.data.settings=settings;save_profile();show_settings())
 func play_rarity_sound(rarity: int) -> void:
  if not profile.data.get("settings",{}).get("sound",true):return
  if rarity>=3:
@@ -482,6 +615,8 @@ func animate_victory_effects(delta: float) -> void:
    if pop.ttl<=0:pop.active=false
 
 func _process(delta: float) -> void:
+ if OS.has_feature("web"):poll_web_storage()
+ if persistence_kind=="load":return
  toast_t=maxf(0,toast_t-delta)
  if state=="title" and not profile.data.get("settings",{}).get("reduce_fx",false):
   hub_time+=delta;hub_redraw_clock+=delta
@@ -523,7 +658,7 @@ func _process(delta: float) -> void:
      if reward_fx.item(int(item.rarity),profile.get_template(item.template).name,event.position,reduced,event.boss):play_rarity_sound(int(item.rarity))
      battle.scatter(event.position,"arcane",5)
    if battle.rng.randf()<0.12: profile.add_gem(Profile.FAMILIES[battle.rng.randi_range(0,6)])
-  if needs_save:profile.save_game()
+  if needs_save:save_profile()
   if battle.ended:
    if not reward_given and not reduced and reward_fx.banners.any(func(b):return b.active):
     reward_fx.boss_result_wait=maxf(reward_fx.boss_result_wait,1.0)
@@ -535,7 +670,7 @@ func finalize_battle_rewards() -> void:
  var points:int=int(battle.kills/5)+int(battle.elapsed/30)+(20 if battle.won else 0)
  profile.data.points+=points
  if battle.won:profile.data.unlocked_stage=maxi(int(profile.data.unlocked_stage),mini(1,selected_stage+1))
- profile.save_game();reward_given=true
+ save_profile();reward_given=true
 func show_result() -> void:
  finalize_battle_rewards()
  state="result"
@@ -551,10 +686,11 @@ func show_result() -> void:
 func try_bomb() -> void:
  if state=="battle" and battle.use_bomb():queue_redraw()
 func _input(event: InputEvent) -> void:
+ if persistence_kind=="load":return
  if state=="battle" and event is InputEventKey and event.keycode==KEY_SPACE and event.pressed and not event.echo:
   try_bomb();get_viewport().set_input_as_handled()
 func _gui_input(event: InputEvent) -> void:
- if state!="battle":return
+ if persistence_kind=="load" or state!="battle":return
  if event is InputEventMouseMotion:
   var v:Vector2=event.position-Battle.CENTER
   if v.length()>2:battle.aim=v.normalized()
